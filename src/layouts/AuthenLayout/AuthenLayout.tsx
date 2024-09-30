@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
 
-export default function AuthenLayout() {
+interface Props {
+  children?: React.ReactNode
+}
+
+export default function AuthenLayout({ children }: Props) {
   const [isHiddenImage, setIsHiddenImage] = useState<boolean>(false)
 
   useEffect(() => {
@@ -26,9 +29,7 @@ export default function AuthenLayout() {
           <img src='src/assets/img/dutact-logo.png' alt='dutact-logo' className='h-[40px] w-[40px]' />
           <div className='text-xl font-semibold tracking-wide'>Dutact.</div>
         </div>
-        <div className='flex flex-1 items-center justify-center px-16'>
-          <Outlet />
-        </div>
+        <div className='flex flex-1 items-center justify-center px-16'>{children}</div>
         <div className='flex min-h-[40px] items-end gap-2'>
           <img src='src/assets/img/dut-logo.jpg' alt='dut-logo' className='h-[30px] w-[30px]' />
           <div className='flex flex-col justify-center gap-0'>

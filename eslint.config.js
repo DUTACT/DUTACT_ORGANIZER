@@ -17,37 +17,34 @@ export default tseslint.config(
       'plugin:import/typescript',
       'plugin:jsx-a11y/recommended',
       'eslint-config-prettier',
-      'prettier',
+      'prettier'
     ],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: globals.browser
     },
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      'prettier': prettierPlugin,
+      prettier: prettierPlugin
     },
     settings: {
       react: {
-        version: 'detect', 
+        version: 'detect'
       },
       'import/resolver': {
         node: {
           paths: ['.'],
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        },
-      },
+          extensions: ['.js', '.jsx', '.ts', '.tsx']
+        }
+      }
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
-      'react/react-in-jsx-scope': 'off', 
-      'react/jsx-no-target-blank': 'warn', 
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react/react-in-jsx-scope': 'off',
+      'react/jsx-no-target-blank': 'warn',
       'prettier/prettier': [
         'warn',
         {
@@ -59,9 +56,10 @@ export default tseslint.config(
           useTabs: false,
           singleQuote: true,
           printWidth: 120,
-          jsxSingleQuote: true,
-        },
-      ],
+          jsxSingleQuote: true
+        }
+      ]
     },
+    ignores: ['node_modules/', 'dist/']
   }
 )

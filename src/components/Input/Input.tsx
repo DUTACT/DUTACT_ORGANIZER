@@ -1,6 +1,6 @@
 import { InputHTMLAttributes } from 'react'
 import type { RegisterOptions, UseFormRegister } from 'react-hook-form'
-import { cn } from 'src/lib/utils'
+import { cn } from 'src/lib/tailwind/utils'
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   className?: string
