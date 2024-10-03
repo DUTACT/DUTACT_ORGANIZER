@@ -1,4 +1,4 @@
-import { cn } from 'src/lib/utils'
+import { cn } from 'src/lib/tailwind/utils'
 
 interface Props {
   classWrapper?: string
@@ -10,10 +10,7 @@ export default function LoadingIndicator({ classWrapper = '', classLoadingIndica
     <div className={cn('hidden h-4 w-4', classWrapper)}>
       <svg
         aria-hidden='true'
-        className={cn(
-          'h-full w-full animate-spin fill-blue-600 text-gray-200 dark:text-gray-600',
-          classLoadingIndicator
-        )}
+        className={cn('h-full w-full animate-spin fill-white text-gray-200 dark:text-gray-600', classLoadingIndicator)}
         viewBox='0 0 100 101'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
