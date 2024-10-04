@@ -10,7 +10,6 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   classNameRequired?: string
   labelName?: string
   errorMessage?: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register?: UseFormRegister<any>
   rules?: RegisterOptions
   showIsRequired?: boolean
