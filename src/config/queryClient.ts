@@ -2,7 +2,7 @@ import axios from 'axios'
 import qs from 'qs'
 import { QueryClient } from '@tanstack/react-query'
 import { QueryFetchOptions, ApiError, MutationFetchOptions, MutationResult } from 'src/types/client.type'
-import { ERROR_MESSAGE } from 'src/constants/errorMessage'
+import { ERROR_MESSAGE } from 'src/constants/message'
 
 const BASE_URL = 'https://dutact-appserver.orangecoast-3558f3a9.southeastasia.azurecontainerapps.io'
 

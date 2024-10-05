@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --sidebar: 280px;
+    --aside: 280px;
+    --w-main: calc(100% - var(--sidebar) - var(--aside));
+    --logo-sm: 32px;
+    --logo-md: 40px;
+    --logo-lg: 60px;
+    --h-header: 50px;
+    --h-main: calc(100% - var(--h-header));
+  }
+}
+
 :root {
   font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

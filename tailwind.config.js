@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary': '#2C91F6',
+        primary: '#2C91F6',
         'neutral-0': '#ffffff',
         'neutral-1': '#fcfcfc',
         'neutral-2': '#f2f4f7',
@@ -27,9 +27,45 @@ module.exports = {
         'body-text': '#242424',
         'body-text-2': '#525252',
         'hover-icon': '#e7e7e7',
-        'icon-gray': '#c2cfe0',
+        'icon-gray': '#c2cfe0'
+      },
+      width: {
+        sidebar: 'var(--sidebar)',
+        aside: 'var(--aside)',
+        main: 'var(--w-main)',
+        'logo-sm': 'var(--logo-sm)',
+        'logo-md': 'var(--logo-md)',
+        'logo-lg': 'var(--logo-lg)'
+      },
+      height: {
+        header: 'var(--h-header)',
+        main: 'var(--h-main)',
+        'logo-sm': 'var(--logo-sm)',
+        'logo-md': 'var(--logo-md)',
+        'logo-lg': 'var(--logo-lg)'
+      },
+      minWidth: {
+        'logo-sm': 'var(--logo-sm)',
+        'logo-md': 'var(--logo-md)',
+        'logo-lg': 'var(--logo-lg)'
+      },
+      minHeight: {
+        'logo-sm': 'var(--logo-sm)',
+        'logo-md': 'var(--logo-md)',
+        'logo-lg': 'var(--logo-lg)'
+      },
+      margin: {
+        header: 'var(--h-header)'
+      },
+      boxShadow: {
+        custom:
+          '0px -1px 1px 0px rgba(0, 0, 0, 0.04) inset, 0px 2px 0px 0px rgba(255, 255, 255, 0.25) inset, 0px 4px 8px -4px rgba(80, 80, 80, 0.20)'
+      },
+      inset: {
+        sidebar: 'var(--sidebar)',
+        aside: 'var(--aside)'
       }
     }
   },
-  plugins: []
+  plugins: [require('@tailwindcss/aspect-ratio')]
 }

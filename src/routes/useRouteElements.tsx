@@ -6,6 +6,10 @@ import HomePage from 'src/pages/HomePage'
 import PageNotFound from 'src/pages/PageNotFound'
 import MainLayout from 'src/layouts/MainLayout'
 import { useAppContext } from 'src/contexts/app.context'
+import UserManagement from 'src/pages/UserManagement'
+import EventManagement from 'src/pages/EventManagement'
+import { useEffect } from 'react'
+import { ROUTE_CONFIG } from 'src/constants/routeConfig'
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAppContext()
@@ -18,6 +22,15 @@ const RejectedRoute: React.FC = () => {
 }
 
 export default function useRouteElements() {
+  const { setCurrentPageInfo } = useAppContext()
+  useEffect(() => {
+    console.log('location.pathname', location.pathname)
+    const currentRoute = ROUTE_CONFIG.find((route) => route.path === location.pathname)
+    if (currentRoute) {
+      setCurrentPageInfo({ title: currentRoute.title, icon: currentRoute.icon })
+    }
+  }, [location, setCurrentPageInfo])
+
   return useRoutes([
     {
       path: '',
@@ -29,6 +42,22 @@ export default function useRouteElements() {
           element: (
             <MainLayout>
               <HomePage />
+            </MainLayout>
+          )
+        },
+        {
+          path: path.user,
+          element: (
+            <MainLayout>
+              <UserManagement />
+            </MainLayout>
+          )
+        },
+        {
+          path: path.event,
+          element: (
+            <MainLayout>
+              <EventManagement />
             </MainLayout>
           )
         }

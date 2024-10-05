@@ -1,9 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { login } from 'src/apis/auth'
 import Button from 'src/components/Button'
 import Input from 'src/components/Input'
+import { TIMEOUT } from 'src/constants/common'
+import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { useAppContext } from 'src/contexts/app.context'
 import useLocalStorage from 'src/hooks/useLocalStorage'
 import { cn } from 'src/lib/tailwind/utils'
@@ -33,6 +36,9 @@ export default function Login() {
     onSuccess: (data) => {
       setAccessToken(data.accessToken)
       setIsAuthenticated(true)
+      toast.success(SUCCESS_MESSAGE.LOGIN, {
+        autoClose: TIMEOUT.TOAST_SHORT
+      })
       navigate(path.home)
     },
     onError: (error) => {

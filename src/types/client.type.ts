@@ -18,6 +18,6 @@ export interface ApiError {
 }
 
 export interface MutationResult<T> {
-  data: T;
-  status: number;
+  data: T
+  status: number
 }

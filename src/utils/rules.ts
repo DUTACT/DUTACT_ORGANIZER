@@ -20,7 +20,6 @@ import * as yup from 'yup'
 
 type Rules = { [key in 'username' | 'password' | 'confirm_password' | 'name']?: RegisterOptions }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getRules = (getValues?: UseFormGetValues<any>): Rules => ({
   username: {
     required: {
