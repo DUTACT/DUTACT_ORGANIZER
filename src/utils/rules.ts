@@ -17,7 +17,9 @@ import {
   REGEX_PASSWORD,
   ERROR_REQUIRED_NAME,
   ERROR_REQUIRED_FIELD,
-  ERROR_START_TIME_GREATER_THAN_END_TIME
+  ERROR_START_TIME_GREATER_THAN_END_TIME,
+  EVENT_START_AFTER_REGISTRATION_END,
+  REGISTRATION_END_BEFORE_EVENT_START
 } from 'src/constants/validate'
 import * as yup from 'yup'
 
@@ -100,41 +102,50 @@ const validateTimeRange = (
   maxTimeFieldKey?: string,
   outOfRangeMessage?: string
 ) => {
-  return yup.string().test({
-    name: 'time-range-validation',
-    message: errorMessage ?? '',
-    test(_, context) {
-      const firstValue = context.parent[firstFieldKey]
-      const secondValue = context.parent[secondFieldKey]
+  return yup
+    .string()
+    .required(requiredMessage || '')
+    .test({
+      name: 'time-range-validation',
+      message: errorMessage ?? '',
+      test(_, context) {
+        const firstValue = context.parent[firstFieldKey]
+        const secondValue = context.parent[secondFieldKey]
 
-      if (!firstValue || !secondValue) {
-        return context.createError({ message: requiredMessage ?? '' })
-      }
-
-      const firstTime = moment(firstValue)
-      const secondTime = moment(secondValue)
-
-      if (!firstTime.isValid() || !secondTime.isValid()) {
-        return false
-      }
-
-      if (minTimeFieldKey) {
-        const minTime = moment(context.parent[minTimeFieldKey])
-        if (minTime.isSameOrAfter(firstTime)) {
-          return context.createError({ message: outOfRangeMessage ?? '' })
+        if (!firstValue || !secondValue) {
+          return context.createError({ message: requiredMessage ?? '' })
         }
-      }
 
-      if (maxTimeFieldKey) {
-        const maxTime = moment(context.parent[maxTimeFieldKey])
-        if (maxTime.isSameOrBefore(secondTime)) {
-          return context.createError({ message: outOfRangeMessage ?? '' })
+        const firstTime = moment(firstValue)
+        const secondTime = moment(secondValue)
+
+        if (!firstTime.isValid() || !secondTime.isValid()) {
+          return true
         }
-      }
 
-      return firstTime.isSameOrBefore(secondTime)
-    }
-  })
+        if (minTimeFieldKey) {
+          const minValue = context.parent[minTimeFieldKey]
+          if (!minValue) return true
+
+          const minTime = moment(minValue)
+          if (minTime.isSameOrAfter(firstTime)) {
+            return context.createError({ message: outOfRangeMessage ?? '' })
+          }
+        }
+
+        if (maxTimeFieldKey) {
+          const maxValue = context.parent[maxTimeFieldKey]
+          if (!maxValue) return true
+
+          const maxTime = moment(maxValue)
+          if (maxTime.isSameOrBefore(secondTime)) {
+            return context.createError({ message: outOfRangeMessage ?? '' })
+          }
+        }
+
+        return firstTime.isSameOrBefore(secondTime)
+      }
+    })
 }
 
 export const authenSchema = yup.object({
@@ -163,7 +174,7 @@ export const eventSchema = yup.object({
     ERROR_REQUIRED_FIELD,
     'endRegistrationAt',
     undefined,
-    'Thời gian sự kiện diễn ra phải sau thời gian kết thúc đăng ký'
+    EVENT_START_AFTER_REGISTRATION_END
   ),
   endAt: validateTimeRange(
     'startAt',
@@ -172,7 +183,7 @@ export const eventSchema = yup.object({
     ERROR_REQUIRED_FIELD,
     'endRegistrationAt',
     undefined,
-    'Thời gian sự kiện diễn ra phải sau thời gian kết thúc đăng ký'
+    EVENT_START_AFTER_REGISTRATION_END
   ),
   startRegistrationAt: validateTimeRange(
     'startRegistrationAt',
@@ -181,7 +192,7 @@ export const eventSchema = yup.object({
     ERROR_REQUIRED_FIELD,
     undefined,
     'startAt',
-    'Thời gian kết thúc đăng ký phải trước thời gian bắt đầu sự kiện'
+    REGISTRATION_END_BEFORE_EVENT_START
   ),
   endRegistrationAt: validateTimeRange(
     'startRegistrationAt',
@@ -190,8 +201,9 @@ export const eventSchema = yup.object({
     ERROR_REQUIRED_FIELD,
     undefined,
     'startAt',
-    'Thời gian kết thúc đăng ký phải trước thời gian bắt đầu sự kiện'
-  )
+    REGISTRATION_END_BEFORE_EVENT_START
+  ),
+  coverPhoto: yup.mixed<File>().required(ERROR_REQUIRED_FIELD)
 })
 
 export type AuthenSchemaType = yup.InferType<typeof authenSchema>

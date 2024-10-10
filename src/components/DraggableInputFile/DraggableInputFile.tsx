@@ -85,6 +85,7 @@ export default function DraggableInputFile<TFieldValues extends FieldValues = Fi
 
   const handleRemoveFile = () => {
     setUploadedImage(null)
+    onChange?.(undefined)
   }
 
   useEffect(() => {
