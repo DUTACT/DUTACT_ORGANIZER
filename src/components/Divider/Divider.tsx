@@ -1,7 +1,7 @@
 import { cn } from 'src/lib/tailwind/utils'
 
 interface Props {
-  className: string
+  className?: string
 }
 
 export default function Divider({ className = '' }: Props) {

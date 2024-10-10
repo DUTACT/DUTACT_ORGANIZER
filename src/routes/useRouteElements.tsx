@@ -10,6 +10,7 @@ import UserManagement from 'src/pages/UserManagement'
 import EventManagement from 'src/pages/EventManagement'
 import { useEffect } from 'react'
 import { ROUTE_CONFIG } from 'src/constants/routeConfig'
+import CreateEventPage from 'src/pages/CreateEventPage'
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAppContext()
@@ -58,6 +59,14 @@ export default function useRouteElements() {
           element: (
             <MainLayout>
               <EventManagement />
+            </MainLayout>
+          )
+        },
+        {
+          path: path.createEvent,
+          element: (
+            <MainLayout>
+              <CreateEventPage />
             </MainLayout>
           )
         }

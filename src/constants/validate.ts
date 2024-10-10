@@ -1,3 +1,7 @@
+// COMMON
+export const ERROR_REQUIRED_FIELD = 'Không được bỏ trống trường này'
+export const ERROR_START_TIME_GREATER_THAN_END_TIME = 'Thời gian bắt đầu không được lớn hơn thời gian kết thúc'
+
 // USERNAME
 export const ERROR_REQUIRED_USERNAME = 'Tên tài khoản là bắt buộc'
 export const MAX_LENGTH_USERNAME = 20

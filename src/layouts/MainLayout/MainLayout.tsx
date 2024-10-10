@@ -13,7 +13,7 @@ export default function MainLayout({ children }: Props) {
       {/* Main */}
       <div className='fixed h-[100vh] top-0 bottom-0 left-sidebar right-aside w-main'>
         <Header />
-        <div className='mt-header h-main'>{children}</div>
+        <div className='mt-header h-main block'>{children}</div>
       </div>
       <Aside />
     </div>
