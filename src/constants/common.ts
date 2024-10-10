@@ -7,3 +7,10 @@ export const USER_ROLE = {
 export const TIMEOUT = {
   TOAST_SHORT: 3000
 }
+
+export const DATE_TIME_FORMATS = {
+  ISO: 'YYYY-MM-DDTHH:mm:ss.SSS',
+  DATE: 'YYYY-MM-DD',
+  TIME: 'HH:mm:ss',
+  DATE_TIME: 'YYYY-MM-DD HH:mm:ss'
+}

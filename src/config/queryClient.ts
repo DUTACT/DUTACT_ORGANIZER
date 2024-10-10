@@ -1,7 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
 import { QueryClient } from '@tanstack/react-query'
-import { QueryFetchOptions, ApiError, MutationFetchOptions, MutationResult } from 'src/types/client.type'
+import { QueryFetchOptions, ApiError, MutationFetchOptions } from 'src/types/client.type'
 import { ERROR_MESSAGE } from 'src/constants/message'
 import { CONFIG } from 'src/constants/config'
 
@@ -75,7 +75,7 @@ export async function mutationFetch<T>({ url, method, body, baseURL }: MutationF
   })
 }
 
-export async function mutationFormData<T>({ url, body, method }: MutationFetchOptions): Promise<MutationResult<T>> {
+export async function mutationFormData<T>({ url, body, method }: MutationFetchOptions): Promise<T> {
   return new Promise(async (resolve, reject) => {
     try {
       const form = new FormData()
@@ -91,7 +91,8 @@ export async function mutationFormData<T>({ url, body, method }: MutationFetchOp
         method,
         data: form,
         headers: {
-          'Content-Type': method === 'POST' ? 'application/json' : 'application/x-www-form-urlencoded'
+          'Content-Type':
+            method === 'POST' || method === 'PUT' || method === 'PATCH' ? 'multipart/form-data' : 'application/json'
         }
       })
 

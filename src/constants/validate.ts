@@ -25,3 +25,7 @@ export const ERROR_PASSWORD_NOT_MATCHED = 'Nhập lại mật khẩu không kh�
 
 // NAME
 export const ERROR_REQUIRED_NAME = 'Tên là bắt buộc'
+
+// TIME RANGE
+export const REGISTRATION_END_BEFORE_EVENT_START = 'Thời gian kết thúc đăng ký phải trước thời gian bắt đầu sự kiện'
+export const EVENT_START_AFTER_REGISTRATION_END = 'Thời gian sự kiện diễn ra phải sau thời gian kết thúc đăng ký'

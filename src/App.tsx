@@ -6,6 +6,8 @@ import { ROUTE_CONFIG } from './constants/routeConfig'
 import { useAppContext } from './contexts/app.context'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import RequestInterceptor from './config/RequestInterceptor'
+import ResponseInterceptor from './config/ResponseInterceptor'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +34,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       {routeElements}
+      <RequestInterceptor />
+      <ResponseInterceptor />
       <ToastContainer />
     </QueryClientProvider>
   )

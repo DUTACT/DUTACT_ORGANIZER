@@ -1,10 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import moment from 'moment'
 import { Controller, useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import { createEvent } from 'src/apis/event'
 import Button from 'src/components/Button'
 import Divider from 'src/components/Divider'
 import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInputFile'
 import Input from 'src/components/Input'
 import TextArea from 'src/components/TextArea'
+import { DATE_TIME_FORMATS } from 'src/constants/common'
+import { SUCCESS_MESSAGE } from 'src/constants/message'
+import { EventBody } from 'src/types/event.type'
 import { eventSchema, EventSchemaType } from 'src/utils/rules'
 
 type FormData = EventSchemaType
@@ -20,8 +26,27 @@ export default function CreateEventPage() {
     resolver: yupResolver(eventSchema)
   })
 
+  const { mutate } = createEvent({
+    onSuccess: () => {
+      toast.success(SUCCESS_MESSAGE.CREATE_EVENT)
+    },
+    onError: (error) => {
+      console.error(error.message)
+    }
+  })
+
   const onSubmit = handleSubmit((data) => {
-    console.log('data', data)
+    const eventBody: EventBody = {
+      name: data.name,
+      content: data.content,
+      startAt: moment(data.startAt).format(DATE_TIME_FORMATS.ISO),
+      endAt: moment(data.endAt).format(DATE_TIME_FORMATS.ISO),
+      startRegistrationAt: moment(data.startRegistrationAt).format(DATE_TIME_FORMATS.ISO),
+      endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.ISO),
+      coverPhoto: data.coverPhoto,
+      organizerId: 33
+    } as EventBody
+    mutate(eventBody)
   })
 
   return (
@@ -184,7 +209,19 @@ export default function CreateEventPage() {
           />
         </div>
         <div className='flex gap-4 w-full'>
-          <DraggableInputFile labelName='Ảnh sự kiện' classNameWrapper='w-full flex-1' />
+          <Controller
+            name='coverPhoto'
+            control={control}
+            render={({ field }) => (
+              <DraggableInputFile
+                {...field}
+                labelName='Ảnh sự kiện'
+                classNameWrapper='w-full flex-1'
+                errorMessage={errors.coverPhoto?.message}
+                onChange={(file?: File) => field.onChange(file)}
+              />
+            )}
+          />
           <div className='w-full flex-1'></div>
         </div>
       </form>
