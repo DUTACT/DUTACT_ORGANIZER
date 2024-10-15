@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { login } from 'src/apis/auth'
 import Button from 'src/components/Button'
 import Input from 'src/components/Input'
+import { setupToken } from 'src/config/queryClient'
 import { TIMEOUT } from 'src/constants/common'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { useAppContext } from 'src/contexts/app.context'
@@ -35,6 +36,7 @@ export default function Login() {
   const { mutate, error, isPending } = login({
     onSuccess: (data) => {
       setAccessToken(data.accessToken)
+      setupToken(data.accessToken)
       setIsAuthenticated(true)
       toast.success(SUCCESS_MESSAGE.LOGIN, {
         autoClose: TIMEOUT.TOAST_SHORT
