@@ -1,13 +1,15 @@
 import { useLocation } from 'react-router-dom'
 import useRouteElements from './routes/useRouteElements'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ROUTE_CONFIG } from './constants/routeConfig'
 import { useAppContext } from './contexts/app.context'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import RequestInterceptor from './config/RequestInterceptor'
 import ResponseInterceptor from './config/ResponseInterceptor'
+import useLocalStorage from './hooks/useLocalStorage'
+import { setupToken } from './config/queryClient'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +24,8 @@ function App() {
   const routeElements = useRouteElements()
   const { setCurrentPageInfo } = useAppContext()
   const { pathname } = useLocation()
+  const [accessToken] = useLocalStorage<string>('access_token', '')
+  const [isTokenReady, setIsTokenReady] = useState<boolean>(false)
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -30,6 +34,19 @@ function App() {
       setCurrentPageInfo({ title: currentRoute.title, icon: currentRoute.icon })
     }
   }, [pathname])
+
+  useEffect(() => {
+    if (accessToken) {
+      setupToken(accessToken)
+      setIsTokenReady(true)
+    } else {
+      setIsTokenReady(false)
+    }
+  }, [accessToken])
+
+  if (!isTokenReady) {
+    return null
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
