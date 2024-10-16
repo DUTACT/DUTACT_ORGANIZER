@@ -4,11 +4,31 @@ import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
 import { getAllEvents } from 'src/apis/event'
 import { DATE_TIME_FORMATS } from 'src/constants/common'
 import moment from 'moment'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import InputSearch from 'src/components/InputSearch'
+import { EventOfOrganizer } from 'src/types/event.type'
 
 export default function EventManagement() {
-  const { data: events, error: eventsError } = getAllEvents()
+  const [inputSearch, setInputSearch] = useState<string>('')
+  const [events, setEvents] = useState<EventOfOrganizer[]>([])
+  const [filteredEvents, setFilteredEvents] = useState<EventOfOrganizer[]>([])
+
+  const { data: eventList, error: eventsError } = getAllEvents()
+
+  const handleSearchEvents = (value: string) => {
+    const lowerCaseValue = value.toLowerCase()
+    const filteredEvents = events.filter(
+      (event) =>
+        event.name.toLowerCase().includes(lowerCaseValue) ||
+        event.content.toLowerCase().includes(lowerCaseValue) ||
+        event.startAt.includes(lowerCaseValue) ||
+        event.endAt.toLowerCase().includes(lowerCaseValue) ||
+        event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
+        event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
+    )
+    setFilteredEvents(filteredEvents)
+  }
 
   useEffect(() => {
     if (eventsError) {
@@ -16,10 +36,36 @@ export default function EventManagement() {
     }
   }, [eventsError])
 
+  useEffect(() => {
+    if (eventList) {
+      const newEvents = eventList.map((event) => ({
+        ...event,
+        startAt: moment(event.startAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
+        endAt: moment(event.endAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
+        startRegistrationAt: moment(event.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
+        endRegistrationAt: moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)
+      }))
+      setEvents(newEvents)
+    }
+  }, [eventList])
+
+  useEffect(() => {
+    handleSearchEvents(inputSearch)
+  }, [inputSearch])
+
   return (
-    <div className='p-4 overflow-y-auto flex'>
+    <div className='p-4 overflow-y-auto flex flex-col gap-2'>
+      <div className='flex items-center justify-between'>
+        <div className='flex-1 max-w-[300px]'>
+          <InputSearch
+            placeholder='Tìm kiếm tên, nội dung sự kiện'
+            inputSearch={inputSearch}
+            setInputSearch={setInputSearch}
+          />
+        </div>
+      </div>
       <div className='overflow-x-auto'>
-        {events && events.length > 0 && (
+        {events.length > 0 && (
           <table className='min-w-full'>
             <thead className='border-b-[2px] border-neutral-5'>
               <tr>
@@ -51,56 +97,50 @@ export default function EventManagement() {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {events.map((event, index) => (
-                <tr className='border-b-[1px] border-neutral-4 group hover:bg-neutral-2'>
-                  <td className='px-4 py-2 bg-neutral-0 sticky left-0 z-10 group-hover:bg-neutral-2'>
-                    <div className='flex items-center justify-center'>
-                      <input type='checkbox' className='w-[16px] h-[16px] cursor-pointer' />
-                    </div>
-                  </td>
-                  <td className='px-4 py-2 text-sm text-center'>{index + 1}</td>
-                  <td className='px-4 py-2 text-sm'>
-                    <div className='line-clamp-3 overflow-hidden'>{event.name}</div>
-                  </td>
-                  <td className='px-4 py-2 text-sm'>
-                    <div className='line-clamp-3 overflow-hidden'>{event.content}</div>
-                  </td>
-                  <td className='px-4 py-2 text-sm flex items-center justify-center '>
-                    <img
-                      src={event.coverPhotoUrl}
-                      alt='ảnh sự kiện'
-                      className='max-w-[300px] max-h-[100px] aspect-w-16 aspect-h-9 p-0'
-                    />
-                  </td>
-                  <td className='px-4 py-2 text-sm'>
-                    {moment(event.startAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}
-                  </td>
-                  <td className='px-4 py-2 text-sm'>
-                    {moment(event.endAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}
-                  </td>
-                  <td className='px-4 py-2 text-sm'>
-                    {moment(event.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}
-                  </td>
-                  <td className='px-4 py-2 text-sm'>
-                    {moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}
-                  </td>
-                  <td className='px-4 py-2 bg-neutral-0 group-hover:bg-neutral-2 sticky right-0 z-20 before:absolute before:top-0 before:left-0 before:h-full before:w-[1px] before:bg-neutral-3'>
-                    <div className='flex items-center justify-center gap-1'>
-                      <div className='flex items-center justify-center p-2 cursor-pointer opacity-70 hover:opacity-100'>
-                        <ShowDetailIcon className='w-[20px] h-[20px]' />
+            {filteredEvents.length > 0 && (
+              <tbody>
+                {filteredEvents.map((event, index) => (
+                  <tr className='border-b-[1px] border-neutral-4 group hover:bg-neutral-2'>
+                    <td className='px-4 py-2 bg-neutral-0 sticky left-0 z-10 group-hover:bg-neutral-2'>
+                      <div className='flex items-center justify-center'>
+                        <input type='checkbox' className='w-[16px] h-[16px] cursor-pointer' />
                       </div>
-                      <div className='flex items-center justify-center p-2 cursor-pointer opacity-70 hover:opacity-100'>
-                        <EditIcon className='w-[20px] h-[20px]' />
+                    </td>
+                    <td className='px-4 py-2 text-sm text-center'>{index + 1}</td>
+                    <td className='px-4 py-2 text-sm'>
+                      <div className='line-clamp-3 overflow-hidden'>{event.name}</div>
+                    </td>
+                    <td className='px-4 py-2 text-sm'>
+                      <div className='line-clamp-3 overflow-hidden'>{event.content}</div>
+                    </td>
+                    <td className='px-4 py-2 text-sm flex items-center justify-center '>
+                      <img
+                        src={event.coverPhotoUrl}
+                        alt='ảnh sự kiện'
+                        className='max-w-[300px] max-h-[100px] aspect-w-16 aspect-h-9 p-0'
+                      />
+                    </td>
+                    <td className='px-4 py-2 text-sm'>{event.startAt}</td>
+                    <td className='px-4 py-2 text-sm'>{event.endAt}</td>
+                    <td className='px-4 py-2 text-sm'>{event.startRegistrationAt}</td>
+                    <td className='px-4 py-2 text-sm'>{event.endRegistrationAt}</td>
+                    <td className='px-4 py-2 bg-neutral-0 group-hover:bg-neutral-2 sticky right-0 z-20 before:absolute before:top-0 before:left-0 before:h-full before:w-[1px] before:bg-neutral-3'>
+                      <div className='flex items-center justify-center gap-1'>
+                        <div className='flex items-center justify-center p-2 cursor-pointer opacity-70 hover:opacity-100'>
+                          <ShowDetailIcon className='w-[20px] h-[20px]' />
+                        </div>
+                        <div className='flex items-center justify-center p-2 cursor-pointer opacity-70 hover:opacity-100'>
+                          <EditIcon className='w-[20px] h-[20px]' />
+                        </div>
+                        <div className='flex items-center justify-center p-2 cursor-pointer opacity-70 hover:opacity-100'>
+                          <DeleteIcon className='w-[20px] h-[20px]' />
+                        </div>
                       </div>
-                      <div className='flex items-center justify-center p-2 cursor-pointer opacity-70 hover:opacity-100'>
-                        <DeleteIcon className='w-[20px] h-[20px]' />
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
           </table>
         )}
       </div>
