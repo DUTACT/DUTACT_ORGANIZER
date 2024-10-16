@@ -8,17 +8,28 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import InputSearch from 'src/components/InputSearch'
 import { EventOfOrganizer } from 'src/types/event.type'
+import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
+import SortIcon from 'src/components/SortIcon'
 
 export default function EventManagement() {
   const [inputSearch, setInputSearch] = useState<string>('')
   const [events, setEvents] = useState<EventOfOrganizer[]>([])
   const [filteredEvents, setFilteredEvents] = useState<EventOfOrganizer[]>([])
+  const [sortCriteria, setSortCriteria] = useState<SortCriterion<EventOfOrganizer>[]>([
+    { field: 'name', direction: null },
+    { field: 'content', direction: null },
+    { field: 'startAt', direction: null },
+    { field: 'endAt', direction: null },
+    { field: 'startRegistrationAt', direction: null },
+    { field: 'endRegistrationAt', direction: null }
+  ])
 
   const { data: eventList, error: eventsError } = getAllEvents()
 
   const handleSearchEvents = (value: string) => {
     const lowerCaseValue = value.toLowerCase()
-    const filteredEvents = events.filter(
+    const orderedEvents = sortItems<EventOfOrganizer>(events, sortCriteria)
+    const filteredEvents = orderedEvents.filter(
       (event) =>
         event.name.toLowerCase().includes(lowerCaseValue) ||
         event.content.toLowerCase().includes(lowerCaseValue) ||
@@ -28,6 +39,13 @@ export default function EventManagement() {
         event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
     )
     setFilteredEvents(filteredEvents)
+  }
+
+  const handleSortChange = (field: keyof EventOfOrganizer) => {
+    const updatedCriteria = toggleSortDirection(sortCriteria, field)
+    const newFilteredEvents = sortItems<EventOfOrganizer>(filteredEvents, updatedCriteria)
+    setSortCriteria(updatedCriteria)
+    setFilteredEvents(newFilteredEvents)
   }
 
   useEffect(() => {
@@ -51,10 +69,10 @@ export default function EventManagement() {
 
   useEffect(() => {
     handleSearchEvents(inputSearch)
-  }, [inputSearch])
+  }, [inputSearch, events])
 
   return (
-    <div className='p-4 overflow-y-auto flex flex-col gap-2'>
+    <div className='p-4 h-full flex flex-col gap-2'>
       <div className='flex items-center justify-between'>
         <div className='flex-1 max-w-[300px]'>
           <InputSearch
@@ -64,35 +82,73 @@ export default function EventManagement() {
           />
         </div>
       </div>
-      <div className='overflow-x-auto'>
+      <div className='block overflow-auto '>
         {events.length > 0 && (
-          <table className='min-w-full'>
-            <thead className='border-b-[2px] border-neutral-5'>
+          <table className='min-w-full overflow-auto relative'>
+            <thead className='before:absolute sticky top-0 before:bottom-0 before:left-0 before:w-full before:h-[2px] before:bg-neutral-5 z-50 bg-neutral-0'>
               <tr>
-                <th className='px-4 py-2 text-center sticky left-0 z-10 bg-neutral-0'>
+                <th className='px-4 py-2 text-center sticky left-0 z-10 bg-neutral-0 before:bottom-0 before:left-0 before:w-full before:h-[2px] before:bg-neutral-5 before:absolute'>
                   <div className='flex items-center justify-center'>
                     <input type='checkbox' className='w-[16px] h-[16px] cursor-pointer' />
                   </div>
                 </th>
-                <th className='px-4 py-2 text-sm text-center whitespace-normal break-words'>STT</th>
-                <th className='px-4 py-2 text-sm text-center whitespace-normal break-words min-w-[150px]'>
-                  Tên sự kiện
+                <th className='px-4 py-2 text-sm text-left whitespace-normal break-words'>STT</th>
+                <th
+                  className='px-4 py-2 text-sm text-left whitespace-normal break-words min-w-[150px] cursor-pointer'
+                  onClick={() => handleSortChange('name')}
+                >
+                  <div className='flex items-center justify-between'>
+                    <span>Tên sự kiện</span>
+                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'name')} />
+                  </div>
                 </th>
-                <th className='px-4 py-2 text-sm text-center whitespace-normal break-words min-w-[300px]'>Mô tả</th>
-                <th className='px-4 py-2 text-sm text-center whitespace-normal break-words min-w-[150px]'>Ảnh bìa</th>
-                <th className='px-4 py-2 text-sm text-center whitespace-normal break-words min-w-[120px]'>
-                  Ngày bắt đầu sự kiện
+                <th
+                  className='px-4 py-2 text-sm text-left whitespace-normal break-words min-w-[300px] cursor-pointer'
+                  onClick={() => handleSortChange('content')}
+                >
+                  <div className='flex items-center justify-between'>
+                    <span>Mô tả</span>
+                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'content')} />
+                  </div>
                 </th>
-                <th className='px-4 py-2 text-sm text-center whitespace-normal break-words min-w-[120px]'>
-                  Ngày kết thúc sự kiện
+                <th className='px-4 py-2 text-sm text-left whitespace-normal break-words min-w-[150px]'>Ảnh bìa</th>
+                <th
+                  className='px-4 py-2 text-sm text-left whitespace-normal break-words min-w-[140px] cursor-pointer'
+                  onClick={() => handleSortChange('startAt')}
+                >
+                  <div className='flex items-center justify-between'>
+                    <span>Ngày bắt đầu sự kiện</span>
+                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'startAt')} />
+                  </div>
                 </th>
-                <th className='px-4 py-2 text-sm text-center whitespace-normal break-words min-w-[120px]'>
-                  Ngày bắt đầu đăng ký
+                <th
+                  className='px-4 py-2 text-sm text-left whitespace-normal break-words min-w-[140px] cursor-pointer'
+                  onClick={() => handleSortChange('endAt')}
+                >
+                  <div className='flex items-center justify-between'>
+                    <span>Ngày kết thúc sự kiện</span>
+                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'endAt')} />
+                  </div>
                 </th>
-                <th className='px-4 py-2 text-sm text-center whitespace-normal break-words min-w-[120px]'>
-                  Ngày kết thúc đăng ký
+                <th
+                  className='px-4 py-2 text-sm text-left whitespace-normal break-words min-w-[140px] cursor-pointer'
+                  onClick={() => handleSortChange('startRegistrationAt')}
+                >
+                  <div className='flex items-center justify-between'>
+                    <span>Ngày bắt đầu đăng ký</span>
+                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'startRegistrationAt')} />
+                  </div>
                 </th>
-                <th className='text-center bg-neutral-0 px-4 py-2 text-sm  whitespace-normal break-words sticky right-0 z-20 before:absolute before:top-0 before:left-0 before:h-full before:w-[1px] before:bg-neutral-3'>
+                <th
+                  className='px-4 py-2 text-sm text-left whitespace-normal break-words min-w-[140px] cursor-pointer'
+                  onClick={() => handleSortChange('endRegistrationAt')}
+                >
+                  <div className='flex items-center justify-between'>
+                    <span>Ngày kết thúc đăng ký</span>
+                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'endRegistrationAt')} />
+                  </div>
+                </th>
+                <th className='text-left bg-neutral-0 px-4 py-2 text-sm whitespace-normal break-words sticky right-0 z-20 before:absolute before:top-0 before:left-0 before:h-full before:w-[1px] before:bg-neutral-3 after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-neutral-5 after:absolute'>
                   Hành động
                 </th>
               </tr>
@@ -100,7 +156,7 @@ export default function EventManagement() {
             {filteredEvents.length > 0 && (
               <tbody>
                 {filteredEvents.map((event, index) => (
-                  <tr className='border-b-[1px] border-neutral-4 group hover:bg-neutral-2'>
+                  <tr key={event.id} className='border-b-[1px] border-neutral-4 group hover:bg-neutral-2'>
                     <td className='px-4 py-2 bg-neutral-0 sticky left-0 z-10 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center'>
                         <input type='checkbox' className='w-[16px] h-[16px] cursor-pointer' />
@@ -139,6 +195,15 @@ export default function EventManagement() {
                     </td>
                   </tr>
                 ))}
+              </tbody>
+            )}
+            {filteredEvents.length === 0 && (
+              <tbody>
+                <tr>
+                  <td colSpan={10} className='text-center py-4 '>
+                    Không có kết quả
+                  </td>
+                </tr>
               </tbody>
             )}
           </table>
