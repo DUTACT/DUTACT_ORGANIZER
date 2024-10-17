@@ -1,4 +1,4 @@
-import { PageInfo, useAppContext } from 'src/contexts/app.context'
+import { useAppContext } from 'src/contexts/app.context'
 
 export default function Header() {
   const { currentPageInfo } = useAppContext()

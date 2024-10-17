@@ -2,7 +2,7 @@ import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import EditIcon from 'src/assets/icons/i-edit-secondary.svg?react'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
 import { getAllEvents } from 'src/apis/event'
-import { DATE_TIME_FORMATS } from 'src/constants/common'
+import { DATE_TIME_FORMATS, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -10,6 +10,7 @@ import InputSearch from 'src/components/InputSearch'
 import { EventOfOrganizer } from 'src/types/event.type'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
+import Pagination from 'src/components/Pagination/Pagination'
 
 export default function EventManagement() {
   const [inputSearch, setInputSearch] = useState<string>('')
@@ -23,6 +24,9 @@ export default function EventManagement() {
     { field: 'startRegistrationAt', direction: null },
     { field: 'endRegistrationAt', direction: null }
   ])
+
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [itemsPerPage, setItemsPerPage] = useState<number>(INITIAL_ITEMS_PER_PAGE)
 
   const { data: eventList, error: eventsError } = getAllEvents()
 
@@ -48,6 +52,15 @@ export default function EventManagement() {
     setFilteredEvents(newFilteredEvents)
   }
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  const handleRowsPerPageChange = (rowsPerPage: number) => {
+    setItemsPerPage(rowsPerPage)
+    setCurrentPage(1)
+  }
+
   useEffect(() => {
     if (eventsError) {
       toast.error(eventsError.message)
@@ -71,8 +84,12 @@ export default function EventManagement() {
     handleSearchEvents(inputSearch)
   }, [inputSearch, events])
 
+  const indexOfLastEvent = currentPage * itemsPerPage
+  const indexOfFirstEvent = indexOfLastEvent - itemsPerPage
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent)
+
   return (
-    <div className='p-4 h-full flex flex-col gap-2'>
+    <div className='p-4 h-full flex flex-col gap-4'>
       <div className='flex items-center justify-between'>
         <div className='flex-1 max-w-[300px]'>
           <InputSearch
@@ -82,6 +99,11 @@ export default function EventManagement() {
           />
         </div>
       </div>
+      <Pagination
+        totalItems={filteredEvents.length}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
+      />
       <div className='block overflow-auto '>
         {events.length > 0 && (
           <table className='min-w-full overflow-auto relative'>
@@ -153,9 +175,9 @@ export default function EventManagement() {
                 </th>
               </tr>
             </thead>
-            {filteredEvents.length > 0 && (
+            {currentEvents.length > 0 && (
               <tbody>
-                {filteredEvents.map((event, index) => (
+                {currentEvents.map((event, index) => (
                   <tr key={event.id} className='border-b-[1px] border-neutral-4 group hover:bg-neutral-2'>
                     <td className='px-4 py-2 bg-neutral-0 sticky left-0 z-10 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center'>
@@ -197,7 +219,7 @@ export default function EventManagement() {
                 ))}
               </tbody>
             )}
-            {filteredEvents.length === 0 && (
+            {currentEvents.length === 0 && (
               <tbody>
                 <tr>
                   <td colSpan={10} className='text-center py-4 '>

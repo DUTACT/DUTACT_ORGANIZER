@@ -16,3 +16,5 @@ export const DATE_TIME_FORMATS = {
   DATE_TIME: 'YYYY-MM-DD HH:mm:ss',
   DATE_TIME_COMMON: 'DD/MM/YYYY HH:mm'
 }
+
+export const INITIAL_ITEMS_PER_PAGE = 10
