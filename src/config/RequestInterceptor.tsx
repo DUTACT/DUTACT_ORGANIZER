@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { client } from './queryClient'
 import { useLocation } from 'react-router-dom'
 import useLocalStorage from 'src/hooks/useLocalStorage'
+import { path } from 'src/routes/path'
 
 const RequestInterceptor = () => {
   const [accessToken, _] = useLocalStorage<string>('access_token', '')
@@ -11,7 +12,7 @@ const RequestInterceptor = () => {
   useEffect(() => {
     interceptorId.current = client.interceptors.request.use(
       async (config: any) => {
-        if (accessToken && location.pathname !== '/login') {
+        if (accessToken && location.pathname !== path.login) {
           config.headers.Authorization = `Bearer ${accessToken}`
         }
 

@@ -18,6 +18,8 @@ const ResponseInterceptor = () => {
         setAccessToken('')
         navigate(path.login)
         toast.warn('Your token has been expired')
+      } else if (error.response.status === HttpStatusCode.Forbidden) {
+        toast.warn('You can not access this page')
       }
 
       return Promise.reject(error)

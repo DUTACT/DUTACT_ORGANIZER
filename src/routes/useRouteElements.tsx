@@ -25,7 +25,6 @@ const RejectedRoute: React.FC = () => {
 export default function useRouteElements() {
   const { setCurrentPageInfo } = useAppContext()
   useEffect(() => {
-    console.log('location.pathname', location.pathname)
     const currentRoute = ROUTE_CONFIG.find((route) => route.path === location.pathname)
     if (currentRoute) {
       setCurrentPageInfo({ title: currentRoute.title, icon: currentRoute.icon })

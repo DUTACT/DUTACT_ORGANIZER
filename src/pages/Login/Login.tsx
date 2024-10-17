@@ -52,7 +52,7 @@ export default function Login() {
     mutate(authData)
   }
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit((data: FormData) => {
     handleLogin({
       username: data.username,
       password: data.password
