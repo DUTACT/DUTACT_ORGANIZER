@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default function SortIcon({ sortDirection }: Props) {
-  console.log('sortDirection', sortDirection)
   return (
     <div className='flex flex-col items-center justify-center'>
       {sortDirection === 'asc' && <SortUpActiveIcon className='w-[14px] h-[14px]' />}

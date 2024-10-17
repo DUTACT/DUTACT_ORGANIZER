@@ -56,7 +56,7 @@ export default function EventManagement() {
 
   useEffect(() => {
     if (eventList) {
-      const newEvents = eventList.map((event) => ({
+      const newEvents = eventList.map((event: EventOfOrganizer) => ({
         ...event,
         startAt: moment(event.startAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
         endAt: moment(event.endAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
