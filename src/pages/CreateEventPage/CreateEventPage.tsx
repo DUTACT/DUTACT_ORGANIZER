@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import moment from 'moment'
 import { Controller, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { createEvent } from 'src/apis/event'
 import Button from 'src/components/Button'
@@ -8,14 +9,16 @@ import Divider from 'src/components/Divider'
 import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInputFile'
 import Input from 'src/components/Input'
 import TextArea from 'src/components/TextArea'
-import { DATE_TIME_FORMATS } from 'src/constants/common'
+import { DATE_TIME_FORMATS, TIMEOUT } from 'src/constants/common'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
+import { path } from 'src/routes/path'
 import { EventBody } from 'src/types/event.type'
 import { eventSchema, EventSchemaType } from 'src/utils/rules'
 
 type FormData = EventSchemaType
 
 export default function CreateEventPage() {
+  const navigate = useNavigate()
   const {
     register,
     control,
@@ -29,9 +32,12 @@ export default function CreateEventPage() {
   const { mutate } = createEvent({
     onSuccess: () => {
       toast.success(SUCCESS_MESSAGE.CREATE_EVENT)
+      setTimeout(() => {
+        navigate(path.event)
+      }, TIMEOUT.NAVIGATE)
     },
     onError: (error) => {
-      console.error(error.message)
+      toast.error(error.message)
     }
   })
 
@@ -48,6 +54,10 @@ export default function CreateEventPage() {
     } as EventBody
     mutate(eventBody)
   })
+
+  const navigateToEventManagementPage = () => {
+    navigate(path.event)
+  }
 
   return (
     <div className='flex flex-col flex-1 w-full h-full'>
@@ -69,6 +79,7 @@ export default function CreateEventPage() {
             <Button
               title='Quay lại'
               classButton='min-w-[100px] text-neutral-7 bg-neutral-2 hover:bg-neutral-3 text-nowrap rounded-md'
+              onClick={navigateToEventManagementPage}
             />
           </div>
         </div>

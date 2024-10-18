@@ -1,5 +1,7 @@
 export const ERROR_MESSAGE = {
-  'Invalid login credentials': 'Tên tài khoản hoặc mật khẩu không đúng'
+  invalid_credentials: 'Tên tài khoản hoặc mật khẩu không đúng',
+  forbidden: 'Bạn không được phép truy cập trang này',
+  payload_too_large: 'Nội dung tải lên của bạn có dung lượng quá lớn'
 }
 
 export const SUCCESS_MESSAGE = {

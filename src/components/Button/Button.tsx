@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes } from 'react'
+import { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from 'src/lib/tailwind/utils'
 import LoadingIndicator from '../LoadingIndicator'
 
@@ -7,7 +7,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   classButton?: string
   classTitle?: string
   classLoadingIndicator?: string
-  href?: string
+  iconComponent?: ReactNode
 }
 
 export default function Button({
@@ -17,7 +17,7 @@ export default function Button({
   classButton = '',
   classTitle = '',
   classLoadingIndicator = '',
-  href = '',
+  iconComponent,
   ...rest
 }: Props) {
   return (
@@ -30,6 +30,7 @@ export default function Button({
       {...rest}
     >
       <LoadingIndicator classWrapper={classLoadingIndicator} />
+      {iconComponent && iconComponent}
       <span className={cn('text-md font-medium', classTitle)}>{title}</span>
     </button>
   )

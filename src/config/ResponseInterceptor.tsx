@@ -5,6 +5,7 @@ import { HttpStatusCode } from 'axios'
 import useLocalStorage from 'src/hooks/useLocalStorage'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { path } from 'src/routes/path'
+import { ERROR_MESSAGE } from 'src/constants/message'
 
 const ResponseInterceptor = () => {
   const [_, setAccessToken] = useLocalStorage<string>('access_token', '')
@@ -17,13 +18,18 @@ const ResponseInterceptor = () => {
       if (error.response.status === HttpStatusCode.Unauthorized) {
         setAccessToken('')
         navigate(path.login)
-        toast.warn('Your token has been expired')
       } else if (error.response.status === HttpStatusCode.Forbidden) {
-        toast.warn('You can not access this page')
+        toast.warn(ERROR_MESSAGE.forbidden)
+      } else if (error.response.status === HttpStatusCode.PayloadTooLarge) {
+        toast.error(ERROR_MESSAGE.payload_too_large)
       }
 
       return Promise.reject(error)
     })
+
+    return () => {
+      client.interceptors.response.eject(interceptorId.current)
+    }
   }, [location])
 
   return null

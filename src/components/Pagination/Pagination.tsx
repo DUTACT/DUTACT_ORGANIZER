@@ -33,9 +33,9 @@ export default function Pagination({ totalItems, onPageChange, onRowsPerPageChan
 
   return (
     <div className='flex items-center justify-between'>
-      <div>
+      <div className='flex items-center gap-1'>
         <label htmlFor='rowsPerPage' className='text-sm'>
-          Tổng số sự kiện mỗi trang:{' '}
+          Tổng số sự kiện mỗi trang:
         </label>
         <select
           id='rowsPerPage'

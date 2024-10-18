@@ -20,6 +20,10 @@ const RequestInterceptor = () => {
       },
       (error: any) => Promise.reject(error)
     )
+
+    return () => {
+      client.interceptors.response.eject(interceptorId.current)
+    }
   }, [location])
 
   return null
