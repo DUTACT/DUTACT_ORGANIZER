@@ -11,8 +11,13 @@ import { EventOfOrganizer } from 'src/types/event.type'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
 import Pagination from 'src/components/Pagination/Pagination'
+import AddIcon from 'src/assets/icons/i-plus-white.svg?react'
+import Button from 'src/components/Button'
+import { useNavigate } from 'react-router-dom'
+import { path } from 'src/routes/path'
 
 export default function EventManagement() {
+  const navigate = useNavigate()
   const [inputSearch, setInputSearch] = useState<string>('')
   const [events, setEvents] = useState<EventOfOrganizer[]>([])
   const [filteredEvents, setFilteredEvents] = useState<EventOfOrganizer[]>([])
@@ -61,6 +66,10 @@ export default function EventManagement() {
     setCurrentPage(1)
   }
 
+  const navigateToCreateEventPage = () => {
+    navigate(path.createEvent)
+  }
+
   useEffect(() => {
     if (eventsError) {
       toast.error(eventsError.message)
@@ -96,6 +105,15 @@ export default function EventManagement() {
             placeholder='Tìm kiếm tên, nội dung sự kiện'
             inputSearch={inputSearch}
             setInputSearch={setInputSearch}
+          />
+        </div>
+        <div className='flex items-center gap-2'>
+          <Button
+            title='Tạo sự kiện mới'
+            type='button'
+            classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
+            iconComponent={<AddIcon className='w-[20px] h-[20px]' />}
+            onClick={navigateToCreateEventPage}
           />
         </div>
       </div>

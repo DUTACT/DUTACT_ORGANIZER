@@ -6,7 +6,8 @@ export const USER_ROLE = {
 
 export const TIMEOUT = {
   TOAST_SHORT: 3000,
-  DEBOUNCE: 500
+  DEBOUNCE: 500,
+  NAVIGATE: 1000
 }
 
 export const DATE_TIME_FORMATS = {
