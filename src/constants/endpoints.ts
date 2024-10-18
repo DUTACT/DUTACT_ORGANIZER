@@ -6,6 +6,4 @@ export const ACCOUNT_URL = {
 
 // admin-event-controller
 
-export const EVENT_URL = {
-  CREATE_EVENT: '/api/admin/events'
-}
+export const BASE_EVENT_URL = '/api/admin/events'

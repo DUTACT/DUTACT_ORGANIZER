@@ -23,11 +23,11 @@ export default function InputSearch({ placeholder, inputSearch, setInputSearch }
   }
 
   return (
-    <div className='flex gap-2 border border-neutral-3 rounded-md w-full items-center px-2 py-2'>
-      <SearchIcon className='w-[20px] h-[20px]' />
+    <div className='flex w-full items-center gap-2 rounded-md border border-neutral-3 px-2 py-2'>
+      <SearchIcon className='h-[20px] w-[20px]' />
       <input
         type='text'
-        className='flex-1 text-sm font-medium placeholder:font-normal text-neutral-6 placeholder:text-neutral-5 outline-none'
+        className='flex-1 text-sm font-medium text-neutral-6 outline-none placeholder:font-normal placeholder:text-neutral-5'
         value={searchTerm}
         placeholder={placeholder}
         onChange={handleChange}

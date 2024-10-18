@@ -106,51 +106,51 @@ export default function DraggableInputFile<TFieldValues extends FieldValues = Fi
       />
       <div
         className={cn(
-          'w-full  gap-1 rounded-md flex flex-col items-center text-sm text-neutral-7 font-medium justify-center  transition-opacity duration-200',
+          'flex w-full flex-col items-center justify-center gap-1 rounded-md text-sm font-medium text-neutral-7 transition-opacity duration-200',
           {
             'opacity-50': isDragging,
             'opacity-100': !isDragging,
-            'py-4 border-2 w-full border-dashed border-gray-300 cursor-pointer': !uploadedImage
+            'w-full cursor-pointer border-2 border-dashed border-gray-300 py-4': !uploadedImage
           }
         )}
       >
         {!uploadedImage && (
           <div
-            className='flex items-center justify-center flex-col flex-1 w-full h-full'
+            className='flex h-full w-full flex-1 flex-col items-center justify-center'
             onClick={handleUpload}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
           >
-            <ImageIcon className='w-logo-md h-logo-md' />
+            <ImageIcon className='h-logo-md w-logo-md' />
             <p className='mt-2'>Kéo và thả ảnh vào đây</p>
             <p>
               hoặc <span className='text-primary/80 hover:text-primary'>tải ảnh lên</span>
             </p>
-            <p className='text-xs font-normal text-neutral-5 mt-2'>Tệp hỗ trợ: .JPG, .JPEG, .PNG</p>
+            <p className='mt-2 text-xs font-normal text-neutral-5'>Tệp hỗ trợ: .JPG, .JPEG, .PNG</p>
           </div>
         )}
 
         {uploadedImage && (
           <Fragment>
-            <div className='mt-2 w-full relative'>
-              <div className='block w-full border-[1px] border-neutral-4 overflow-hidden min-w-full min-h-[50px] aspect-w-16 aspect-h-9 relative rounded-md'>
+            <div className='relative mt-2 w-full'>
+              <div className='aspect-h-9 aspect-w-16 relative block min-h-[50px] w-full min-w-full overflow-hidden rounded-md border-[1px] border-neutral-4'>
                 <img
                   src={uploadedImage}
                   alt='Uploaded image'
-                  className='w-full h-full absolute mx-auto left-0 top-0 object-contain'
+                  className='absolute left-0 top-0 mx-auto h-full w-full object-contain'
                 />
               </div>
               <div
-                className='bg-neutral-0 flex items-center justify-center rounded-full absolute top-[5px] right-[5px] opacity-50 cursor-pointer hover:opacity-100 p-1'
+                className='absolute right-[5px] top-[5px] flex cursor-pointer items-center justify-center rounded-full bg-neutral-0 p-1 opacity-50 hover:opacity-100'
                 onClick={handleRemoveFile}
               >
-                <CloseIcon className='w-[20px] h-[20px]' />
+                <CloseIcon className='h-[20px] w-[20px]' />
               </div>
             </div>
 
             <div
-              className='text-semantic-secondary/80 hover:text-semantic-secondary font-medium w-full py-2 cursor-pointer text-center text-md'
+              className='text-md w-full cursor-pointer py-2 text-center font-medium text-semantic-secondary/80 hover:text-semantic-secondary'
               onClick={handleUpload}
             >
               Chọn ảnh khác

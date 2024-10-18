@@ -16,15 +16,15 @@ export default function Sidebar() {
   }
 
   return (
-    <div className='fixed h-[100vh] w-sidebar top-0 bottom-0 left-0 px-6 py-4 flex flex-col border-r-[1px] border-r-neutral-3'>
+    <div className='fixed bottom-0 left-0 top-0 flex h-[100vh] w-sidebar flex-col border-r-[1px] border-r-neutral-3 px-6 py-4'>
       {/* Logo */}
-      <div className='flex gap-1 items-center ml-[-10px]'>
+      <div className='ml-[-10px] flex items-center gap-1'>
         <img src={DutactLogo} alt='dutact-logo' className='h-logo-lg w-logo-lg' />
         <div className='text-xl font-semibold tracking-wide'>Dutact.</div>
       </div>
       {/* User info */}
       <div className='mt-4 flex gap-2'>
-        <div className='relative min-h-logo-md min-w-logo-md h-logo-md w-logo-md'>
+        <div className='relative h-logo-md min-h-logo-md w-logo-md min-w-logo-md'>
           <img
             className='absolute left-0 top-0 mx-auto h-full w-full rounded-full border-[1px] border-gray-200 object-cover'
             src={DUTLogo}
@@ -32,19 +32,19 @@ export default function Sidebar() {
           />
         </div>
         <div className='flex flex-col'>
-          <div className='text-neutral-8 font-semibold text-sm overflow-ellipsis line-clamp-2'>
+          <div className='line-clamp-2 overflow-ellipsis text-sm font-semibold text-neutral-8'>
             Phòng Công tác sinh viên
           </div>
-          <div className='text-neutral-5 font-medium text-xs overflow-ellipsis line-clamp-1 mt-1'>@Tổ chức</div>
+          <div className='mt-1 line-clamp-1 overflow-ellipsis text-xs font-medium text-neutral-5'>@Tổ chức</div>
         </div>
       </div>
       <Divider className='mt-4' />
-      <div className='flex flex-1 flex-col items-start justify-start gap-2 mt-4'>
+      <div className='mt-4 flex flex-1 flex-col items-start justify-start gap-2'>
         {SIDEBAR_ROUTES.map(({ path, name, icon: Icon, iconActive: IconActive }) => (
           <NavLink
             key={path}
             to={path}
-            className='flex gap-2 w-full px-4 py-2 hover:bg-neutral-3 rounded-lg text-neutral-5 hover:text-neutral-6 items-center'
+            className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:bg-neutral-3 hover:text-neutral-6'
           >
             {({ isActive }: { isActive: boolean }) => (
               <>
@@ -63,22 +63,22 @@ export default function Sidebar() {
         ))}
       </div>
       <div
-        className='flex gap-2 w-full px-4 py-2 hover:bg-neutral-3 rounded-lg items-center hover:cursor-pointer hover:text-neutral-6 text-neutral-5'
+        className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:cursor-pointer hover:bg-neutral-3 hover:text-neutral-6'
         onClick={handleLogOut}
       >
         <LogOutIcon className='h-[24px] w-[24px]' />
         <div className='text-md font-normal'>Đăng xuất</div>
       </div>
       <Divider className='mt-4' />
-      <div className='flex gap-2 mt-2'>
-        <div className='relative min-h-logo-md min-w-logo-md h-logo-md w-logo-md'>
+      <div className='mt-2 flex gap-2'>
+        <div className='relative h-logo-md min-h-logo-md w-logo-md min-w-logo-md'>
           <img
             className='absolute left-0 top-0 mx-auto h-full w-full border-[1px] border-gray-200 object-cover'
             src={DUTLogo}
             alt='dut-logo'
           />
         </div>
-        <div className='flex flex-col max-w-[150px]'>
+        <div className='flex max-w-[150px] flex-col'>
           <div className='text-xs font-medium text-neutral-5'>Bản quyền thuộc về</div>
           <div className='text-xs font-medium text-neutral-7'>Trường Đại học Bách khoa Đà Nẵng</div>
         </div>
