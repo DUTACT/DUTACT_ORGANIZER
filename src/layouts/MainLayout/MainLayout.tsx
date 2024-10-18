@@ -8,12 +8,12 @@ interface Props {
 
 export default function MainLayout({ children }: Props) {
   return (
-    <div className='w-[100vw] h-[100vh] relative'>
+    <div className='relative h-[100vh] w-[100vw]'>
       <Sidebar />
       {/* Main */}
-      <div className='fixed h-[100vh] top-0 bottom-0 left-sidebar right-aside w-main'>
+      <div className='fixed bottom-0 left-sidebar right-aside top-0 h-[100vh] w-main'>
         <Header />
-        <div className='mt-header h-main block'>{children}</div>
+        <div className='mt-header block h-main'>{children}</div>
       </div>
       <Aside />
     </div>

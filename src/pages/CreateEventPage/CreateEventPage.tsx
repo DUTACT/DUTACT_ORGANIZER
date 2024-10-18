@@ -60,9 +60,9 @@ export default function CreateEventPage() {
   }
 
   return (
-    <div className='flex flex-col flex-1 w-full h-full'>
-      <div className='sticky top-0 left-0 px-6 pt-3'>
-        <div className='flex justify-between items-center'>
+    <div className='flex h-full w-full flex-1 flex-col'>
+      <div className='sticky left-0 top-0 px-6 pt-3'>
+        <div className='flex items-center justify-between'>
           <div className='flex flex-col gap-1'>
             <div className='text-xl font-semibold text-neutral-8'>Tạo sự kiện mới</div>
             <div className='text-sm font-normal text-neutral-5'>
@@ -86,8 +86,8 @@ export default function CreateEventPage() {
         <Divider className='mt-4' />
       </div>
 
-      <form action='' className='px-6 py-3 overflow-auto flex-1'>
-        <div className='flex gap-4 w-full'>
+      <form action='' className='flex-1 overflow-auto px-6 py-3'>
+        <div className='flex w-full gap-4'>
           <Input
             name='name'
             register={register}
@@ -106,9 +106,9 @@ export default function CreateEventPage() {
             classNameWrapper='w-full flex-1'
           />
         </div>
-        <div className='flex gap-4 w-full'>
-          <div className='flex flex-col w-full'>
-            <div className='flex gap-4 w-full flex-1'>
+        <div className='flex w-full gap-4'>
+          <div className='flex w-full flex-col'>
+            <div className='flex w-full flex-1 gap-4'>
               <Controller
                 control={control}
                 name='startAt'
@@ -157,8 +157,8 @@ export default function CreateEventPage() {
               {errors.startAt?.message}
             </div>
           </div>
-          <div className='flex flex-col w-full'>
-            <div className='flex gap-4 w-full flex-1'>
+          <div className='flex w-full flex-col'>
+            <div className='flex w-full flex-1 gap-4'>
               <Controller
                 control={control}
                 name='startRegistrationAt'
@@ -208,7 +208,7 @@ export default function CreateEventPage() {
             </div>
           </div>
         </div>
-        <div className='flex gap-4 w-full'>
+        <div className='flex w-full gap-4'>
           <TextArea
             name='content'
             register={register}
@@ -219,7 +219,7 @@ export default function CreateEventPage() {
             errorMessage={errors.content?.message}
           />
         </div>
-        <div className='flex gap-4 w-full'>
+        <div className='flex w-full gap-4'>
           <Controller
             name='coverPhoto'
             control={control}

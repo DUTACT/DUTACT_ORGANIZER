@@ -63,7 +63,7 @@ export default function Login() {
     <div className='flex w-full min-w-[400px] flex-col'>
       <h1 className='text-4xl font-semibold uppercase tracking-wide text-primary'>Đăng nhập</h1>
       <p className='mt-1 text-sm tracking-wide text-neutral-5'>để quản lý các hoạt động phục vụ cộng đồng</p>
-      <div className='mt-4 text-sm text-semantic-cancelled font-semibold leading-[15px] min-h-[15px]'>
+      <div className='mt-4 min-h-[15px] text-sm font-semibold leading-[15px] text-semantic-cancelled'>
         {error?.message}
       </div>
       <form action='' className='mt-4' onSubmit={onSubmit}>

@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import RequestInterceptor from './config/RequestInterceptor'
 import ResponseInterceptor from './config/ResponseInterceptor'
+import ModalConfirm from 'src/components/ModalConfirm'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +37,7 @@ export default function App() {
       <RequestInterceptor />
       <ResponseInterceptor />
       {routeElements}
+      <ModalConfirm />
       <ToastContainer />
     </QueryClientProvider>
   )

@@ -41,7 +41,7 @@ export default function Pagination({ totalItems, onPageChange, onRowsPerPageChan
           id='rowsPerPage'
           value={itemsPerPage}
           onChange={handleRowsPerPageChange}
-          className='w-[50px] text-sm p-1 border border-neutral-4 rounded-lg outline-none'
+          className='w-[50px] rounded-lg border border-neutral-4 p-1 text-sm outline-none'
         >
           <option value={5}>5</option>
           <option value={10}>10</option>
@@ -55,43 +55,43 @@ export default function Pagination({ totalItems, onPageChange, onRowsPerPageChan
         </div>
         <div
           className={cn(
-            'flex items-center justify-center p-1 rounded-full border cursor-pointer border-neutral-5 hover:bg-neutral-3',
+            'flex cursor-pointer items-center justify-center rounded-full border border-neutral-5 p-1 hover:bg-neutral-3',
             {
-              'opacity-30 bg-neutral-2 cursor-default': currentPage === 1
+              'cursor-default bg-neutral-2 opacity-30': currentPage === 1
             }
           )}
         >
-          <FirstPageIcon className='w-[16px] h-[16px]' onClick={() => goToPage(1)} />
+          <FirstPageIcon className='h-[16px] w-[16px]' onClick={() => goToPage(1)} />
         </div>
         <div
           className={cn(
-            'flex items-center justify-center p-1 rounded-full border cursor-pointer border-neutral-5 hover:bg-neutral-3',
+            'flex cursor-pointer items-center justify-center rounded-full border border-neutral-5 p-1 hover:bg-neutral-3',
             {
-              'opacity-30 bg-neutral-2 cursor-default': currentPage === 1
+              'cursor-default bg-neutral-2 opacity-30': currentPage === 1
             }
           )}
         >
-          <PreviousPageIcon className='w-[16px] h-[16px]' onClick={prevPage} />
+          <PreviousPageIcon className='h-[16px] w-[16px]' onClick={prevPage} />
         </div>
         <div
           className={cn(
-            'flex items-center justify-center p-1 rounded-full border cursor-pointer border-neutral-5 hover:bg-neutral-3',
+            'flex cursor-pointer items-center justify-center rounded-full border border-neutral-5 p-1 hover:bg-neutral-3',
             {
-              'opacity-30 bg-neutral-2 cursor-default': currentPage === totalPages
+              'cursor-default bg-neutral-2 opacity-30': currentPage === totalPages
             }
           )}
         >
-          <NextPageIcon className='w-[16px] h-[16px]' onClick={nextPage} />
+          <NextPageIcon className='h-[16px] w-[16px]' onClick={nextPage} />
         </div>
         <div
           className={cn(
-            'flex items-center justify-center p-1 rounded-full border cursor-pointer border-neutral-5 hover:bg-neutral-3',
+            'flex cursor-pointer items-center justify-center rounded-full border border-neutral-5 p-1 hover:bg-neutral-3',
             {
-              'opacity-30 bg-neutral-2 cursor-default': currentPage === totalPages
+              'cursor-default bg-neutral-2 opacity-30': currentPage === totalPages
             }
           )}
         >
-          <LastPageIcon className='w-[16px] h-[16px]' onClick={() => goToPage(totalPages)} />
+          <LastPageIcon className='h-[16px] w-[16px]' onClick={() => goToPage(totalPages)} />
         </div>
       </div>
     </div>

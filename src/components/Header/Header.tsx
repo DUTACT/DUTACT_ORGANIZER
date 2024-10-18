@@ -7,11 +7,11 @@ export default function Header() {
     icon: null
   }
   return (
-    <div className='absolute top-0 left-0 right-0 w-full h-header border-b-[1px] border-b-neutral-3 shadow-sm '>
+    <div className='absolute left-0 right-0 top-0 h-header w-full border-b-[1px] border-b-neutral-3 shadow-sm'>
       {currentPageInfo && (
-        <div className='flex items-center px-4 w-full h-full gap-2 hover:cursor-default'>
+        <div className='flex h-full w-full items-center gap-2 px-4 hover:cursor-default'>
           {Icon && <Icon className='h-[20px] w-[20px]' />}
-          <div className='text-neutral-6 text-sm font-medium'>{pageTitle}</div>
+          <div className='text-sm font-medium text-neutral-6'>{pageTitle}</div>
         </div>
       )}
     </div>

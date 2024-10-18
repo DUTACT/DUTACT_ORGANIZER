@@ -11,10 +11,10 @@ interface Props {
 export default function SortIcon({ sortDirection }: Props) {
   return (
     <div className='flex flex-col items-center justify-center'>
-      {sortDirection === 'asc' && <SortUpActiveIcon className='w-[14px] h-[14px]' />}
-      {sortDirection !== 'asc' && <SortUpIcon className='w-[14px] h-[14px]' />}
-      {sortDirection === 'desc' && <SortDownActiveIcon className='w-[14px] h-[14px]' />}
-      {sortDirection !== 'desc' && <SortDownIcon className='w-[14px] h-[14px]' />}
+      {sortDirection === 'asc' && <SortUpActiveIcon className='h-[14px] w-[14px]' />}
+      {sortDirection !== 'asc' && <SortUpIcon className='h-[14px] w-[14px]' />}
+      {sortDirection === 'desc' && <SortDownActiveIcon className='h-[14px] w-[14px]' />}
+      {sortDirection !== 'desc' && <SortDownIcon className='h-[14px] w-[14px]' />}
     </div>
   )
 }

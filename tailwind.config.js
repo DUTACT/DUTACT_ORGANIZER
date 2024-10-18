@@ -27,7 +27,8 @@ module.exports = {
         'body-text': '#242424',
         'body-text-2': '#525252',
         'hover-icon': '#e7e7e7',
-        'icon-gray': '#c2cfe0'
+        'icon-gray': '#c2cfe0',
+        overlay: 'rgba(32, 41, 57, 0.50)'
       },
       width: {
         sidebar: 'var(--sidebar)',
