@@ -12,8 +12,6 @@ import Pagination from 'src/components/Pagination/Pagination'
 import ApproveIcon from 'src/assets/icons/i-check.svg?react'
 import RejectIcon from 'src/assets/icons/i-close-cancelled.svg?react'
 import DeleteEventIcon from 'src/assets/icons/i-delete-event.svg?react'
-import { useNavigate } from 'react-router-dom'
-import { path } from 'src/routes/path'
 import { useDispatch } from 'react-redux'
 import { clearModal, setIsShowModalConfirm, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
@@ -21,7 +19,6 @@ import { getStatusMessage } from 'src/utils/common'
 import Tag from 'src/components/Tag'
 
 export default function EventModeration() {
-  const navigate = useNavigate()
   const dispatch = useDispatch()
 
   const [inputSearch, setInputSearch] = useState<string>('')

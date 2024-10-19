@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tan
 import { mutationFetch, mutationFormData, queryFetch } from 'src/config/queryClient'
 import { BASE_EVENT_URL } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
-import { ChangeStatusData, EventBody, EventOfOrganizer, EventStatus } from 'src/types/event.type'
+import { ChangeStatusData, EventBody, EventOfOrganizer } from 'src/types/event.type'
 
 export const createEvent = (options?: UseMutationOptions<EventOfOrganizer, ApiError, EventBody>) => {
   return useMutation<EventOfOrganizer, ApiError, EventBody>({
