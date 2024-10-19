@@ -7,5 +7,7 @@ export const ERROR_MESSAGE = {
 export const SUCCESS_MESSAGE = {
   LOGIN: 'Đăng nhập thành công',
   CREATE_EVENT: 'Tạo sự kiện thành công. Vui lòng chờ Phòng Công tác Sinh viên duyệt sự kiện.',
-  DELETE_EVENT: 'Xóa sự kiện thành công'
+  DELETE_EVENT: 'Xóa sự kiện thành công',
+  APPROVE_EVENT: 'Duyệt sự kiện thành công',
+  REJECT_EVENT: 'Từ chối sự kiện thành công'
 }

@@ -8,6 +8,8 @@ export interface SortCriterion<T> {
 export const sortItems = <T>(items: T[], sortCriteria: SortCriterion<T>[]): T[] => {
   return [...items].sort((a, b) => {
     for (const { field, direction } of sortCriteria) {
+      if (direction === null) continue
+
       const aValue = a[field]
       const bValue = b[field]
 
@@ -24,7 +26,6 @@ export const sortItems = <T>(items: T[], sortCriteria: SortCriterion<T>[]): T[] 
 }
 
 export const toggleSortDirection = <T>(sortCriteria: SortCriterion<T>[], field: keyof T): SortCriterion<T>[] => {
-  console.log('sortCriteria', sortCriteria, field)
   const newCriteria = [...sortCriteria]
   const index = newCriteria.findIndex((item) => item.field === field)
 

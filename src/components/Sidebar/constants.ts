@@ -5,6 +5,8 @@ import UserIcon from 'src/assets/icons/i-user.svg?react'
 import UserActiveIcon from 'src/assets/icons/i-user-active.svg?react'
 import EventIcon from 'src/assets/icons/i-event.svg?react'
 import EventActiveIcon from 'src/assets/icons/i-event-active.svg?react'
+import EventModIcon from 'src/assets/icons/i-event-mod.svg?react'
+import EventModActiveIcon from 'src/assets/icons/i-event-mod-active.svg?react'
 import { USER_ROLE } from 'src/constants/common'
 
 export const SIDEBAR_ROUTES = [
@@ -27,6 +29,13 @@ export const SIDEBAR_ROUTES = [
     name: 'Quản lý sự kiện',
     icon: EventIcon,
     iconActive: EventActiveIcon,
-    userRole: [USER_ROLE.ADMIN, USER_ROLE.STUDENT_AFFAIRS_OFFICE, USER_ROLE.EVENT_ORGANIZER]
+    userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE, USER_ROLE.EVENT_ORGANIZER]
+  },
+  {
+    path: path.eventMod,
+    name: 'Kiểm duyệt sự kiện',
+    icon: EventModIcon,
+    iconActive: EventModActiveIcon,
+    userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
   }
 ]

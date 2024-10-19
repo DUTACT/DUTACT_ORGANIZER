@@ -43,6 +43,7 @@ export async function queryFetch<T>({ url, inputParams }: QueryFetchOptions): Pr
       resolve(json)
     } catch (error: any) {
       reject({
+        status: error.response?.data.status,
         message:
           ERROR_MESSAGE[error.response?.data.message as keyof typeof ERROR_MESSAGE] || 'An unexpected error occurred'
       } as ApiError)
@@ -68,8 +69,9 @@ export async function mutationFetch<T>({ url, method, body, baseURL }: MutationF
       resolve(json)
     } catch (error: any) {
       reject({
+        status: error.response?.data.status,
         message:
-          ERROR_MESSAGE[error.response?.data.message as keyof typeof ERROR_MESSAGE] || 'An unexpected error occurred'
+          ERROR_MESSAGE[error.response?.data.status as keyof typeof ERROR_MESSAGE] || 'An unexpected error occurred'
       } as ApiError)
     }
   })
@@ -101,8 +103,9 @@ export async function mutationFormData<T>({ url, body, method }: MutationFetchOp
       resolve(json)
     } catch (error: any) {
       reject({
+        status: error.response?.data.status,
         message:
-          ERROR_MESSAGE[error.response?.data.message as keyof typeof ERROR_MESSAGE] || 'An unexpected error occurred'
+          ERROR_MESSAGE[error.response?.data.status as keyof typeof ERROR_MESSAGE] || 'An unexpected error occurred'
       } as ApiError)
     }
   })

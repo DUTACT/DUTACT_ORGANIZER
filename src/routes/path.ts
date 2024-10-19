@@ -3,5 +3,6 @@ export const path = {
   login: '/login',
   event: '/event',
   createEvent: '/event/create',
-  user: '/user'
+  user: '/user',
+  eventMod: '/event-mod'
 }
