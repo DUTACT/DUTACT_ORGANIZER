@@ -1,3 +1,4 @@
+export type EventStatus = 'pending' | 'approved' | 'rejected'
 export interface EventOfOrganizer {
   id: number
   name: string
@@ -8,7 +9,8 @@ export interface EventOfOrganizer {
   endRegistrationAt: string
   coverPhotoUrl: string
   status: {
-    type: string
+    type: EventStatus
+    label?: string
   }
   organizer: {
     id: number
