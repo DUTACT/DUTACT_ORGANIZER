@@ -3518,11 +3518,6 @@ util-deprecate@^1.0.2:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
-vite-plugin-history-api-fallback@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/vite-plugin-history-api-fallback/-/vite-plugin-history-api-fallback-0.0.1.tgz#7cc302865a40d524a5935ca1cbc04ea5f4bbf391"
-  integrity sha512-Vp93G2H+2KXYRI0lFeRXwpNARz76UV7xa4IZ/u63TiSzYyCkcVRXDRQidMBlhoDOadz46TrD2oAl/bHld4CSdg==
-
 vite-plugin-svgr@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/vite-plugin-svgr/-/vite-plugin-svgr-4.2.0.tgz#9f3bf5206b0ec510287e56d16f1915e729bb4e6b"
