@@ -1,7 +1,15 @@
+import { EventStatus } from 'src/types/event.type'
+
 export const USER_ROLE = {
   ADMIN: 'ADMIN',
   STUDENT_AFFAIRS_OFFICE: 'STUDENT_AFFAIRS_OFFICE',
   EVENT_ORGANIZER: 'EVENT_ORGANIZER'
+}
+
+export const EVENT_STATUS: Record<EventStatus, string> = {
+  pending: 'Chờ duyệt',
+  approved: 'Đã duyệt',
+  rejected: 'Từ chối'
 }
 
 export const TIMEOUT = {

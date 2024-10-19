@@ -1,4 +1,3 @@
-import SearchIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import Button from 'src/components/Button'
 import CloseIcon from 'src/assets/icons/i-close.svg?react'
 import { cn } from 'src/lib/tailwind/utils'

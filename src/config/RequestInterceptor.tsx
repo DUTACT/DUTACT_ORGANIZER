@@ -13,7 +13,6 @@ const RequestInterceptor = () => {
     const tokenString = parsedToken ? parsedToken.toString() : ''
     interceptorId.current = client.interceptors.request.use(
       async (config: any) => {
-        console.log('tokenString', tokenString)
         if (tokenString && location.pathname !== path.login) {
           config.headers.Authorization = `Bearer ${tokenString}`
         }
