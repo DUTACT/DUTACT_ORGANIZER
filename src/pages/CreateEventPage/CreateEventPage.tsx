@@ -11,13 +11,16 @@ import Input from 'src/components/Input'
 import TextArea from 'src/components/TextArea'
 import { DATE_TIME_FORMATS, TIMEOUT } from 'src/constants/common'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
+import useLocalStorage from 'src/hooks/useLocalStorage'
 import { path } from 'src/routes/path'
 import { EventBody } from 'src/types/event.type'
+import { parseJwt } from 'src/utils/common'
 import { eventSchema, EventSchemaType } from 'src/utils/rules'
 
 type FormData = EventSchemaType
 
 export default function CreateEventPage() {
+  const [accessToken, _] = useLocalStorage<string>('access_token')
   const navigate = useNavigate()
   const {
     register,
@@ -50,7 +53,7 @@ export default function CreateEventPage() {
       startRegistrationAt: moment(data.startRegistrationAt).format(DATE_TIME_FORMATS.ISO),
       endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.ISO),
       coverPhoto: data.coverPhoto,
-      organizerId: 33
+      organizerId: parseJwt(accessToken)?.organizerId
     } as EventBody
     mutate(eventBody)
   })

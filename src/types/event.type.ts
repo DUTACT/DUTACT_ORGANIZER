@@ -10,9 +10,14 @@ export interface EventOfOrganizer {
   status: {
     type: string
   }
-  organizerId: number
+  organizer: {
+    id: number
+    name: string
+    avatarUrl: string
+  }
 }
 
-export type EventBody = Omit<EventOfOrganizer, 'id' | 'status'> & {
+export type EventBody = Omit<EventOfOrganizer, 'id' | 'status' | 'organizer'> & {
+  organizerId: number
   coverPhoto: File
 }
