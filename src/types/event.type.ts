@@ -23,3 +23,8 @@ export type EventBody = Omit<EventOfOrganizer, 'id' | 'status' | 'organizer'> & 
   organizerId: number
   coverPhoto: File
 }
+
+export interface ChangeStatusData {
+  eventId: number
+  type: EventStatus
+}

@@ -1,9 +1,9 @@
 import { EventStatus } from 'src/types/event.type'
 
 export const USER_ROLE = {
-  ADMIN: 'ADMIN',
-  STUDENT_AFFAIRS_OFFICE: 'STUDENT_AFFAIRS_OFFICE',
-  EVENT_ORGANIZER: 'EVENT_ORGANIZER'
+  ADMIN: 'ROLE_ADMIN',
+  STUDENT_AFFAIRS_OFFICE: 'ROLE_STUDENT_AFFAIRS_OFFICE',
+  EVENT_ORGANIZER: 'ROLE_EVENT_ORGANIZER'
 }
 
 export const EVENT_STATUS: Record<EventStatus, string> = {

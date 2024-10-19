@@ -11,6 +11,7 @@ const RequestInterceptor = () => {
     const accessToken = localStorage.getItem('access_token')
     const parsedToken = accessToken ? JSON.parse(accessToken) : null
     const tokenString = parsedToken ? parsedToken.toString() : ''
+    console.log(tokenString)
     interceptorId.current = client.interceptors.request.use(
       async (config: any) => {
         if (tokenString && location.pathname !== path.login) {

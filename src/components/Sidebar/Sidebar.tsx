@@ -6,9 +6,13 @@ import { NavLink } from 'react-router-dom'
 import { cn } from 'src/lib/tailwind/utils'
 import LogOutIcon from 'src/assets/icons/i-logout.svg?react'
 import { useAppContext } from 'src/contexts/app.context'
+import useLocalStorage from 'src/hooks/useLocalStorage'
+import { parseJwt } from 'src/utils/common'
 
 export default function Sidebar() {
   const { setIsAuthenticated } = useAppContext()
+  const [accessToken, _] = useLocalStorage<string>('access_token')
+  const userRole = parseJwt(accessToken).scp[0]
 
   const handleLogOut = () => {
     localStorage.removeItem('access_token')
@@ -40,27 +44,29 @@ export default function Sidebar() {
       </div>
       <Divider className='mt-4' />
       <div className='mt-4 flex flex-1 flex-col items-start justify-start gap-2'>
-        {SIDEBAR_ROUTES.map(({ path, name, icon: Icon, iconActive: IconActive }) => (
-          <NavLink
-            key={path}
-            to={path}
-            className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:bg-neutral-3 hover:text-neutral-6'
-          >
-            {({ isActive }: { isActive: boolean }) => (
-              <>
-                {isActive ? <IconActive className='h-[24px] w-[24px]' /> : <Icon className='h-[24px] w-[24px]' />}
-                <div
-                  className={cn('text-md', {
-                    'font-medium text-semantic-secondary': isActive,
-                    'font-normal': !isActive
-                  })}
-                >
-                  {name}
-                </div>
-              </>
-            )}
-          </NavLink>
-        ))}
+        {SIDEBAR_ROUTES.filter((route) => route.userRoles.includes(userRole)).map(
+          ({ path, name, icon: Icon, iconActive: IconActive }) => (
+            <NavLink
+              key={path}
+              to={path}
+              className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:bg-neutral-3 hover:text-neutral-6'
+            >
+              {({ isActive }: { isActive: boolean }) => (
+                <>
+                  {isActive ? <IconActive className='h-[24px] w-[24px]' /> : <Icon className='h-[24px] w-[24px]' />}
+                  <div
+                    className={cn('text-md', {
+                      'font-medium text-semantic-secondary': isActive,
+                      'font-normal': !isActive
+                    })}
+                  >
+                    {name}
+                  </div>
+                </>
+              )}
+            </NavLink>
+          )
+        )}
       </div>
       <div
         className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:cursor-pointer hover:bg-neutral-3 hover:text-neutral-6'

@@ -1,18 +1,16 @@
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
-import EditIcon from 'src/assets/icons/i-edit-secondary.svg?react'
-import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
-import { deleteEvent, getAllEvents } from 'src/apis/event'
+import { changeStatusOfEvent, getAllEvents } from 'src/apis/event'
 import { DATE_TIME_FORMATS, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import InputSearch from 'src/components/InputSearch'
-import { EventOfOrganizer } from 'src/types/event.type'
+import { ChangeStatusData, EventOfOrganizer, EventStatus } from 'src/types/event.type'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
 import Pagination from 'src/components/Pagination/Pagination'
-import AddIcon from 'src/assets/icons/i-plus-white.svg?react'
-import Button from 'src/components/Button'
+import ApproveIcon from 'src/assets/icons/i-check.svg?react'
+import RejectIcon from 'src/assets/icons/i-close-cancelled.svg?react'
 import DeleteEventIcon from 'src/assets/icons/i-delete-event.svg?react'
 import { useNavigate } from 'react-router-dom'
 import { path } from 'src/routes/path'
@@ -22,7 +20,7 @@ import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { getStatusMessage } from 'src/utils/common'
 import Tag from 'src/components/Tag'
 
-export default function EventManagement() {
+export default function EventModeration() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -85,19 +83,15 @@ export default function EventManagement() {
     setCurrentPage(1)
   }
 
-  const navigateToCreateEventPage = () => {
-    navigate(path.createEvent)
-  }
-
-  const openPopupDeleteEvent = (event: EventOfOrganizer) => {
+  const openPopupRejectEvent = (event: EventOfOrganizer) => {
     dispatch(
       setModalProperties({
         isShow: true,
-        title: 'Xóa sự kiện',
-        question: `Bạn có chắc chắn muốn xóa sự kiện ${event.name}?`,
-        actionConfirm: () => handleDeleteEvent(event.id),
+        title: 'Từ chối sự kiện',
+        question: `Bạn có chắc chắn muốn từ chối sự kiện ${event.name} diễn ra?`,
+        actionConfirm: () => handleChangeStatusOfEvent(event.id, 'rejected'),
         actionCancel: () => dispatch(clearModal()),
-        titleConfirm: 'Xóa sự kiện',
+        titleConfirm: 'Từ chối sự kiện',
         titleCancel: 'Quay lại',
         isWarning: true,
         iconComponent: <DeleteEventIcon className='h-[20px] w-[20px]' />
@@ -105,20 +99,33 @@ export default function EventManagement() {
     )
   }
 
-  const { mutate } = deleteEvent({
-    onSuccess: (eventId: number) => {
-      toast.success(SUCCESS_MESSAGE.DELETE_EVENT)
+  const { mutate: mutateChangeStatusOfEvent } = changeStatusOfEvent({
+    onSuccess: (data: ChangeStatusData) => {
+      if (data.type === 'approved') {
+        toast.success(SUCCESS_MESSAGE.APPROVE_EVENT)
+      } else {
+        toast.success(SUCCESS_MESSAGE.REJECT_EVENT)
+      }
       dispatch(setIsShowModalConfirm(false))
-      setEvents(events.filter((event) => event.id !== eventId))
-      setFilteredEvents(filteredEvents.filter((event) => event.id !== eventId))
+      setEvents(
+        events.map((event) =>
+          event.id === data.eventId
+            ? ({ ...event, status: { type: data.type, label: getStatusMessage(data.type) } } as EventOfOrganizer)
+            : event
+        )
+      )
+      setFilteredEvents(filteredEvents.filter((event) => event.id !== data.eventId))
     },
     onError: (error) => {
       toast.error(error.message)
     }
   })
 
-  const handleDeleteEvent = (eventId: number) => {
-    mutate(eventId)
+  const handleChangeStatusOfEvent = (eventId: number, type: EventStatus) => {
+    mutateChangeStatusOfEvent({
+      eventId,
+      type
+    })
   }
 
   useEffect(() => {
@@ -162,15 +169,6 @@ export default function EventManagement() {
             setInputSearch={setInputSearch}
           />
         </div>
-        <div className='flex items-center gap-2'>
-          <Button
-            title='Tạo sự kiện mới'
-            type='button'
-            classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
-            iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
-            onClick={navigateToCreateEventPage}
-          />
-        </div>
       </div>
       <Pagination
         totalItems={filteredEvents.length}
@@ -194,6 +192,15 @@ export default function EventManagement() {
                 >
                   <div className='flex items-center justify-between'>
                     <span>Tên sự kiện</span>
+                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'name')} />
+                  </div>
+                </th>
+                <th
+                  className='min-w-[180px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
+                  onClick={() => handleSortChange('name')}
+                >
+                  <div className='flex items-center justify-between'>
+                    <span>Được tạo bởi</span>
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'name')} />
                   </div>
                 </th>
@@ -244,7 +251,7 @@ export default function EventManagement() {
                   </div>
                 </th>
                 <th
-                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
+                  className='min-w-[120px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
                   onClick={() => handleSortChange('endRegistrationAt')}
                 >
                   <div className='flex items-center justify-between'>
@@ -271,6 +278,19 @@ export default function EventManagement() {
                       <div className='line-clamp-3 overflow-hidden'>{event.name}</div>
                     </td>
                     <td className='px-4 py-2 text-sm'>
+                      <div className='line-clamp-3 flex items-start gap-2 overflow-hidden'>
+                        <div className='relative h-logo-sm min-h-logo-sm w-logo-sm min-w-logo-sm'>
+                          <img
+                            className='absolute left-0 top-0 mx-auto h-full w-full rounded-full border-[1px] border-gray-200 object-cover'
+                            src={event.organizer.avatarUrl}
+                            alt='org-avt'
+                          />
+                        </div>
+
+                        <div className='text-sm'>{event.organizer.name}</div>
+                      </div>
+                    </td>
+                    <td className='px-4 py-2 text-sm'>
                       <div className='line-clamp-3 overflow-hidden'>{event.content}</div>
                     </td>
                     <td className='flex items-center justify-center px-4 py-2 text-sm'>
@@ -292,15 +312,22 @@ export default function EventManagement() {
                         <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
                           <ShowDetailIcon className='h-[20px] w-[20px]' />
                         </div>
-                        <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
-                          <EditIcon className='h-[20px] w-[20px]' />
-                        </div>
-                        <div
-                          className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                          onClick={() => openPopupDeleteEvent(event)}
-                        >
-                          <DeleteIcon className='h-[20px] w-[20px]' />
-                        </div>
+                        {event.status.type === 'pending' && (
+                          <Fragment>
+                            <div
+                              className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
+                              onClick={() => handleChangeStatusOfEvent(event.id, 'approved')}
+                            >
+                              <ApproveIcon className='h-[20px] w-[20px]' />
+                            </div>
+                            <div
+                              className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
+                              onClick={() => openPopupRejectEvent(event)}
+                            >
+                              <RejectIcon className='h-[20px] w-[20px]' />
+                            </div>
+                          </Fragment>
+                        )}
                       </div>
                     </td>
                   </tr>
