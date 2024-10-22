@@ -1,14 +1,14 @@
 import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { mutationFetch, mutationFormData, queryFetch } from 'src/config/queryClient'
-import { BASE_EVENT_URL } from 'src/constants/endpoints'
+import { getEventUrl } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
 import { ChangeStatusData, EventBody, EventOfOrganizer } from 'src/types/event.type'
 
 export const createEvent = (options?: UseMutationOptions<EventOfOrganizer, ApiError, EventBody>) => {
   return useMutation<EventOfOrganizer, ApiError, EventBody>({
-    mutationFn: async (body) => {
+    mutationFn: async ({ organizerId, ...body }) => {
       const response = await mutationFormData<EventOfOrganizer>({
-        url: BASE_EVENT_URL,
+        url: getEventUrl(organizerId),
         method: 'POST',
         body
       })
@@ -18,12 +18,12 @@ export const createEvent = (options?: UseMutationOptions<EventOfOrganizer, ApiEr
   })
 }
 
-export const getAllEvents = (options?: UseQueryOptions<EventOfOrganizer[], ApiError>) => {
+export const getAllEvents = (organizerId: number, options?: UseQueryOptions<EventOfOrganizer[], ApiError>) => {
   return useQuery<EventOfOrganizer[], ApiError>({
     queryKey: ['getAllEvents'],
     queryFn: async () => {
       const response = await queryFetch<EventOfOrganizer[]>({
-        url: BASE_EVENT_URL
+        url: getEventUrl(organizerId)
       })
       return response
     },
@@ -31,11 +31,11 @@ export const getAllEvents = (options?: UseQueryOptions<EventOfOrganizer[], ApiEr
   })
 }
 
-export const deleteEvent = (options?: UseMutationOptions<any, ApiError, number>) => {
+export const deleteEvent = (organizerId: number, options?: UseMutationOptions<any, ApiError, number>) => {
   return useMutation<any, ApiError, number>({
     mutationFn: async (eventId: number) => {
       await mutationFetch<any>({
-        url: `${BASE_EVENT_URL}/${eventId}`,
+        url: getEventUrl(organizerId, eventId),
         method: 'DELETE',
         body: undefined
       })
@@ -45,11 +45,14 @@ export const deleteEvent = (options?: UseMutationOptions<any, ApiError, number>)
   })
 }
 
-export const changeStatusOfEvent = (options?: UseMutationOptions<any, ApiError, ChangeStatusData>) => {
+export const changeStatusOfEvent = (
+  organizerId: number,
+  options?: UseMutationOptions<any, ApiError, ChangeStatusData>
+) => {
   return useMutation<any, ApiError, ChangeStatusData>({
     mutationFn: async (data: ChangeStatusData) => {
       await mutationFetch<any>({
-        url: `${BASE_EVENT_URL}/${data.eventId}/status`,
+        url: getEventUrl(organizerId, data.eventId),
         method: 'PUT',
         body: { type: data.type }
       })

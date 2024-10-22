@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import moment from 'moment'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { createEvent } from 'src/apis/event'
@@ -8,7 +8,6 @@ import Button from 'src/components/Button'
 import Divider from 'src/components/Divider'
 import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInputFile'
 import Input from 'src/components/Input'
-import TextArea from 'src/components/TextArea'
 import { DATE_TIME_FORMATS, TIMEOUT } from 'src/constants/common'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import useLocalStorage from 'src/hooks/useLocalStorage'
@@ -23,7 +22,6 @@ export default function CreateEventPage() {
   const [accessToken, _] = useLocalStorage<string>('access_token')
   const navigate = useNavigate()
   const {
-    register,
     control,
     trigger,
     handleSubmit,
@@ -93,13 +91,12 @@ export default function CreateEventPage() {
         <div className='flex w-full gap-4'>
           <Input
             name='name'
-            register={register}
+            control={control}
             type='text'
             placeholder='Nhập tên sự kiện'
             labelName='Tên sự kiện'
             showIsRequired={true}
             classNameWrapper='w-full flex-1'
-            errorMessage={errors.name?.message}
           />
           <Input
             type='text'
@@ -112,47 +109,32 @@ export default function CreateEventPage() {
         <div className='flex w-full gap-4'>
           <div className='flex w-full flex-col'>
             <div className='flex w-full flex-1 gap-4'>
-              <Controller
+              <Input
+                type='datetime-local'
+                labelName='Ngày bắt đầu sự kiện'
+                showIsRequired={true}
+                showError={false}
+                classNameWrapper='text-sm w-full flex-1'
+                classNameInput='px-3'
                 control={control}
                 name='startAt'
-                render={({ field }) => {
-                  return (
-                    <Input
-                      type='datetime-local'
-                      labelName='Ngày bắt đầu sự kiện'
-                      showIsRequired={true}
-                      showError={false}
-                      classNameWrapper='text-sm w-full flex-1'
-                      classNameInput='px-3'
-                      {...field}
-                      onChange={(event) => {
-                        field.onChange(event)
-                        trigger('endAt')
-                        trigger('endRegistrationAt')
-                      }}
-                    />
-                  )
+                onChange={() => {
+                  trigger('endAt')
+                  trigger('endRegistrationAt')
                 }}
               />
-              <Controller
+
+              <Input
+                type='datetime-local'
+                labelName='Ngày kết thúc sự kiện'
+                showIsRequired={true}
+                showError={false}
+                classNameWrapper='text-sm w-full flex-1'
+                classNameInput='px-3'
                 control={control}
                 name='endAt'
-                render={({ field }) => {
-                  return (
-                    <Input
-                      type='datetime-local'
-                      labelName='Ngày kết thúc sự kiện'
-                      showIsRequired={true}
-                      showError={false}
-                      classNameWrapper='text-sm w-full flex-1'
-                      classNameInput='px-3'
-                      {...field}
-                      onChange={(event) => {
-                        field.onChange(event)
-                        trigger('startAt')
-                      }}
-                    />
-                  )
+                onChange={() => {
+                  trigger('startAt')
                 }}
               />
             </div>
@@ -162,47 +144,32 @@ export default function CreateEventPage() {
           </div>
           <div className='flex w-full flex-col'>
             <div className='flex w-full flex-1 gap-4'>
-              <Controller
+              <Input
+                type='datetime-local'
+                labelName='Ngày bắt đầu đăng ký'
+                showIsRequired={true}
+                showError={false}
+                classNameWrapper='text-sm w-full flex-1'
+                classNameInput='px-3'
                 control={control}
                 name='startRegistrationAt'
-                render={({ field }) => {
-                  return (
-                    <Input
-                      type='datetime-local'
-                      labelName='Ngày bắt đầu đăng ký'
-                      showIsRequired={true}
-                      showError={false}
-                      classNameWrapper='text-sm w-full flex-1'
-                      classNameInput='px-3'
-                      {...field}
-                      onChange={(event) => {
-                        field.onChange(event)
-                        trigger('endRegistrationAt')
-                      }}
-                    />
-                  )
+                onChange={() => {
+                  trigger('endRegistrationAt')
                 }}
               />
-              <Controller
+
+              <Input
+                type='datetime-local'
+                labelName='Ngày kết thúc đăng ký'
+                showIsRequired={true}
+                showError={false}
+                classNameWrapper='text-sm w-full flex-1'
+                classNameInput='px-3'
                 control={control}
                 name='endRegistrationAt'
-                render={({ field }) => {
-                  return (
-                    <Input
-                      type='datetime-local'
-                      labelName='Ngày kết thúc đăng ký'
-                      showIsRequired={true}
-                      showError={false}
-                      classNameWrapper='text-sm w-full flex-1'
-                      classNameInput='px-3'
-                      {...field}
-                      onChange={(event) => {
-                        field.onChange(event)
-                        trigger('startRegistrationAt')
-                        trigger('startAt')
-                      }}
-                    />
-                  )
+                onChange={() => {
+                  trigger('startRegistrationAt')
+                  trigger('startAt')
                 }}
               />
             </div>
@@ -212,29 +179,25 @@ export default function CreateEventPage() {
           </div>
         </div>
         <div className='flex w-full gap-4'>
-          <TextArea
-            name='content'
-            register={register}
+          <Input
+            variant='textarea'
             placeholder='Nhập thông tin sự kiện'
             labelName='Thông tin sự kiện'
             showIsRequired={true}
-            classNameWrapper='w-full flex-1'
-            errorMessage={errors.content?.message}
+            showError={false}
+            classNameWrapper='text-sm w-full flex-1'
+            classNameInput='px-3'
+            control={control}
+            name='content'
           />
         </div>
         <div className='flex w-full gap-4'>
-          <Controller
+          <DraggableInputFile
             name='coverPhoto'
             control={control}
-            render={({ field }) => (
-              <DraggableInputFile
-                {...field}
-                labelName='Ảnh sự kiện'
-                classNameWrapper='w-full flex-1'
-                errorMessage={errors.coverPhoto?.message}
-                onChange={(file?: File) => field.onChange(file)}
-              />
-            )}
+            labelName='Ảnh sự kiện'
+            showIsRequired={true}
+            classNameWrapper='text-sm w-full flex-1'
           />
           <div className='w-full flex-1'></div>
         </div>

@@ -19,12 +19,15 @@ import { path } from 'src/routes/path'
 import { useDispatch } from 'react-redux'
 import { clearModal, setIsShowModalConfirm, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
-import { getStatusMessage } from 'src/utils/common'
+import { getStatusMessage, parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
+import useLocalStorage from 'src/hooks/useLocalStorage'
 
 export default function EventManagement() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const [accessToken, _] = useLocalStorage<string>('access_token')
+  const organizerId = parseJwt(accessToken)?.organizerId
 
   const [inputSearch, setInputSearch] = useState<string>('')
   const [events, setEvents] = useState<EventOfOrganizer[]>([])
@@ -41,7 +44,7 @@ export default function EventManagement() {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(INITIAL_ITEMS_PER_PAGE)
 
-  const { data: eventList, error: eventsError } = getAllEvents()
+  const { data: eventList, error: eventsError } = getAllEvents(organizerId)
 
   const handleSearchEvents = (value: string) => {
     const lowerCaseValue = value.trim().toLowerCase()
@@ -105,7 +108,7 @@ export default function EventManagement() {
     )
   }
 
-  const { mutate } = deleteEvent({
+  const { mutate } = deleteEvent(organizerId, {
     onSuccess: (eventId: number) => {
       toast.success(SUCCESS_MESSAGE.DELETE_EVENT)
       dispatch(setIsShowModalConfirm(false))
@@ -131,13 +134,15 @@ export default function EventManagement() {
     if (eventList) {
       const newEvents = eventList.map((event: EventOfOrganizer) => ({
         ...event,
+        createdAt: moment(event.createdAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
         startAt: moment(event.startAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
         endAt: moment(event.endAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
         startRegistrationAt: moment(event.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
         endRegistrationAt: moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
         status: {
           ...event.status,
-          label: getStatusMessage(event.status.type)
+          label: getStatusMessage(event.status.type),
+          moderatedAt: moment(event.status.moderatedAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)
         }
       }))
       setEvents(newEvents)
@@ -188,6 +193,11 @@ export default function EventManagement() {
                   </div>
                 </th>
                 <th className='whitespace-normal break-words px-4 py-2 text-left text-sm'>STT</th>
+                <th className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'>
+                  <div className='flex items-center justify-between'>
+                    <span>Thời gian tạo</span>
+                  </div>
+                </th>
                 <th
                   className='min-w-[150px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
                   onClick={() => handleSortChange('name')}
@@ -252,6 +262,11 @@ export default function EventManagement() {
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'endRegistrationAt')} />
                   </div>
                 </th>
+                <th className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'>
+                  <div className='flex items-center justify-between'>
+                    <span>Thời gian duyệt</span>
+                  </div>
+                </th>
                 <th className='sticky right-0 z-20 whitespace-normal break-words bg-neutral-0 px-4 py-2 text-left text-sm before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-neutral-5'>
                   Hành động
                 </th>
@@ -267,6 +282,8 @@ export default function EventManagement() {
                       </div>
                     </td>
                     <td className='px-4 py-2 text-center text-sm'>{index + 1}</td>
+                    <td className='px-4 py-2 text-sm'>{event.createdAt}</td>
+
                     <td className='px-4 py-2 text-sm'>
                       <div className='line-clamp-3 overflow-hidden'>{event.name}</div>
                     </td>
@@ -284,9 +301,12 @@ export default function EventManagement() {
                     <td className='px-4 py-2 text-sm'>{event.endAt}</td>
                     <td className='px-4 py-2 text-sm'>{event.startRegistrationAt}</td>
                     <td className='px-4 py-2 text-sm'>{event.endRegistrationAt}</td>
+
                     <td className='px-4 py-2 text-sm'>
                       <Tag status={event.status} />
                     </td>
+                    <td className='px-4 py-2 text-sm'>{event.status.moderatedAt}</td>
+
                     <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center gap-1'>
                         <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
