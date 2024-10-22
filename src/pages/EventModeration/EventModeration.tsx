@@ -15,11 +15,14 @@ import DeleteEventIcon from 'src/assets/icons/i-delete-event.svg?react'
 import { useDispatch } from 'react-redux'
 import { clearModal, setIsShowModalConfirm, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
-import { getStatusMessage } from 'src/utils/common'
+import { getStatusMessage, parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
+import useLocalStorage from 'src/hooks/useLocalStorage'
 
 export default function EventModeration() {
   const dispatch = useDispatch()
+  const [accessToken, _] = useLocalStorage<string>('access_token')
+  const organizerId = parseJwt(accessToken)?.organizerId
 
   const [inputSearch, setInputSearch] = useState<string>('')
   const [events, setEvents] = useState<EventOfOrganizer[]>([])
@@ -36,7 +39,7 @@ export default function EventModeration() {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(INITIAL_ITEMS_PER_PAGE)
 
-  const { data: eventList, error: eventsError } = getAllEvents()
+  const { data: eventList, error: eventsError } = getAllEvents(organizerId)
 
   const handleSearchEvents = (value: string) => {
     const lowerCaseValue = value.trim().toLowerCase()
@@ -96,7 +99,7 @@ export default function EventModeration() {
     )
   }
 
-  const { mutate: mutateChangeStatusOfEvent } = changeStatusOfEvent({
+  const { mutate: mutateChangeStatusOfEvent } = changeStatusOfEvent(organizerId, {
     onSuccess: (data: ChangeStatusData) => {
       if (data.type === 'approved') {
         toast.success(SUCCESS_MESSAGE.APPROVE_EVENT)

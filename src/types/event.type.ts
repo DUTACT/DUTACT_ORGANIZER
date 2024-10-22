@@ -3,6 +3,7 @@ export interface EventOfOrganizer {
   id: number
   name: string
   content: string
+  createdAt: string
   startAt: string
   endAt: string
   startRegistrationAt: string
@@ -11,6 +12,7 @@ export interface EventOfOrganizer {
   status: {
     type: EventStatus
     label?: string
+    moderatedAt: string
   }
   organizer: {
     id: number
@@ -19,7 +21,7 @@ export interface EventOfOrganizer {
   }
 }
 
-export type EventBody = Omit<EventOfOrganizer, 'id' | 'status' | 'organizer'> & {
+export type EventBody = Omit<EventOfOrganizer, 'id' | 'status' | 'organizer' | 'createdAt'> & {
   organizerId: number
   coverPhoto: File
 }

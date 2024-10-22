@@ -26,7 +26,7 @@ export default function Login() {
   const navigate = useNavigate()
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors }
   } = useForm<FormData>({
@@ -67,21 +67,13 @@ export default function Login() {
         {error?.message}
       </div>
       <form action='' className='mt-4' onSubmit={onSubmit}>
-        <Input
-          name='username'
-          register={register}
-          type='text'
-          placeholder='Nhập username'
-          labelName='Username'
-          errorMessage={errors.username?.message}
-        />
+        <Input name='username' control={control} type='text' placeholder='Nhập username' labelName='Username' />
         <Input
           name='password'
-          register={register}
+          control={control}
           type='password'
           placeholder='Nhập mật khẩu'
           labelName='Mật khẩu của bạn'
-          errorMessage={errors.password?.message}
         />
         <Button
           title='Đăng nhập'
