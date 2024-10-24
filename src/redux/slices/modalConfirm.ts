@@ -31,14 +31,13 @@ const modalConfirmSlice = createSlice({
   name: 'modalConfirm',
   initialState,
   reducers: {
-    setIsShowModalConfirm: (state, action: PayloadAction<Partial<boolean>>) => {
+    setIsShowModalConfirm: (state, action: PayloadAction<boolean>) => {
       state.isShow = action.payload
     },
     setModalProperties: (state, action: PayloadAction<Partial<ModalConfirmState>>) => {
       Object.assign(state, action.payload)
     },
     clearModal: (state) => {
-      console.log('clear')
       Object.assign(state, initialState)
     }
   }

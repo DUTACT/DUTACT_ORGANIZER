@@ -1,7 +1,7 @@
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import EditIcon from 'src/assets/icons/i-edit-secondary.svg?react'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
-import { deleteEvent, getAllEvents } from 'src/apis/event'
+import { deleteEvent, getAllEventsOfOrganizer } from 'src/apis/event'
 import { DATE_TIME_FORMATS, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
 import moment from 'moment'
 import { useEffect, useMemo, useState } from 'react'
@@ -57,7 +57,7 @@ export default function EventManagement() {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(INITIAL_ITEMS_PER_PAGE)
 
-  const { data: eventList, error: eventsError } = getAllEvents(organizerId)
+  const { data: eventList, error: eventsError } = getAllEventsOfOrganizer(organizerId)
 
   const uniqueOrganizers = useMemo(() => {
     return events
@@ -215,9 +215,12 @@ export default function EventManagement() {
     setFilteredEvents(newFilteredEvents)
   }, [inputSearch, events, eventFilterOptions, sortCriteria])
 
-  const indexOfLastEvent = currentPage * itemsPerPage
-  const indexOfFirstEvent = indexOfLastEvent - itemsPerPage
-  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent)
+  const indexOfLastEvent = useMemo(() => currentPage * itemsPerPage, [currentPage, itemsPerPage])
+  const indexOfFirstEvent = useMemo(() => indexOfLastEvent - itemsPerPage, [indexOfLastEvent, itemsPerPage])
+  const currentEvents = useMemo(
+    () => filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent),
+    [filteredEvents, indexOfFirstEvent, indexOfLastEvent]
+  )
 
   return (
     <div className='flex h-full flex-col gap-4 p-4'>

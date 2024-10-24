@@ -10,19 +10,17 @@ import prettierPlugin from 'eslint-plugin-prettier'
 
 export default [
   {
-    files: ['**/*.{ts,tsx,js,jsx}'], // Định nghĩa loại file sẽ được lint
+    files: ['**/*.{ts,tsx,js,jsx}'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 2020,
         sourceType: 'module',
         ecmaFeatures: {
-          jsx: true // Nếu bạn sử dụng JSX
+          jsx: true
         }
       },
-      globals: {
-        // Nơi khai báo các global variables nếu cần
-      }
+      globals: {}
     },
     plugins: {
       prettier: prettierPlugin,
@@ -48,6 +46,8 @@ export default [
       'react/jsx-no-target-blank': 'warn',
       'eslint-comments/no-unused-disable': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
+      'no-unused-vars': ['warn', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
+      'import/no-unused-modules': ['warn', { unusedExports: true }],
       'prettier/prettier': [
         'warn',
         {

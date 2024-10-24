@@ -29,9 +29,10 @@ export type EventBody = Omit<EventOfOrganizer, 'id' | 'status' | 'organizer' | '
 export interface ChangeStatusData {
   eventId: number
   type: EventStatus
+  moderatedAt: string
 }
 
-export type EventFilter = {
+export interface EventFilter {
   organizerIds: number[]
   timeStartFrom: string
   timeStartTo: string
