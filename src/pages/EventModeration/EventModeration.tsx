@@ -2,10 +2,10 @@ import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import { changeStatusOfEvent, getAllEvents } from 'src/apis/event'
 import { DATE_TIME_FORMATS, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
 import moment from 'moment'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import InputSearch from 'src/components/InputSearch'
-import { ChangeStatusData, EventOfOrganizer, EventStatus } from 'src/types/event.type'
+import { ChangeStatusData, EventOfOrganizer, EventStatus, EventFilter as EventFilterType } from 'src/types/event.type'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
 import Pagination from 'src/components/Pagination/Pagination'
@@ -18,6 +18,10 @@ import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { getStatusMessage, parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
 import useLocalStorage from 'src/hooks/useLocalStorage'
+import { checkTimeOverlap } from 'src/utils/datetime'
+import { Option } from 'src/types/common.type'
+import EventFilter from '../EventManagement/components/EventFilter'
+import FilterPopover from 'src/components/FilterPopover'
 
 export default function EventModeration() {
   const dispatch = useDispatch()
@@ -35,17 +39,40 @@ export default function EventModeration() {
     { field: 'startRegistrationAt', direction: null },
     { field: 'endRegistrationAt', direction: null }
   ])
+  const [eventFilterOptions, setEventFilterOptions] = useState<EventFilterType>({
+    organizerIds: [],
+    timeStartFrom: '',
+    timeStartTo: '',
+    registrationDeadlineFrom: '',
+    registrationDeadlineTo: '',
+    types: []
+  })
 
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(INITIAL_ITEMS_PER_PAGE)
 
   const { data: eventList, error: eventsError } = getAllEvents(organizerId)
 
-  const handleSearchEvents = (value: string) => {
+  const uniqueOrganizers = useMemo(() => {
+    return events
+      .map((event) => event.organizer)
+      .filter((organizer, index, self) => index === self.findIndex((o) => o.id === organizer.id))
+  }, [events])
+
+  const organizerList = useMemo((): Option[] => {
+    return uniqueOrganizers.map(
+      (organizer) =>
+        ({
+          label: organizer.name,
+          value: organizer.id
+        }) as Option
+    )
+  }, [uniqueOrganizers])
+
+  const handleSearchEvents = (events: EventOfOrganizer[], value: string): EventOfOrganizer[] => {
     const lowerCaseValue = value.trim().toLowerCase()
-    const orderedEvents = sortItems<EventOfOrganizer>(events, sortCriteria)
-    const filteredEvents = orderedEvents.filter(
-      (event) =>
+    return events.filter(
+      (event: EventOfOrganizer) =>
         event.name.toLowerCase().includes(lowerCaseValue) ||
         event.content.toLowerCase().includes(lowerCaseValue) ||
         event.startAt.includes(lowerCaseValue) ||
@@ -53,26 +80,89 @@ export default function EventModeration() {
         event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
         event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
     )
-    setFilteredEvents(filteredEvents)
   }
 
-  const handleSortChange = (field: keyof EventOfOrganizer) => {
-    const lowerCaseValue = inputSearch.trim().toLowerCase()
+  const toggleSortCriteria = (field: keyof EventOfOrganizer): void => {
     const updatedCriteria = toggleSortDirection(sortCriteria, field)
-    const newFilteredEvents = sortItems<EventOfOrganizer>(events, updatedCriteria)
     setSortCriteria(updatedCriteria)
-    setFilteredEvents(
-      newFilteredEvents.filter(
-        (event) =>
-          event.name.toLowerCase().includes(lowerCaseValue) ||
-          event.content.toLowerCase().includes(lowerCaseValue) ||
-          event.startAt.includes(lowerCaseValue) ||
-          event.endAt.toLowerCase().includes(lowerCaseValue) ||
-          event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
-          event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
-      )
-    )
   }
+
+  const handleSortChange = (
+    events: EventOfOrganizer[],
+    criteria: SortCriterion<EventOfOrganizer>[]
+  ): EventOfOrganizer[] => {
+    return sortItems<EventOfOrganizer>(events, criteria)
+  }
+
+  const handleFilterEvents = (events: EventOfOrganizer[], eventFilterOptions: EventFilterType) => {
+    return events.filter((event) => {
+      const organizerMatch =
+        eventFilterOptions.organizerIds.length === 0 || eventFilterOptions.organizerIds.includes(event.organizer.id)
+
+      const typesMatch = eventFilterOptions.types.length === 0 || eventFilterOptions.types.includes(event.status.type)
+
+      const timeStartFrom = moment(eventFilterOptions.timeStartFrom, DATE_TIME_FORMATS.DATE).startOf('day')
+      const timeStartTo = moment(eventFilterOptions.timeStartTo, DATE_TIME_FORMATS.DATE).startOf('day')
+      const eventStartAt = moment(event.startAt, DATE_TIME_FORMATS.DATE_TIME_COMMON).startOf('day')
+      const eventEndAt = moment(event.endAt, DATE_TIME_FORMATS.DATE_TIME_COMMON).startOf('day')
+
+      const isTimeOverlap = checkTimeOverlap(eventStartAt, eventEndAt, timeStartFrom, timeStartTo)
+
+      const registrationDeadlineFrom = moment(
+        eventFilterOptions.registrationDeadlineFrom,
+        DATE_TIME_FORMATS.DATE
+      ).startOf('day')
+      const registrationDeadlineTo = moment(eventFilterOptions.registrationDeadlineTo, DATE_TIME_FORMATS.DATE).startOf(
+        'day'
+      )
+      const eventRegistrationStartAt = moment(event.startRegistrationAt, DATE_TIME_FORMATS.DATE_TIME_COMMON).startOf(
+        'day'
+      )
+      const eventRegistrationEndAt = moment(event.endRegistrationAt, DATE_TIME_FORMATS.DATE_TIME_COMMON).startOf('day')
+
+      const isRegistrationOverlap = checkTimeOverlap(
+        eventRegistrationStartAt,
+        eventRegistrationEndAt,
+        registrationDeadlineFrom,
+        registrationDeadlineTo
+      )
+
+      return organizerMatch && typesMatch && isTimeOverlap && isRegistrationOverlap
+    })
+  }
+
+  // const handleSearchEvents = (value: string) => {
+  //   const lowerCaseValue = value.trim().toLowerCase()
+  //   const orderedEvents = sortItems<EventOfOrganizer>(events, sortCriteria)
+  //   const filteredEvents = orderedEvents.filter(
+  //     (event) =>
+  //       event.name.toLowerCase().includes(lowerCaseValue) ||
+  //       event.content.toLowerCase().includes(lowerCaseValue) ||
+  //       event.startAt.includes(lowerCaseValue) ||
+  //       event.endAt.toLowerCase().includes(lowerCaseValue) ||
+  //       event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
+  //       event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
+  //   )
+  //   setFilteredEvents(filteredEvents)
+  // }
+
+  // const handleSortChange = (field: keyof EventOfOrganizer) => {
+  //   const lowerCaseValue = inputSearch.trim().toLowerCase()
+  //   const updatedCriteria = toggleSortDirection(sortCriteria, field)
+  //   const newFilteredEvents = sortItems<EventOfOrganizer>(events, updatedCriteria)
+  //   setSortCriteria(updatedCriteria)
+  //   setFilteredEvents(
+  //     newFilteredEvents.filter(
+  //       (event) =>
+  //         event.name.toLowerCase().includes(lowerCaseValue) ||
+  //         event.content.toLowerCase().includes(lowerCaseValue) ||
+  //         event.startAt.includes(lowerCaseValue) ||
+  //         event.endAt.toLowerCase().includes(lowerCaseValue) ||
+  //         event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
+  //         event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
+  //     )
+  //   )
+  // }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -152,8 +242,12 @@ export default function EventModeration() {
   }, [eventList])
 
   useEffect(() => {
-    handleSearchEvents(inputSearch)
-  }, [inputSearch, events])
+    const newFilteredEvents = handleSortChange(
+      handleFilterEvents(handleSearchEvents(events, inputSearch), eventFilterOptions),
+      sortCriteria
+    )
+    setFilteredEvents(newFilteredEvents)
+  }, [inputSearch, events, eventFilterOptions, sortCriteria])
 
   const indexOfLastEvent = currentPage * itemsPerPage
   const indexOfFirstEvent = indexOfLastEvent - itemsPerPage
@@ -162,11 +256,22 @@ export default function EventModeration() {
   return (
     <div className='flex h-full flex-col gap-4 p-4'>
       <div className='flex items-center justify-between'>
-        <div className='max-w-[300px] flex-1'>
-          <InputSearch
-            placeholder='Tìm kiếm tên, nội dung sự kiện'
-            inputSearch={inputSearch}
-            setInputSearch={setInputSearch}
+        <div className='flex items-center gap-2'>
+          <div className='w-[300px] flex-1'>
+            <InputSearch
+              placeholder='Tìm kiếm tên, nội dung sự kiện'
+              inputSearch={inputSearch}
+              setInputSearch={setInputSearch}
+            />
+          </div>
+          <FilterPopover
+            content={(onClosePopover) => (
+              <EventFilter
+                onSendFilterOptions={setEventFilterOptions}
+                onClosePopover={onClosePopover}
+                organizerOptions={organizerList}
+              />
+            )}
           />
         </div>
       </div>
@@ -188,7 +293,7 @@ export default function EventModeration() {
                 <th className='whitespace-normal break-words px-4 py-2 text-left text-sm'>STT</th>
                 <th
                   className='min-w-[150px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => handleSortChange('name')}
+                  onClick={() => toggleSortCriteria('name')}
                 >
                   <div className='flex items-center justify-between'>
                     <span>Tên sự kiện</span>
@@ -197,7 +302,7 @@ export default function EventModeration() {
                 </th>
                 <th
                   className='min-w-[180px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => handleSortChange('name')}
+                  onClick={() => toggleSortCriteria('name')}
                 >
                   <div className='flex items-center justify-between'>
                     <span>Được tạo bởi</span>
@@ -206,7 +311,7 @@ export default function EventModeration() {
                 </th>
                 <th
                   className='min-w-[300px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => handleSortChange('content')}
+                  onClick={() => toggleSortCriteria('content')}
                 >
                   <div className='flex items-center justify-between'>
                     <span>Mô tả</span>
@@ -216,7 +321,7 @@ export default function EventModeration() {
                 <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>Ảnh bìa</th>
                 <th
                   className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => handleSortChange('startAt')}
+                  onClick={() => toggleSortCriteria('startAt')}
                 >
                   <div className='flex items-center justify-between'>
                     <span>Ngày bắt đầu sự kiện</span>
@@ -225,7 +330,7 @@ export default function EventModeration() {
                 </th>
                 <th
                   className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => handleSortChange('endAt')}
+                  onClick={() => toggleSortCriteria('endAt')}
                 >
                   <div className='flex items-center justify-between'>
                     <span>Ngày kết thúc sự kiện</span>
@@ -234,7 +339,7 @@ export default function EventModeration() {
                 </th>
                 <th
                   className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => handleSortChange('startRegistrationAt')}
+                  onClick={() => toggleSortCriteria('startRegistrationAt')}
                 >
                   <div className='flex items-center justify-between'>
                     <span>Ngày bắt đầu đăng ký</span>
@@ -243,7 +348,7 @@ export default function EventModeration() {
                 </th>
                 <th
                   className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => handleSortChange('endRegistrationAt')}
+                  onClick={() => toggleSortCriteria('endRegistrationAt')}
                 >
                   <div className='flex items-center justify-between'>
                     <span>Ngày kết thúc đăng ký</span>
@@ -252,7 +357,7 @@ export default function EventModeration() {
                 </th>
                 <th
                   className='min-w-[120px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => handleSortChange('endRegistrationAt')}
+                  onClick={() => toggleSortCriteria('endRegistrationAt')}
                 >
                   <div className='flex items-center justify-between'>
                     <span>Trạng thái</span>

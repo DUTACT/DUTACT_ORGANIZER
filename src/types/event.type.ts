@@ -30,3 +30,12 @@ export interface ChangeStatusData {
   eventId: number
   type: EventStatus
 }
+
+export type EventFilter = {
+  organizerIds: number[]
+  timeStartFrom: string
+  timeStartTo: string
+  registrationDeadlineFrom: string
+  registrationDeadlineTo: string
+  types: EventStatus[]
+}
