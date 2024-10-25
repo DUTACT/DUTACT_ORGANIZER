@@ -5,8 +5,18 @@ import { modalConfirmState } from 'src/redux/store'
 import { useSelector } from 'react-redux'
 
 export default function ModalConfirm() {
-  const { isShow, title, question, iconComponent, actionConfirm, actionCancel, titleConfirm, titleCancel, isWarning } =
-    useSelector(modalConfirmState)
+  const {
+    isShow,
+    title,
+    question,
+    iconComponent,
+    moreInfoComponent,
+    actionConfirm,
+    actionCancel,
+    titleConfirm,
+    titleCancel,
+    isWarning
+  } = useSelector(modalConfirmState)
   if (isShow) {
     return (
       <div className='z-100 fixed inset-0 flex items-center justify-center bg-overlay' onClick={actionCancel}>
@@ -25,6 +35,7 @@ export default function ModalConfirm() {
             <div className='text-md font-medium text-neutral-7'>{title}</div>
           </div>
           <div className='text-sm font-normal'>{question}</div>
+          {moreInfoComponent && moreInfoComponent}
           <div className='mt-6 flex items-center gap-2'>
             <Button
               title={titleCancel}

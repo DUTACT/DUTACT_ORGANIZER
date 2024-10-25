@@ -6,10 +6,14 @@ export const ACCOUNT_URL = {
 
 // organizer-event-controller
 
-const BASE_API_URL_ORGANIZERS = '/api/admin/organizers'
+const BASE_API_URL_ORGANIZER_EVENT = '/api/admin/organizers'
 
-export const getEventUrl = (organizerId: number, eventId?: number) => {
+export const getEventUrlOfOrganizer = (organizerId: number, eventId?: number) => {
   return eventId
-    ? `${BASE_API_URL_ORGANIZERS}/${organizerId}/events/${eventId}`
-    : `${BASE_API_URL_ORGANIZERS}/${organizerId}/events`
+    ? `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events/${eventId}`
+    : `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events`
 }
+
+// admin-event-controller
+
+export const BASE_API_URL_ADMIN_EVENT = '/api/admin/events'

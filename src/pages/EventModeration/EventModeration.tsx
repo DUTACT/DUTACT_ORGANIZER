@@ -1,11 +1,11 @@
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
-import { changeStatusOfEvent, getAllEvents } from 'src/apis/event'
+import { approveEvent, getAllEvents, rejectEvent } from 'src/apis/event'
 import { DATE_TIME_FORMATS, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
 import moment from 'moment'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import InputSearch from 'src/components/InputSearch'
-import { ChangeStatusData, EventOfOrganizer, EventStatus, EventFilter as EventFilterType } from 'src/types/event.type'
+import { ChangeStatusData, EventOfOrganizer, EventFilter as EventFilterType } from 'src/types/event.type'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
 import Pagination from 'src/components/Pagination/Pagination'
@@ -13,7 +13,7 @@ import ApproveIcon from 'src/assets/icons/i-check.svg?react'
 import RejectIcon from 'src/assets/icons/i-close-cancelled.svg?react'
 import DeleteEventIcon from 'src/assets/icons/i-delete-event.svg?react'
 import { useDispatch } from 'react-redux'
-import { clearModal, setIsShowModalConfirm, setModalProperties } from 'src/redux/slices/modalConfirm'
+import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { getStatusMessage, parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
@@ -22,13 +22,22 @@ import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
 import EventFilter from '../EventManagement/components/EventFilter'
 import FilterPopover from 'src/components/FilterPopover'
+import { useForm } from 'react-hook-form'
+import Input from 'src/components/Input'
+import { ERROR_REQUIRED_FIELD } from 'src/constants/validate'
 
 export default function EventModeration() {
   const dispatch = useDispatch()
+
   const [accessToken, _] = useLocalStorage<string>('access_token')
   const organizerId = parseJwt(accessToken)?.organizerId
 
+  const { control, reset, handleSubmit } = useForm<{
+    reason: string
+  }>()
+
   const [inputSearch, setInputSearch] = useState<string>('')
+
   const [events, setEvents] = useState<EventOfOrganizer[]>([])
   const [filteredEvents, setFilteredEvents] = useState<EventOfOrganizer[]>([])
   const [sortCriteria, setSortCriteria] = useState<SortCriterion<EventOfOrganizer>[]>([
@@ -131,39 +140,6 @@ export default function EventModeration() {
     })
   }
 
-  // const handleSearchEvents = (value: string) => {
-  //   const lowerCaseValue = value.trim().toLowerCase()
-  //   const orderedEvents = sortItems<EventOfOrganizer>(events, sortCriteria)
-  //   const filteredEvents = orderedEvents.filter(
-  //     (event) =>
-  //       event.name.toLowerCase().includes(lowerCaseValue) ||
-  //       event.content.toLowerCase().includes(lowerCaseValue) ||
-  //       event.startAt.includes(lowerCaseValue) ||
-  //       event.endAt.toLowerCase().includes(lowerCaseValue) ||
-  //       event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
-  //       event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
-  //   )
-  //   setFilteredEvents(filteredEvents)
-  // }
-
-  // const handleSortChange = (field: keyof EventOfOrganizer) => {
-  //   const lowerCaseValue = inputSearch.trim().toLowerCase()
-  //   const updatedCriteria = toggleSortDirection(sortCriteria, field)
-  //   const newFilteredEvents = sortItems<EventOfOrganizer>(events, updatedCriteria)
-  //   setSortCriteria(updatedCriteria)
-  //   setFilteredEvents(
-  //     newFilteredEvents.filter(
-  //       (event) =>
-  //         event.name.toLowerCase().includes(lowerCaseValue) ||
-  //         event.content.toLowerCase().includes(lowerCaseValue) ||
-  //         event.startAt.includes(lowerCaseValue) ||
-  //         event.endAt.toLowerCase().includes(lowerCaseValue) ||
-  //         event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
-  //         event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
-  //     )
-  //   )
-  // }
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
   }
@@ -173,30 +149,9 @@ export default function EventModeration() {
     setCurrentPage(1)
   }
 
-  const openPopupRejectEvent = (event: EventOfOrganizer) => {
-    dispatch(
-      setModalProperties({
-        isShow: true,
-        title: 'Từ chối sự kiện',
-        question: `Bạn có chắc chắn muốn từ chối sự kiện ${event.name} diễn ra?`,
-        actionConfirm: () => handleChangeStatusOfEvent(event.id, 'rejected'),
-        actionCancel: () => dispatch(clearModal()),
-        titleConfirm: 'Từ chối sự kiện',
-        titleCancel: 'Quay lại',
-        isWarning: true,
-        iconComponent: <DeleteEventIcon className='h-[20px] w-[20px]' />
-      })
-    )
-  }
-
-  const { mutate: mutateChangeStatusOfEvent } = changeStatusOfEvent(organizerId, {
+  const { mutate: mutateApproveEvent } = approveEvent({
     onSuccess: (data: ChangeStatusData) => {
-      if (data.type === 'approved') {
-        toast.success(SUCCESS_MESSAGE.APPROVE_EVENT)
-      } else {
-        toast.success(SUCCESS_MESSAGE.REJECT_EVENT)
-      }
-      dispatch(setIsShowModalConfirm(false))
+      toast.success(SUCCESS_MESSAGE.APPROVE_EVENT)
       setEvents(
         events.map((event) =>
           event.id === data.eventId
@@ -211,11 +166,69 @@ export default function EventModeration() {
     }
   })
 
-  const handleChangeStatusOfEvent = (eventId: number, type: EventStatus) => {
-    mutateChangeStatusOfEvent({
-      eventId,
-      type
-    })
+  const { mutate: mutateRejectEvent } = rejectEvent({
+    onSuccess: (data: ChangeStatusData) => {
+      toast.success(SUCCESS_MESSAGE.REJECT_EVENT)
+      setEvents(
+        events.map((event) =>
+          event.id === data.eventId
+            ? ({ ...event, status: { type: data.type, label: getStatusMessage(data.type) } } as EventOfOrganizer)
+            : event
+        )
+      )
+      setFilteredEvents(filteredEvents.filter((event) => event.id !== data.eventId))
+      dispatch(clearModal())
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    }
+  })
+
+  const handleApproveEvent = (eventId: number) => {
+    mutateApproveEvent(eventId)
+  }
+
+  const handleRejectEvent = ({ eventId, reason }: { eventId: number; reason: string }) => {
+    if (reason) {
+      mutateRejectEvent({ eventId, reason })
+    }
+  }
+
+  const openPopupRejectEvent = (event: EventOfOrganizer) => {
+    dispatch(
+      setModalProperties({
+        isShow: true,
+        title: 'Từ chối sự kiện',
+        question: `Bạn có chắc chắn muốn từ chối sự kiện ${event.name} diễn ra?`,
+        moreInfoComponent: (
+          <Input
+            name='reason'
+            control={control}
+            type='text'
+            labelName='Lý do từ chối'
+            placeholder='Nhập lý do tại đây...'
+            showIsRequired
+            classNameWrapper='w-full flex-1 mt-4'
+            rules={{
+              validate: {
+                notEmpty: (value = '') => {
+                  return value.trim().length > 0 || ERROR_REQUIRED_FIELD
+                }
+              }
+            }}
+          />
+        ),
+        actionConfirm: handleSubmit((data) => handleRejectEvent({ ...data, eventId: event.id })),
+        actionCancel: () => {
+          reset()
+          dispatch(clearModal())
+        },
+        titleConfirm: 'Từ chối sự kiện',
+        titleCancel: 'Quay lại',
+        isWarning: true,
+        iconComponent: <DeleteEventIcon className='h-[20px] w-[20px]' />
+      })
+    )
   }
 
   useEffect(() => {
@@ -249,9 +262,12 @@ export default function EventModeration() {
     setFilteredEvents(newFilteredEvents)
   }, [inputSearch, events, eventFilterOptions, sortCriteria])
 
-  const indexOfLastEvent = currentPage * itemsPerPage
-  const indexOfFirstEvent = indexOfLastEvent - itemsPerPage
-  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent)
+  const indexOfLastEvent = useMemo(() => currentPage * itemsPerPage, [currentPage, itemsPerPage])
+  const indexOfFirstEvent = useMemo(() => indexOfLastEvent - itemsPerPage, [indexOfLastEvent, itemsPerPage])
+  const currentEvents = useMemo(
+    () => filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent),
+    [filteredEvents, indexOfFirstEvent, indexOfLastEvent]
+  )
 
   return (
     <div className='flex h-full flex-col gap-4 p-4'>
@@ -421,7 +437,7 @@ export default function EventModeration() {
                           <Fragment>
                             <div
                               className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                              onClick={() => handleChangeStatusOfEvent(event.id, 'approved')}
+                              onClick={() => handleApproveEvent(event.id)}
                             >
                               <ApproveIcon className='h-[20px] w-[20px]' />
                             </div>
