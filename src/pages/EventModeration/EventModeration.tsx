@@ -306,51 +306,22 @@ export default function EventModeration() {
                     <input type='checkbox' className='h-[16px] w-[16px] cursor-pointer' />
                   </div>
                 </th>
-                <th className='whitespace-normal break-words px-4 py-2 text-left text-sm'>STT</th>
                 <th
                   className='min-w-[150px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
                   onClick={() => toggleSortCriteria('name')}
                 >
                   <div className='flex items-center justify-between'>
-                    <span>Tên sự kiện</span>
+                    <span className='font-bold'>Tên sự kiện</span>
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'name')} />
                   </div>
                 </th>
-                <th
-                  className='min-w-[180px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('name')}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span>Được tạo bởi</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'name')} />
-                  </div>
-                </th>
-                <th
-                  className='min-w-[300px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('content')}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span>Mô tả</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'content')} />
-                  </div>
-                </th>
-                <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>Ảnh bìa</th>
                 <th
                   className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
                   onClick={() => toggleSortCriteria('startAt')}
                 >
                   <div className='flex items-center justify-between'>
-                    <span>Ngày bắt đầu sự kiện</span>
+                    <span>Thời gian diễn ra sự kiện</span>
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'startAt')} />
-                  </div>
-                </th>
-                <th
-                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('endAt')}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span>Ngày kết thúc sự kiện</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'endAt')} />
                   </div>
                 </th>
                 <th
@@ -358,17 +329,8 @@ export default function EventModeration() {
                   onClick={() => toggleSortCriteria('startRegistrationAt')}
                 >
                   <div className='flex items-center justify-between'>
-                    <span>Ngày bắt đầu đăng ký</span>
+                    <span>Thời gian đăng ký</span>
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'startRegistrationAt')} />
-                  </div>
-                </th>
-                <th
-                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('endRegistrationAt')}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span>Ngày kết thúc đăng ký</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'endRegistrationAt')} />
                   </div>
                 </th>
                 <th
@@ -394,37 +356,25 @@ export default function EventModeration() {
                         <input type='checkbox' className='h-[16px] w-[16px] cursor-pointer' />
                       </div>
                     </td>
-                    <td className='px-4 py-2 text-center text-sm'>{index + 1}</td>
                     <td className='px-4 py-2 text-sm'>
-                      <div className='line-clamp-3 overflow-hidden'>{event.name}</div>
-                    </td>
-                    <td className='px-4 py-2 text-sm'>
-                      <div className='line-clamp-3 flex items-start gap-2 overflow-hidden'>
-                        <div className='relative h-logo-sm min-h-logo-sm w-logo-sm min-w-logo-sm'>
+                      <div className='line-clamp-3 overflow-hidden'>
+                        <span className='text-xl font-bold'>{event.name}</span>
+                        {/* <div className='relative h-logo-sm min-h-logo-sm w-logo-sm min-w-logo-sm'>
                           <img
                             className='absolute left-0 top-0 mx-auto h-full w-full rounded-full border-[1px] border-gray-200 object-cover'
                             src={event.organizer.avatarUrl}
                             alt='org-avt'
                           />
-                        </div>
-
+                        </div> */}
                         <div className='text-sm'>{event.organizer.name}</div>
                       </div>
                     </td>
                     <td className='px-4 py-2 text-sm'>
-                      <div className='line-clamp-3 overflow-hidden'>{event.content}</div>
+                      {event.startAt} - {event.endAt}
                     </td>
-                    <td className='flex items-center justify-center px-4 py-2 text-sm'>
-                      <img
-                        src={event.coverPhotoUrl}
-                        alt='ảnh sự kiện'
-                        className='aspect-h-9 aspect-w-16 max-h-[100px] max-w-[300px] p-0'
-                      />
+                    <td className='px-4 py-2 text-sm'>
+                      {event.startRegistrationAt} - {event.endRegistrationAt}
                     </td>
-                    <td className='px-4 py-2 text-sm'>{event.startAt}</td>
-                    <td className='px-4 py-2 text-sm'>{event.endAt}</td>
-                    <td className='px-4 py-2 text-sm'>{event.startRegistrationAt}</td>
-                    <td className='px-4 py-2 text-sm'>{event.endRegistrationAt}</td>
                     <td className='px-4 py-2 text-sm'>
                       <Tag status={event.status} />
                     </td>
