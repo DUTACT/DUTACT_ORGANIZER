@@ -126,7 +126,7 @@ export default function EventModerationDetails() {
 
   return (
     <div className='flex h-full flex-col overflow-scroll px-6 pt-3'>
-      <div className='mb-4'>
+      <div className='mb-4 mt-2'>
         <div className='mb-2 flex items-center justify-start align-middle'>
           <div className='mr-3 text-3xl font-semibold text-neutral-8'>
             {event.name}
