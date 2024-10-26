@@ -21,6 +21,7 @@ export type Props<
   showIsRequired?: boolean
   showError?: boolean
   name?: FieldPath<TFieldValues>
+  placeholder?: string
   options: Option[]
 } & Partial<UseControllerProps<TFieldValues, TName>>
 
@@ -39,6 +40,7 @@ export default function BaseMultiSelect<
     name,
     options,
     rules,
+    placeholder,
     ...rest
   } = props
 
@@ -94,7 +96,7 @@ export default function BaseMultiSelect<
               </div>
             ))
           ) : (
-            <span className='text-gray-400'>Chọn các tổ chức</span>
+            <span className='text-gray-400'>{placeholder || 'Chọn'}</span>
           )}
         </div>
 

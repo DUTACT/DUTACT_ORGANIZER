@@ -1,20 +1,14 @@
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
-import { approveEvent, getAllEvents, rejectEvent } from 'src/apis/event'
+import { getAllEvents } from 'src/apis/event'
 import { DATE_TIME_FORMATS, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
 import moment from 'moment'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import InputSearch from 'src/components/InputSearch'
-import { ChangeStatusData, EventOfOrganizer, EventFilter as EventFilterType } from 'src/types/event.type'
+import { EventOfOrganizer, EventFilter as EventFilterType } from 'src/types/event.type'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
 import Pagination from 'src/components/Pagination/Pagination'
-import ApproveIcon from 'src/assets/icons/i-check.svg?react'
-import RejectIcon from 'src/assets/icons/i-close-cancelled.svg?react'
-import DeleteEventIcon from 'src/assets/icons/i-delete-event.svg?react'
-import { useDispatch } from 'react-redux'
-import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
-import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { getStatusMessage, parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
 import useLocalStorage from 'src/hooks/useLocalStorage'
@@ -22,19 +16,14 @@ import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
 import EventFilter from '../EventManagement/components/EventFilter'
 import FilterPopover from 'src/components/FilterPopover'
-import { useForm } from 'react-hook-form'
-import Input from 'src/components/Input'
-import { ERROR_REQUIRED_FIELD } from 'src/constants/validate'
+import { useNavigate } from 'react-router-dom'
+import { path } from 'src/routes/path'
 
 export default function EventModeration() {
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const [accessToken, _] = useLocalStorage<string>('access_token')
   const organizerId = parseJwt(accessToken)?.organizerId
-
-  const { control, reset, handleSubmit } = useForm<{
-    reason: string
-  }>()
 
   const [inputSearch, setInputSearch] = useState<string>('')
 
@@ -149,88 +138,6 @@ export default function EventModeration() {
     setCurrentPage(1)
   }
 
-  const { mutate: mutateApproveEvent } = approveEvent({
-    onSuccess: (data: ChangeStatusData) => {
-      toast.success(SUCCESS_MESSAGE.APPROVE_EVENT)
-      setEvents(
-        events.map((event) =>
-          event.id === data.eventId
-            ? ({ ...event, status: { type: data.type, label: getStatusMessage(data.type) } } as EventOfOrganizer)
-            : event
-        )
-      )
-      setFilteredEvents(filteredEvents.filter((event) => event.id !== data.eventId))
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    }
-  })
-
-  const { mutate: mutateRejectEvent } = rejectEvent({
-    onSuccess: (data: ChangeStatusData) => {
-      toast.success(SUCCESS_MESSAGE.REJECT_EVENT)
-      setEvents(
-        events.map((event) =>
-          event.id === data.eventId
-            ? ({ ...event, status: { type: data.type, label: getStatusMessage(data.type) } } as EventOfOrganizer)
-            : event
-        )
-      )
-      setFilteredEvents(filteredEvents.filter((event) => event.id !== data.eventId))
-      dispatch(clearModal())
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    }
-  })
-
-  const handleApproveEvent = (eventId: number) => {
-    mutateApproveEvent(eventId)
-  }
-
-  const handleRejectEvent = ({ eventId, reason }: { eventId: number; reason: string }) => {
-    if (reason) {
-      mutateRejectEvent({ eventId, reason })
-    }
-  }
-
-  const openPopupRejectEvent = (event: EventOfOrganizer) => {
-    dispatch(
-      setModalProperties({
-        isShow: true,
-        title: 'Từ chối sự kiện',
-        question: `Bạn có chắc chắn muốn từ chối sự kiện ${event.name} diễn ra?`,
-        moreInfoComponent: (
-          <Input
-            name='reason'
-            control={control}
-            type='text'
-            labelName='Lý do từ chối'
-            placeholder='Nhập lý do tại đây...'
-            showIsRequired
-            classNameWrapper='w-full flex-1 mt-4'
-            rules={{
-              validate: {
-                notEmpty: (value = '') => {
-                  return value.trim().length > 0 || ERROR_REQUIRED_FIELD
-                }
-              }
-            }}
-          />
-        ),
-        actionConfirm: handleSubmit((data) => handleRejectEvent({ ...data, eventId: event.id })),
-        actionCancel: () => {
-          reset()
-          dispatch(clearModal())
-        },
-        titleConfirm: 'Từ chối sự kiện',
-        titleCancel: 'Quay lại',
-        isWarning: true,
-        iconComponent: <DeleteEventIcon className='h-[20px] w-[20px]' />
-      })
-    )
-  }
-
   useEffect(() => {
     if (eventsError) {
       toast.error(eventsError.message)
@@ -306,51 +213,22 @@ export default function EventModeration() {
                     <input type='checkbox' className='h-[16px] w-[16px] cursor-pointer' />
                   </div>
                 </th>
-                <th className='whitespace-normal break-words px-4 py-2 text-left text-sm'>STT</th>
                 <th
                   className='min-w-[150px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
                   onClick={() => toggleSortCriteria('name')}
                 >
                   <div className='flex items-center justify-between'>
-                    <span>Tên sự kiện</span>
+                    <span className='font-bold'>Tên sự kiện</span>
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'name')} />
                   </div>
                 </th>
-                <th
-                  className='min-w-[180px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('name')}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span>Được tạo bởi</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'name')} />
-                  </div>
-                </th>
-                <th
-                  className='min-w-[300px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('content')}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span>Mô tả</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'content')} />
-                  </div>
-                </th>
-                <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>Ảnh bìa</th>
                 <th
                   className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
                   onClick={() => toggleSortCriteria('startAt')}
                 >
                   <div className='flex items-center justify-between'>
-                    <span>Ngày bắt đầu sự kiện</span>
+                    <span>Thời gian diễn ra sự kiện</span>
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'startAt')} />
-                  </div>
-                </th>
-                <th
-                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('endAt')}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span>Ngày kết thúc sự kiện</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'endAt')} />
                   </div>
                 </th>
                 <th
@@ -358,17 +236,8 @@ export default function EventModeration() {
                   onClick={() => toggleSortCriteria('startRegistrationAt')}
                 >
                   <div className='flex items-center justify-between'>
-                    <span>Ngày bắt đầu đăng ký</span>
+                    <span>Thời gian đăng ký</span>
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'startRegistrationAt')} />
-                  </div>
-                </th>
-                <th
-                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('endRegistrationAt')}
-                >
-                  <div className='flex items-center justify-between'>
-                    <span>Ngày kết thúc đăng ký</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'endRegistrationAt')} />
                   </div>
                 </th>
                 <th
@@ -387,68 +256,36 @@ export default function EventModeration() {
             </thead>
             {currentEvents.length > 0 && (
               <tbody>
-                {currentEvents.map((event, index) => (
+                {currentEvents.map((event) => (
                   <tr key={event.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
                     <td className='sticky left-0 z-10 bg-neutral-0 px-4 py-2 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center'>
                         <input type='checkbox' className='h-[16px] w-[16px] cursor-pointer' />
                       </div>
                     </td>
-                    <td className='px-4 py-2 text-center text-sm'>{index + 1}</td>
                     <td className='px-4 py-2 text-sm'>
-                      <div className='line-clamp-3 overflow-hidden'>{event.name}</div>
-                    </td>
-                    <td className='px-4 py-2 text-sm'>
-                      <div className='line-clamp-3 flex items-start gap-2 overflow-hidden'>
-                        <div className='relative h-logo-sm min-h-logo-sm w-logo-sm min-w-logo-sm'>
-                          <img
-                            className='absolute left-0 top-0 mx-auto h-full w-full rounded-full border-[1px] border-gray-200 object-cover'
-                            src={event.organizer.avatarUrl}
-                            alt='org-avt'
-                          />
-                        </div>
-
+                      <div className='line-clamp-3 overflow-hidden'>
+                        <span className='text-xl font-bold'>{event.name}</span>
                         <div className='text-sm'>{event.organizer.name}</div>
                       </div>
                     </td>
                     <td className='px-4 py-2 text-sm'>
-                      <div className='line-clamp-3 overflow-hidden'>{event.content}</div>
+                      {event.startAt} - {event.endAt}
                     </td>
-                    <td className='flex items-center justify-center px-4 py-2 text-sm'>
-                      <img
-                        src={event.coverPhotoUrl}
-                        alt='ảnh sự kiện'
-                        className='aspect-h-9 aspect-w-16 max-h-[100px] max-w-[300px] p-0'
-                      />
+                    <td className='px-4 py-2 text-sm'>
+                      {event.startRegistrationAt} - {event.endRegistrationAt}
                     </td>
-                    <td className='px-4 py-2 text-sm'>{event.startAt}</td>
-                    <td className='px-4 py-2 text-sm'>{event.endAt}</td>
-                    <td className='px-4 py-2 text-sm'>{event.startRegistrationAt}</td>
-                    <td className='px-4 py-2 text-sm'>{event.endRegistrationAt}</td>
                     <td className='px-4 py-2 text-sm'>
                       <Tag status={event.status} />
                     </td>
                     <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center gap-1'>
-                        <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
+                        <div
+                          className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
+                          onClick={() => navigate(path.eventModDetails.link(event.id))}
+                        >
                           <ShowDetailIcon className='h-[20px] w-[20px]' />
                         </div>
-                        {event.status.type === 'pending' && (
-                          <Fragment>
-                            <div
-                              className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                              onClick={() => handleApproveEvent(event.id)}
-                            >
-                              <ApproveIcon className='h-[20px] w-[20px]' />
-                            </div>
-                            <div
-                              className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                              onClick={() => openPopupRejectEvent(event)}
-                            >
-                              <RejectIcon className='h-[20px] w-[20px]' />
-                            </div>
-                          </Fragment>
-                        )}
                       </div>
                     </td>
                   </tr>

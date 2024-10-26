@@ -17,3 +17,7 @@ export const getEventUrlOfOrganizer = (organizerId: number, eventId?: number) =>
 // admin-event-controller
 
 export const BASE_API_URL_ADMIN_EVENT = '/api/admin/events'
+
+export const getEventModerationUrl = (eventId?: number) => {
+  return eventId ? `${BASE_API_URL_ADMIN_EVENT}/${eventId}` : BASE_API_URL_ADMIN_EVENT
+}
