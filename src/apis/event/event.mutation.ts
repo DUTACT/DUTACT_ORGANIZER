@@ -4,9 +4,12 @@ import { BASE_API_URL_ADMIN_EVENT, getEventModerationUrl, getEventUrlOfOrganizer
 import { ApiError } from 'src/types/client.type'
 import { ChangeStatusData, EventBody, EventOfOrganizer } from 'src/types/event.type'
 
-export const createEvent = (options?: UseMutationOptions<EventOfOrganizer, ApiError, EventBody>) => {
+export const createEvent = (
+  organizerId: number,
+  options?: UseMutationOptions<EventOfOrganizer, ApiError, EventBody>
+) => {
   return useMutation<EventOfOrganizer, ApiError, EventBody>({
-    mutationFn: async ({ organizerId, ...body }) => {
+    mutationFn: async (body) => {
       const response = await mutationFormData<EventOfOrganizer>({
         url: getEventUrlOfOrganizer(organizerId),
         method: 'POST',
@@ -27,6 +30,23 @@ export const getAllEventsOfOrganizer = (
     queryFn: async () => {
       const response = await queryFetch<EventOfOrganizer[]>({
         url: getEventUrlOfOrganizer(organizerId)
+      })
+      return response
+    },
+    ...options
+  })
+}
+
+export const getEventOfOrganizerById = (
+  organizerId: number,
+  eventId: number,
+  options?: UseQueryOptions<EventOfOrganizer, ApiError>
+) => {
+  return useQuery<EventOfOrganizer, ApiError>({
+    queryKey: ['getEventOfOrganizerById', eventId],
+    queryFn: async () => {
+      const response = await queryFetch<EventOfOrganizer>({
+        url: getEventUrlOfOrganizer(organizerId, eventId)
       })
       return response
     },
@@ -100,6 +120,24 @@ export const rejectEvent = (
         }
       })
       return { ...response, eventId }
+    },
+    ...options
+  })
+}
+
+export const updateEvent = (
+  organizerId: number,
+  eventId: number,
+  options?: UseMutationOptions<EventOfOrganizer, ApiError, Partial<EventBody>>
+) => {
+  return useMutation<EventOfOrganizer, ApiError, Partial<EventBody>>({
+    mutationFn: async (body) => {
+      const response = await mutationFormData<EventOfOrganizer>({
+        url: getEventUrlOfOrganizer(organizerId, eventId),
+        method: 'PATCH',
+        body
+      })
+      return response
     },
     ...options
   })

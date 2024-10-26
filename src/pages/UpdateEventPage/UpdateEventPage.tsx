@@ -1,9 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import moment from 'moment'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { createEvent } from 'src/apis/event'
+import { getEventOfOrganizerById, updateEvent } from 'src/apis/event'
 import Button from 'src/components/Button'
 import Divider from 'src/components/Divider'
 import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInputFile'
@@ -13,26 +14,33 @@ import { SUCCESS_MESSAGE } from 'src/constants/message'
 import useLocalStorage from 'src/hooks/useLocalStorage'
 import { path } from 'src/routes/path'
 import { EventBody } from 'src/types/event.type'
-import { parseJwt } from 'src/utils/common'
+import { getDefaultImageFile, parseJwt } from 'src/utils/common'
 import { eventSchema, EventSchemaType } from 'src/utils/rules'
 
 type FormData = EventSchemaType
 
-export default function CreateEventPage() {
+export default function UpdateEventPage() {
   const [accessToken, _] = useLocalStorage<string>('access_token')
   const navigate = useNavigate()
+  const { id } = useParams()
+  const eventId = Number(id) ?? 0
+  const organizerId = parseJwt(accessToken)?.organizerId ?? 0
+  const [removedCoverPhoto, setRemovedCoverPhoto] = useState<boolean>(false)
   const {
     control,
     trigger,
     handleSubmit,
+    reset,
     formState: { errors }
   } = useForm<FormData>({
     resolver: yupResolver(eventSchema)
   })
 
-  const { mutate } = createEvent(parseJwt(accessToken)?.organizerId, {
+  const { data, error, isSuccess } = getEventOfOrganizerById(organizerId, Number(eventId) ?? 0)
+
+  const { mutate } = updateEvent(organizerId, eventId, {
     onSuccess: () => {
-      toast.success(SUCCESS_MESSAGE.CREATE_EVENT)
+      toast.success(SUCCESS_MESSAGE.UPDATE_EVENT)
       setTimeout(() => {
         navigate(path.event)
       }, TIMEOUT.NAVIGATE)
@@ -43,15 +51,18 @@ export default function CreateEventPage() {
   })
 
   const onSubmit = handleSubmit((data) => {
-    const eventBody: EventBody = {
+    const eventBody: Partial<EventBody> = {
       name: data.name,
       content: data.content,
       startAt: moment(data.startAt).format(DATE_TIME_FORMATS.ISO),
       endAt: moment(data.endAt).format(DATE_TIME_FORMATS.ISO),
       startRegistrationAt: moment(data.startRegistrationAt).format(DATE_TIME_FORMATS.ISO),
-      endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.ISO),
-      coverPhoto: data.coverPhoto
-    } as EventBody
+      endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.ISO)
+    }
+    if (removedCoverPhoto) {
+      console.log('true')
+      eventBody.coverPhoto = data.coverPhoto
+    }
     mutate(eventBody)
   })
 
@@ -59,21 +70,29 @@ export default function CreateEventPage() {
     navigate(path.event)
   }
 
+  useEffect(() => {
+    if (isSuccess && data) {
+      reset({ ...data, coverPhoto: getDefaultImageFile() })
+    } else if (error) {
+      toast.error(error.message)
+    }
+  }, [isSuccess, data, error, reset])
+
   return (
     <div className='flex h-full w-full flex-1 flex-col'>
       <div className='sticky left-0 top-0 px-6 pt-3'>
         <div className='flex items-center justify-between'>
           <div className='flex flex-col gap-1'>
-            <div className='text-xl font-semibold text-neutral-8'>Tạo sự kiện mới</div>
+            <div className='text-xl font-semibold text-neutral-8'>Cập nhật sự kiện</div>
             <div className='text-sm font-normal text-neutral-5'>
-              Tạo ra các sự kiện mới tiếp cận các sinh viên Trường Đại học Bách khoa Đà Nẵng
+              Thay đổi kịp thời các thông tin sự kiện của tổ chức
             </div>
           </div>
           <div className='flex gap-1'>
             <Button
-              title='Tạo sự kiện'
+              title='Cập nhật sự kiện'
               type='submit'
-              classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md'
+              classButton='min-w-[150px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md'
               onClick={onSubmit}
             />
             <Button
@@ -99,7 +118,7 @@ export default function CreateEventPage() {
           />
           <Input
             type='text'
-            placeholder='Phòng Công tác Sinh viên'
+            placeholder={data?.organizer.name}
             labelName='Được tạo bởi'
             disabled={true}
             classNameWrapper='w-full flex-1'
@@ -197,6 +216,9 @@ export default function CreateEventPage() {
             labelName='Ảnh sự kiện'
             showIsRequired={true}
             classNameWrapper='text-sm w-full flex-1'
+            initialImageUrl={data?.coverPhotoUrl}
+            removedInitialImage={removedCoverPhoto}
+            setRemovedInitialImage={setRemovedCoverPhoto}
           />
           <div className='w-full flex-1'></div>
         </div>

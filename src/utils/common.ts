@@ -12,3 +12,10 @@ export const parseJwt = (token: string) => {
 export const getStatusMessage = (status: EventStatus): string => {
   return EVENT_STATUS[status]
 }
+
+export const getDefaultImageFile = () => {
+  const defaultImageData = new Uint8Array([255, 0, 0, 255])
+
+  const blob = new Blob([defaultImageData], { type: 'image/jpeg' })
+  return new File([blob], 'default-image.jpg', { type: 'image/jpeg' })
+}

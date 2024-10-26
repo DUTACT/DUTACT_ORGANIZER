@@ -182,6 +182,10 @@ export default function EventManagement() {
     mutate(eventId)
   }
 
+  const navigateToUpdateEventPage = (eventId: number) => {
+    navigate(path.updateEvent.link(eventId))
+  }
+
   useEffect(() => {
     if (eventsError) {
       toast.error(eventsError.message)
@@ -388,7 +392,10 @@ export default function EventManagement() {
                         <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
                           <ShowDetailIcon className='h-[20px] w-[20px]' />
                         </div>
-                        <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
+                        <div
+                          className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
+                          onClick={() => navigateToUpdateEventPage(event.id)}
+                        >
                           <EditIcon className='h-[20px] w-[20px]' />
                         </div>
                         <div
