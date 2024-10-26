@@ -52,6 +52,7 @@ export default function EventFilter({ onSendFilterOptions, onClosePopover, organ
           showError={false}
           name='organizerIds'
           control={control}
+          placeholder='Chọn các tổ chức'
         />
         <div className='flex flex-col gap-1'>
           <div className='text-sm font-semibold tracking-wide text-neutral-8'>Sự kiện đang diễn ra</div>
@@ -114,6 +115,7 @@ export default function EventFilter({ onSendFilterOptions, onClosePopover, organ
           classNameSelect='mt-1'
           name='types'
           control={control}
+          placeholder='Chọn các trạng thái'
         />
       </div>
       <div className='flex-end flex items-center gap-2'>

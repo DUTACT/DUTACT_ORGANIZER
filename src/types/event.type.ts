@@ -12,7 +12,7 @@ export interface EventOfOrganizer {
   status: {
     type: EventStatus
     label?: string
-    moderatedAt: string
+    moderatedAt?: string
   }
   organizer: {
     id: number

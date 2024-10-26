@@ -4,5 +4,9 @@ export const path = {
   event: '/event',
   createEvent: '/event/create',
   user: '/user',
-  eventMod: '/event-mod'
+  eventMod: '/event-mod',
+  eventModDetails: {
+    pattern: '/event-mod/:id',
+    link: (id: number) => `/event-mod/${id}`
+  }
 }

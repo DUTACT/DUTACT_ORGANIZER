@@ -12,6 +12,7 @@ import { useEffect } from 'react'
 import { ROUTE_CONFIG } from 'src/constants/routeConfig'
 import CreateEventPage from 'src/pages/CreateEventPage'
 import EventModeration from 'src/pages/EventModeration'
+import EventModerationDetails from 'src/pages/EventModerationDetails'
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAppContext()
@@ -75,6 +76,14 @@ export default function useRouteElements() {
           element: (
             <MainLayout>
               <EventModeration />
+            </MainLayout>
+          )
+        },
+        {
+          path: path.eventModDetails.pattern,
+          element: (
+            <MainLayout>
+              <EventModerationDetails />
             </MainLayout>
           )
         }

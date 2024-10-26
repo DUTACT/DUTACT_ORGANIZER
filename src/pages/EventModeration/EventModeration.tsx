@@ -25,16 +25,14 @@ import FilterPopover from 'src/components/FilterPopover'
 import { useForm } from 'react-hook-form'
 import Input from 'src/components/Input'
 import { ERROR_REQUIRED_FIELD } from 'src/constants/validate'
+import { useNavigate } from 'react-router-dom'
+import { path } from 'src/routes/path'
 
 export default function EventModeration() {
-  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const [accessToken, _] = useLocalStorage<string>('access_token')
   const organizerId = parseJwt(accessToken)?.organizerId
-
-  const { control, reset, handleSubmit } = useForm<{
-    reason: string
-  }>()
 
   const [inputSearch, setInputSearch] = useState<string>('')
 
@@ -147,88 +145,6 @@ export default function EventModeration() {
   const handleRowsPerPageChange = (rowsPerPage: number) => {
     setItemsPerPage(rowsPerPage)
     setCurrentPage(1)
-  }
-
-  const { mutate: mutateApproveEvent } = approveEvent({
-    onSuccess: (data: ChangeStatusData) => {
-      toast.success(SUCCESS_MESSAGE.APPROVE_EVENT)
-      setEvents(
-        events.map((event) =>
-          event.id === data.eventId
-            ? ({ ...event, status: { type: data.type, label: getStatusMessage(data.type) } } as EventOfOrganizer)
-            : event
-        )
-      )
-      setFilteredEvents(filteredEvents.filter((event) => event.id !== data.eventId))
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    }
-  })
-
-  const { mutate: mutateRejectEvent } = rejectEvent({
-    onSuccess: (data: ChangeStatusData) => {
-      toast.success(SUCCESS_MESSAGE.REJECT_EVENT)
-      setEvents(
-        events.map((event) =>
-          event.id === data.eventId
-            ? ({ ...event, status: { type: data.type, label: getStatusMessage(data.type) } } as EventOfOrganizer)
-            : event
-        )
-      )
-      setFilteredEvents(filteredEvents.filter((event) => event.id !== data.eventId))
-      dispatch(clearModal())
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    }
-  })
-
-  const handleApproveEvent = (eventId: number) => {
-    mutateApproveEvent(eventId)
-  }
-
-  const handleRejectEvent = ({ eventId, reason }: { eventId: number; reason: string }) => {
-    if (reason) {
-      mutateRejectEvent({ eventId, reason })
-    }
-  }
-
-  const openPopupRejectEvent = (event: EventOfOrganizer) => {
-    dispatch(
-      setModalProperties({
-        isShow: true,
-        title: 'Từ chối sự kiện',
-        question: `Bạn có chắc chắn muốn từ chối sự kiện ${event.name} diễn ra?`,
-        moreInfoComponent: (
-          <Input
-            name='reason'
-            control={control}
-            type='text'
-            labelName='Lý do từ chối'
-            placeholder='Nhập lý do tại đây...'
-            showIsRequired
-            classNameWrapper='w-full flex-1 mt-4'
-            rules={{
-              validate: {
-                notEmpty: (value = '') => {
-                  return value.trim().length > 0 || ERROR_REQUIRED_FIELD
-                }
-              }
-            }}
-          />
-        ),
-        actionConfirm: handleSubmit((data) => handleRejectEvent({ ...data, eventId: event.id })),
-        actionCancel: () => {
-          reset()
-          dispatch(clearModal())
-        },
-        titleConfirm: 'Từ chối sự kiện',
-        titleCancel: 'Quay lại',
-        isWarning: true,
-        iconComponent: <DeleteEventIcon className='h-[20px] w-[20px]' />
-      })
-    )
   }
 
   useEffect(() => {
@@ -359,13 +275,6 @@ export default function EventModeration() {
                     <td className='px-4 py-2 text-sm'>
                       <div className='line-clamp-3 overflow-hidden'>
                         <span className='text-xl font-bold'>{event.name}</span>
-                        {/* <div className='relative h-logo-sm min-h-logo-sm w-logo-sm min-w-logo-sm'>
-                          <img
-                            className='absolute left-0 top-0 mx-auto h-full w-full rounded-full border-[1px] border-gray-200 object-cover'
-                            src={event.organizer.avatarUrl}
-                            alt='org-avt'
-                          />
-                        </div> */}
                         <div className='text-sm'>{event.organizer.name}</div>
                       </div>
                     </td>
@@ -380,25 +289,12 @@ export default function EventModeration() {
                     </td>
                     <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center gap-1'>
-                        <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
+                        <div
+                          className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
+                          onClick={() => navigate(path.eventModDetails.link(event.id))}
+                        >
                           <ShowDetailIcon className='h-[20px] w-[20px]' />
                         </div>
-                        {event.status.type === 'pending' && (
-                          <Fragment>
-                            <div
-                              className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                              onClick={() => handleApproveEvent(event.id)}
-                            >
-                              <ApproveIcon className='h-[20px] w-[20px]' />
-                            </div>
-                            <div
-                              className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                              onClick={() => openPopupRejectEvent(event)}
-                            >
-                              <RejectIcon className='h-[20px] w-[20px]' />
-                            </div>
-                          </Fragment>
-                        )}
                       </div>
                     </td>
                   </tr>
