@@ -1,4 +1,4 @@
-import { useRef, useState, Fragment } from 'react'
+import { useRef, useState, Fragment, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { CONFIG } from 'src/constants/config'
 import ImageIcon from 'src/assets/icons/i-image.svg?react'
@@ -19,20 +19,34 @@ interface Props<
   classNameError?: string
   showError?: boolean
   rules?: any
+  initialImageUrl?: string
+  removedInitialImage?: boolean
+  setRemovedInitialImage?: (value: boolean) => void
 }
 
 export default function DraggableInputFile<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->({ control, name, labelName, showIsRequired, classNameWrapper, showError, rules }: Props<TFieldValues, TName>) {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null)
-  const [isDragging, setIsDragging] = useState<boolean>(false)
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-
+>({
+  control,
+  name,
+  labelName,
+  showIsRequired,
+  classNameWrapper,
+  showError,
+  rules,
+  initialImageUrl,
+  removedInitialImage = true,
+  setRemovedInitialImage
+}: Props<TFieldValues, TName>) {
   const {
     field,
     fieldState: { error }
   } = useController({ control, name, rules })
+
+  const [uploadedImage, setUploadedImage] = useState<string | null>(initialImageUrl ?? null)
+  const [isDragging, setIsDragging] = useState<boolean>(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const handleFile = (fileFromLocal?: File) => {
     if (fileFromLocal) {
@@ -43,6 +57,9 @@ export default function DraggableInputFile<
       } else {
         const fileURL = URL.createObjectURL(fileFromLocal)
         setUploadedImage(fileURL)
+        if (setRemovedInitialImage) {
+          setRemovedInitialImage(false)
+        }
       }
     }
 
@@ -51,8 +68,13 @@ export default function DraggableInputFile<
     }
   }
 
-  const handleUpload = () => {
-    fileInputRef.current?.click()
+  const handleUpload = (event: React.MouseEvent) => {
+    event.stopPropagation()
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+      fileInputRef.current.click()
+    }
   }
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -73,18 +95,36 @@ export default function DraggableInputFile<
     setIsDragging(false)
   }
 
-  const handleRemoveFile = () => {
+  const handleRemoveFile = (event: React.MouseEvent) => {
+    event.stopPropagation()
     setUploadedImage(null)
     field.onChange(undefined)
+    if (setRemovedInitialImage) {
+      setRemovedInitialImage(true)
+    }
   }
+
+  useEffect(() => {
+    if (initialImageUrl) {
+      setUploadedImage(initialImageUrl)
+      if (setRemovedInitialImage) {
+        setRemovedInitialImage(false)
+      }
+    } else {
+      setUploadedImage(null)
+      if (setRemovedInitialImage) {
+        setRemovedInitialImage(true)
+      }
+    }
+  }, [initialImageUrl])
 
   return (
     <FormFieldWrapper
       classNameWrapper={classNameWrapper}
       labelName={labelName}
       showIsRequired={showIsRequired}
-      showError={showError}
-      errorMessage={error?.message}
+      showError={removedInitialImage && showError}
+      errorMessage={removedInitialImage ? error?.message : undefined}
     >
       <input
         ref={fileInputRef}
@@ -95,6 +135,9 @@ export default function DraggableInputFile<
           const fileFromLocal = event.target.files?.[0]
           handleFile(fileFromLocal)
           field.onChange(fileFromLocal)
+          {
+            setRemovedInitialImage && setRemovedInitialImage(true)
+          }
         }}
       />
       <div

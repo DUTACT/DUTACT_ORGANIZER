@@ -13,6 +13,7 @@ import { ROUTE_CONFIG } from 'src/constants/routeConfig'
 import CreateEventPage from 'src/pages/CreateEventPage'
 import EventModeration from 'src/pages/EventModeration'
 import EventModerationDetails from 'src/pages/EventModerationDetails'
+import UpdateEventPage from 'src/pages/UpdateEventPage'
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAppContext()
@@ -68,6 +69,14 @@ export default function useRouteElements() {
           element: (
             <MainLayout>
               <CreateEventPage />
+            </MainLayout>
+          )
+        },
+        {
+          path: path.updateEvent.pattern,
+          element: (
+            <MainLayout>
+              <UpdateEventPage />
             </MainLayout>
           )
         },

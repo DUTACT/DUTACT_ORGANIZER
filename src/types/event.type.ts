@@ -22,7 +22,6 @@ export interface EventOfOrganizer {
 }
 
 export type EventBody = Omit<EventOfOrganizer, 'id' | 'status' | 'organizer' | 'createdAt'> & {
-  organizerId: number
   coverPhoto: File
 }
 
