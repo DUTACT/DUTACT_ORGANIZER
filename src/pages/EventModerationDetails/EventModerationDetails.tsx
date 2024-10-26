@@ -170,7 +170,7 @@ export default function EventModerationDetails() {
         </div>
       </div>
 
-      <div className='grid grid-cols-2 gap-x-8 gap-y-4'>
+      <div className='grid grid-cols-2 gap-y-4'>
         <div>
           <div className='font-medium'>Thời gian bắt đầu</div>
           <div>{moment(event.startAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}</div>
