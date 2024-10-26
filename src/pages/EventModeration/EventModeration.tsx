@@ -1,20 +1,14 @@
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
-import { approveEvent, getAllEvents, rejectEvent } from 'src/apis/event'
+import { getAllEvents } from 'src/apis/event'
 import { DATE_TIME_FORMATS, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
 import moment from 'moment'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import InputSearch from 'src/components/InputSearch'
-import { ChangeStatusData, EventOfOrganizer, EventFilter as EventFilterType } from 'src/types/event.type'
+import { EventOfOrganizer, EventFilter as EventFilterType } from 'src/types/event.type'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
 import Pagination from 'src/components/Pagination/Pagination'
-import ApproveIcon from 'src/assets/icons/i-check.svg?react'
-import RejectIcon from 'src/assets/icons/i-close-cancelled.svg?react'
-import DeleteEventIcon from 'src/assets/icons/i-delete-event.svg?react'
-import { useDispatch } from 'react-redux'
-import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
-import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { getStatusMessage, parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
 import useLocalStorage from 'src/hooks/useLocalStorage'
@@ -22,9 +16,6 @@ import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
 import EventFilter from '../EventManagement/components/EventFilter'
 import FilterPopover from 'src/components/FilterPopover'
-import { useForm } from 'react-hook-form'
-import Input from 'src/components/Input'
-import { ERROR_REQUIRED_FIELD } from 'src/constants/validate'
 import { useNavigate } from 'react-router-dom'
 import { path } from 'src/routes/path'
 
@@ -265,7 +256,7 @@ export default function EventModeration() {
             </thead>
             {currentEvents.length > 0 && (
               <tbody>
-                {currentEvents.map((event, index) => (
+                {currentEvents.map((event) => (
                   <tr key={event.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
                     <td className='sticky left-0 z-10 bg-neutral-0 px-4 py-2 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center'>

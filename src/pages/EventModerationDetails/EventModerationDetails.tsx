@@ -1,8 +1,7 @@
 import { Fragment, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { approveEvent, getEventForModeration, rejectEvent } from 'src/apis/event'
-import useLocalStorage from 'src/hooks/useLocalStorage'
-import { getStatusMessage, parseJwt } from 'src/utils/common'
+import { getStatusMessage } from 'src/utils/common'
 import { ChangeStatusData, EventOfOrganizer } from 'src/types/event.type'
 import Divider from 'src/components/Divider'
 import Tag from 'src/components/Tag'
@@ -17,32 +16,6 @@ import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
 import Input from 'src/components/Input'
 import { ERROR_REQUIRED_FIELD } from 'src/constants/validate'
 import DeleteEventIcon from 'src/assets/icons/i-delete-event.svg?react'
-
-const mockEvent: EventOfOrganizer = {
-  id: 1,
-  name: 'Event 1',
-  content:
-    'If the training set is relatively small and not diverse enough, the model might have difficulty generalizing to the training data, while it generalizes better on the validation set if the validation set is easier or more diverse.',
-  createdAt: '2021-09-01',
-  startAt: '2021-09-10',
-  endAt: '2021-09-20',
-  startRegistrationAt: '2021-09-01',
-  endRegistrationAt: '2021-09-10',
-  coverPhotoUrl:
-    'https://img-cdn.2game.vn/2021/02/28/Hutao-va-nhung-dieu-can-biet-khi-co-nang-ra-mat-game-thu-Genshin-Impact-1.jpg',
-  status: {
-    type: 'rejected'
-  },
-  organizer: {
-    id: 1,
-    name: 'Organizer 1',
-    avatarUrl: 'https://via.placeholder.com/150'
-  }
-}
-
-interface EventParams extends Record<string, string> {
-  id: string
-}
 
 export default function EventModerationDetails() {
   const dispatch = useDispatch()
@@ -190,7 +163,7 @@ export default function EventModerationDetails() {
       </div>
       <Divider className='my-4' />
       <div className='grid grid-cols-2'>
-        <div>
+        <div className='mr-6'>
           <div className='font-medium'>Ảnh bìa</div>
           <div className='aspect-h-9 aspect-w-16 relative w-full max-w-96 overflow-hidden rounded-md border border-neutral-4'>
             <img src={event.coverPhotoUrl} alt='cover' className='max-w-96 object-contain' />
