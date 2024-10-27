@@ -186,6 +186,10 @@ export default function EventManagement() {
     navigate(path.updateEvent.link(eventId))
   }
 
+  const navigateToEventDetailsPage = (eventId: number) => {
+    navigate(path.eventDetails.link(eventId))
+  }
+
   useEffect(() => {
     if (eventsError) {
       toast.error(eventsError.message)
@@ -390,7 +394,10 @@ export default function EventManagement() {
                     <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center gap-1'>
                         <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
-                          <ShowDetailIcon className='h-[20px] w-[20px]' />
+                          <ShowDetailIcon
+                            className='h-[20px] w-[20px]'
+                            onClick={() => navigateToEventDetailsPage(event.id)}
+                          />
                         </div>
                         <div
                           className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
