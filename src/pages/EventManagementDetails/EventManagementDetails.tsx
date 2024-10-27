@@ -32,12 +32,6 @@ export default function EventManagementDetails() {
             </span>
           </div>
         </div>
-        <div>
-          <div className='flex items-center'>
-            <img src={event.organizer.avatarUrl} alt='avatar' className='h-6 w-6 rounded-full' />
-            <div className='ml-3'>{event.organizer.name}</div>
-          </div>
-        </div>
       </div>
 
       <div className='grid grid-cols-2 gap-y-4'>
