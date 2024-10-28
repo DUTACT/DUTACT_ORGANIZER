@@ -25,11 +25,7 @@ export default function Login() {
 
   const navigate = useNavigate()
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors }
-  } = useForm<FormData>({
+  const { control, handleSubmit } = useForm<FormData>({
     resolver: yupResolver(loginSchema)
   })
 
