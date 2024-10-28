@@ -5,6 +5,7 @@ import PreviousPageIcon from 'src/assets/icons/i-chevron-left.svg?react'
 import NextPageIcon from 'src/assets/icons/i-chevron-right.svg?react'
 import { cn } from 'src/lib/tailwind/utils'
 import { useEffect } from 'react'
+import { ROWS_PER_PAGE_OPTIONS } from 'src/constants/common'
 
 interface Props {
   totalItems: number
@@ -18,12 +19,12 @@ export default function Pagination({ totalItems, onPageChange, onRowsPerPageChan
   })
 
   const startItem = (currentPage - 1) * itemsPerPage + 1
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems)
+  const endItem = itemsPerPage === -1 ? totalItems : Math.min(currentPage * itemsPerPage, totalItems)
 
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newItemsPerPage = Number(event.target.value)
     changeItemsPerPage(newItemsPerPage)
-    onRowsPerPageChange(newItemsPerPage)
+    onRowsPerPageChange(newItemsPerPage === -1 ? totalItems : newItemsPerPage)
     onPageChange(1)
   }
 
@@ -43,10 +44,11 @@ export default function Pagination({ totalItems, onPageChange, onRowsPerPageChan
           onChange={handleRowsPerPageChange}
           className='w-[50px] rounded-lg border border-neutral-4 p-1 text-sm outline-none'
         >
-          <option value={5}>5</option>
-          <option value={10}>10</option>
-          <option value={20}>20</option>
-          <option value={totalItems}>All</option>
+          {ROWS_PER_PAGE_OPTIONS.map((option) => (
+            <option key={option} value={option}>
+              {option === -1 ? 'All' : option}
+            </option>
+          ))}
         </select>
       </div>
       <div className='flex items-center gap-1 text-sm'>
