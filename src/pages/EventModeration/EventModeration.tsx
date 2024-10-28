@@ -265,7 +265,7 @@ export default function EventModeration() {
                     </td>
                     <td className='px-4 py-2 text-sm'>
                       <div className='line-clamp-3 overflow-hidden'>
-                        <span className='text-xl font-bold'>{event.name}</span>
+                        <span className='text-base font-bold'>{event.name}</span>
                         <div className='text-sm'>{event.organizer.name}</div>
                       </div>
                     </td>
