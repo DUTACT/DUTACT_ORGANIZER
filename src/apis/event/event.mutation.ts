@@ -1,6 +1,11 @@
 import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { mutationFetch, mutationFormData, queryFetch } from 'src/config/queryClient'
-import { BASE_API_URL_ADMIN_EVENT, getEventModerationUrl, getEventUrlOfOrganizer } from 'src/constants/endpoints'
+import {
+  BASE_API_URL_ADMIN_EVENT,
+  getCloseEventUrlOfOrganizer,
+  getEventModerationUrl,
+  getEventUrlOfOrganizer
+} from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
 import { ChangeStatusData, EventBody, EventOfOrganizer } from 'src/types/event.type'
 
@@ -138,6 +143,28 @@ export const updateEvent = (
         body
       })
       return response
+    },
+    ...options
+  })
+}
+
+export const closeEvent = (
+  organizerId: number,
+  eventId: number,
+  options?: UseMutationOptions<EventOfOrganizer, ApiError, Partial<EventBody>>
+) => {
+  return useMutation<EventOfOrganizer, ApiError, Partial<EventBody>>({
+    mutationFn: async () => {
+      try {
+        const response = await mutationFetch<EventOfOrganizer>({
+          url: getCloseEventUrlOfOrganizer(organizerId, eventId),
+          method: 'POST'
+        })
+        return response
+      } catch (error) {
+        console.log(error)
+        throw error
+      }
     },
     ...options
   })
