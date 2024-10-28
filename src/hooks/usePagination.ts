@@ -10,7 +10,7 @@ export function usePagination({ totalItems, initialItemsPerPage = INITIAL_ITEMS_
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(initialItemsPerPage)
 
-  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const totalPages = itemsPerPage === -1 ? 1 : Math.ceil(totalItems / itemsPerPage)
 
   const nextPage = () => {
     if (currentPage < totalPages) {
