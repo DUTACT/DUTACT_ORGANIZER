@@ -2,7 +2,12 @@ import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import EditIcon from 'src/assets/icons/i-edit-secondary.svg?react'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
 import { deleteEvent, getAllEventsOfOrganizer } from 'src/apis/event'
-import { DATE_TIME_FORMATS, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
+import {
+  DATE_TIME_FORMATS,
+  EVENT_STATUS_COLOR_CLASSES,
+  EVENT_STATUS_MESSAGES,
+  INITIAL_ITEMS_PER_PAGE
+} from 'src/constants/common'
 import moment from 'moment'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -207,7 +212,7 @@ export default function EventManagement() {
         endRegistrationAt: moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
         status: {
           ...event.status,
-          label: getStatusMessage(event.status.type),
+          label: getStatusMessage(EVENT_STATUS_MESSAGES, event.status.type),
           moderatedAt: moment(event.status.moderatedAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)
         }
       }))
@@ -336,7 +341,7 @@ export default function EventManagement() {
                       {event.startRegistrationAt} - {event.endRegistrationAt}
                     </td>
                     <td className='px-4 py-2 text-sm'>
-                      <Tag status={event.status} />
+                      <Tag status={event.status} statusClasses={EVENT_STATUS_COLOR_CLASSES} />
                     </td>
                     <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center gap-1'>

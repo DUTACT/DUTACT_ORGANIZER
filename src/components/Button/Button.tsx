@@ -31,7 +31,7 @@ export default function Button({
     >
       <LoadingIndicator classWrapper={classLoadingIndicator} />
       {iconComponent && iconComponent}
-      <span className={cn('text-md font-medium', classTitle)}>{title}</span>
+      <span className={cn('test-base font-medium', classTitle)}>{title}</span>
     </button>
   )
 }

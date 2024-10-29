@@ -12,6 +12,7 @@
     --logo-lg: 60px;
     --h-header: 50px;
     --h-main: calc(100% - var(--h-header));
+    --h-main-absolute: calc(100vh - var(--h-header) - 200px);
   }
 }
 

@@ -182,7 +182,7 @@ export default function DraggableInputFile<
             </div>
 
             <div
-              className='text-md w-full cursor-pointer py-2 text-center font-medium text-semantic-secondary/80 hover:text-semantic-secondary'
+              className='test-base w-full cursor-pointer py-2 text-center font-medium text-semantic-secondary/80 hover:text-semantic-secondary'
               onClick={handleUpload}
             >
               Chọn ảnh khác

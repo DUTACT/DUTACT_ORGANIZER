@@ -32,7 +32,7 @@ export default function ModalConfirm() {
           </div>
           <div className='mb-3 flex items-center gap-2'>
             {iconComponent && iconComponent}
-            <div className='text-md font-medium text-neutral-7'>{title}</div>
+            <div className='test-base font-medium text-neutral-7'>{title}</div>
           </div>
           <div className='text-sm font-normal'>{question}</div>
           {moreInfoComponent && moreInfoComponent}

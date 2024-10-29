@@ -55,7 +55,7 @@ export default function Sidebar() {
                 <>
                   {isActive ? <IconActive className='h-[24px] w-[24px]' /> : <Icon className='h-[24px] w-[24px]' />}
                   <div
-                    className={cn('text-md', {
+                    className={cn('test-base', {
                       'font-medium text-semantic-secondary': isActive,
                       'font-normal': !isActive
                     })}
@@ -73,7 +73,7 @@ export default function Sidebar() {
         onClick={handleLogOut}
       >
         <LogOutIcon className='h-[24px] w-[24px]' />
-        <div className='text-md font-normal'>Đăng xuất</div>
+        <div className='test-base font-normal'>Đăng xuất</div>
       </div>
       <Divider className='mt-4' />
       <div className='mt-2 flex gap-2'>

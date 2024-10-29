@@ -7,7 +7,7 @@ import {
   getEventUrlOfOrganizer
 } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
-import { ChangeStatusData, EventBody, EventOfOrganizer } from 'src/types/event.type'
+import { ChangeEventStatusData, EventBody, EventOfOrganizer } from 'src/types/event.type'
 
 export const createEvent = (
   organizerId: number,
@@ -86,12 +86,11 @@ export const getEventForModeration = (eventId: number, options?: UseQueryOptions
 }
 
 export const deleteEvent = (organizerId: number, options?: UseMutationOptions<any, ApiError, number>) => {
-  return useMutation<any, ApiError, number>({
+  return useMutation<number, ApiError, number>({
     mutationFn: async (eventId: number) => {
-      await mutationFetch<any>({
+      await mutationFetch<number>({
         url: getEventUrlOfOrganizer(organizerId, eventId),
-        method: 'DELETE',
-        body: undefined
+        method: 'DELETE'
       })
       return eventId
     },
@@ -99,11 +98,12 @@ export const deleteEvent = (organizerId: number, options?: UseMutationOptions<an
   })
 }
 
-export const approveEvent = (options?: UseMutationOptions<ChangeStatusData, ApiError, number>) => {
-  return useMutation<ChangeStatusData, ApiError, number>({
+export const approveEvent = (options?: UseMutationOptions<ChangeEventStatusData, ApiError, number>) => {
+  return useMutation<ChangeEventStatusData, ApiError, number>({
     mutationFn: async (eventId: number) => {
-      const response = await mutationFetch<ChangeStatusData>({
-        url: `${BASE_API_URL_ADMIN_EVENT}/${eventId}/approve`,
+      const response = await mutationFetch<ChangeEventStatusData>({
+        baseURL: getEventModerationUrl(eventId),
+        url: 'approve',
         method: 'POST'
       })
       return { ...response, eventId }
@@ -113,12 +113,13 @@ export const approveEvent = (options?: UseMutationOptions<ChangeStatusData, ApiE
 }
 
 export const rejectEvent = (
-  options?: UseMutationOptions<ChangeStatusData, ApiError, { eventId: number; reason: string }>
+  options?: UseMutationOptions<ChangeEventStatusData, ApiError, { eventId: number; reason: string }>
 ) => {
-  return useMutation<ChangeStatusData, ApiError, { eventId: number; reason: string }>({
+  return useMutation<ChangeEventStatusData, ApiError, { eventId: number; reason: string }>({
     mutationFn: async ({ eventId, reason }) => {
-      const response = await mutationFetch<ChangeStatusData>({
-        url: `${BASE_API_URL_ADMIN_EVENT}/${eventId}/reject`,
+      const response = await mutationFetch<ChangeEventStatusData>({
+        baseURL: getEventModerationUrl(eventId),
+        url: 'reject',
         method: 'POST',
         body: {
           reason

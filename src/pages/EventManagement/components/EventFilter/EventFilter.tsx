@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import Button from 'src/components/Button'
 import Input from 'src/components/Input'
 import MultipleSelect from 'src/components/MultipleSelect'
-import { EVENT_STATUS } from 'src/constants/common'
+import { EVENT_STATUS_MESSAGES } from 'src/constants/common'
 import { Option } from 'src/types/common.type'
 import type { EventFilter as EventFilterType } from 'src/types/event.type'
 
@@ -26,7 +26,7 @@ export default function EventFilter({ onSendFilterOptions, onClosePopover, organ
   })
 
   const eventStatusList = useMemo((): Option[] => {
-    return Object.entries(EVENT_STATUS).map(
+    return Object.entries(EVENT_STATUS_MESSAGES).map(
       ([value, label]) =>
         ({
           value,
@@ -36,7 +36,6 @@ export default function EventFilter({ onSendFilterOptions, onClosePopover, organ
   }, [])
 
   const onSubmitFilter = handleSubmit((data: EventFilterType) => {
-    console.log('data', data)
     onSendFilterOptions(data)
     onClosePopover()
   })
