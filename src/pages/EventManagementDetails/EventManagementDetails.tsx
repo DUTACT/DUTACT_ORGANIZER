@@ -56,8 +56,7 @@ export default function EventManagementDetails() {
           dispatch(clearModal())
         },
         titleConfirm: 'Đóng đơn đăng ký',
-        titleCancel: 'Quay lại',
-        isWarning: true
+        titleCancel: 'Quay lại'
       })
     )
   }
@@ -119,7 +118,7 @@ export default function EventManagementDetails() {
       </div>
       <div className='mt-4'>
         <Button
-          className='hover:bg-semantic-danger min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-cancelled/90 text-neutral-0'
+          className='min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
           title='Đóng đơn đăng ký'
           onClick={openPopupCloseRegistration}
         ></Button>
