@@ -53,6 +53,7 @@ export const TIMEOUT = {
 export const DATE_TIME_FORMATS = {
   ISO: 'YYYY-MM-DDTHH:mm:ss.SSS',
   DATE: 'YYYY-MM-DD',
+  DATE_WITHOUT_YEAR: 'DD/MM',
   TIME: 'HH:mm:ss',
   DATE_TIME: 'YYYY-MM-DD HH:mm:ss',
   DATE_TIME_COMMON: 'DD/MM/YYYY HH:mm'
