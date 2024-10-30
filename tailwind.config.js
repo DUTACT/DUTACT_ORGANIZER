@@ -41,6 +41,7 @@ module.exports = {
       height: {
         header: 'var(--h-header)',
         main: 'var(--h-main)',
+        'main-abs': 'var(--h-main-absolute)',
         'logo-sm': 'var(--logo-sm)',
         'logo-md': 'var(--logo-md)',
         'logo-lg': 'var(--logo-lg)'
@@ -54,6 +55,10 @@ module.exports = {
         'logo-sm': 'var(--logo-sm)',
         'logo-md': 'var(--logo-md)',
         'logo-lg': 'var(--logo-lg)'
+      },
+      maxHeight: {
+        main: 'var(--h-main)',
+        'main-abs': 'var(--h-main-absolute)'
       },
       margin: {
         header: 'var(--h-header)'

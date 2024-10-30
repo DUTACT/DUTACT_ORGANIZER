@@ -25,7 +25,7 @@ export type EventBody = Omit<EventOfOrganizer, 'id' | 'status' | 'organizer' | '
   coverPhoto: File
 }
 
-export interface ChangeStatusData {
+export interface ChangeEventStatusData {
   eventId: number
   type: EventStatus
   moderatedAt: string

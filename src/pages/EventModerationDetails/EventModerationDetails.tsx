@@ -2,11 +2,11 @@ import { Fragment, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { approveEvent, getEventForModeration, rejectEvent } from 'src/apis/event'
 import { getStatusMessage } from 'src/utils/common'
-import { ChangeStatusData, EventOfOrganizer } from 'src/types/event.type'
+import { ChangeEventStatusData, EventOfOrganizer } from 'src/types/event.type'
 import Divider from 'src/components/Divider'
 import Tag from 'src/components/Tag'
 import moment from 'moment'
-import { DATE_TIME_FORMATS } from 'src/constants/common'
+import { DATE_TIME_FORMATS, EVENT_STATUS_COLOR_CLASSES, EVENT_STATUS_MESSAGES } from 'src/constants/common'
 import Button from 'src/components/Button'
 import { toast } from 'react-toastify'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
@@ -35,18 +35,21 @@ export default function EventModerationDetails() {
         ...fetchedEvent,
         status: {
           ...fetchedEvent.status,
-          label: getStatusMessage(fetchedEvent.status.type)
+          label: getStatusMessage(EVENT_STATUS_MESSAGES, fetchedEvent.status.type)
         }
       })
     }
   }, [fetchedEvent])
 
   const { mutate: mutateApproveEvent } = approveEvent({
-    onSuccess: (data: ChangeStatusData) => {
+    onSuccess: (data: ChangeEventStatusData) => {
       toast.success(SUCCESS_MESSAGE.APPROVE_EVENT)
       setEvent(
         event
-          ? ({ ...event, status: { type: data.type, label: getStatusMessage(data.type) } } as EventOfOrganizer)
+          ? ({
+              ...event,
+              status: { type: data.type, label: getStatusMessage(EVENT_STATUS_MESSAGES, data.type) }
+            } as EventOfOrganizer)
           : null
       )
     },
@@ -56,11 +59,14 @@ export default function EventModerationDetails() {
   })
 
   const { mutate: mutateRejectEvent } = rejectEvent({
-    onSuccess: (data: ChangeStatusData) => {
+    onSuccess: (data: ChangeEventStatusData) => {
       toast.success(SUCCESS_MESSAGE.REJECT_EVENT)
       setEvent(
         event
-          ? ({ ...event, status: { type: data.type, label: getStatusMessage(data.type) } } as EventOfOrganizer)
+          ? ({
+              ...event,
+              status: { type: data.type, label: getStatusMessage(EVENT_STATUS_MESSAGES, data.type) }
+            } as EventOfOrganizer)
           : null
       )
     },
@@ -131,7 +137,7 @@ export default function EventModerationDetails() {
           <div className='mr-3 text-3xl font-semibold text-neutral-8'>
             {event.name}
             <span className='ml-2 inline-block align-middle'>
-              <Tag status={event.status} />
+              <Tag status={event.status} statusClasses={EVENT_STATUS_COLOR_CLASSES} />
             </span>
           </div>
         </div>

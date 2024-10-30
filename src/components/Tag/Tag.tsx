@@ -1,32 +1,25 @@
 import { cn } from 'src/lib/tailwind/utils'
-import { EventStatus } from 'src/types/event.type'
 
-interface Props {
+interface Props<T extends string> {
   status: {
-    type: EventStatus
+    type: T
     label?: string
   }
+  className?: string
+  statusClasses: Record<T, { backgroundColor: string; textColor: string }>
 }
 
-const statusClasses: Record<EventStatus, { backgroundColor: string; textColor: string }> = {
-  pending: {
-    backgroundColor: 'bg-semantic-secondary-background',
-    textColor: 'text-semantic-secondary'
-  },
-  approved: {
-    backgroundColor: 'bg-semantic-success-background',
-    textColor: 'text-semantic-success'
-  },
-  rejected: {
-    backgroundColor: 'bg-semantic-cancelled-background',
-    textColor: 'text-semantic-cancelled'
-  }
-}
-
-export default function Tag({ status }: Props) {
+export default function Tag<T extends string>({ status, className = '', statusClasses }: Props<T>) {
   const classes = statusClasses[status.type]
   return (
-    <div className={cn('rounded-md p-1 text-center text-sm font-medium', classes.backgroundColor, classes.textColor)}>
+    <div
+      className={cn(
+        'rounded-md p-1 text-center text-sm font-medium',
+        className,
+        classes.backgroundColor,
+        classes.textColor
+      )}
+    >
       {status.label}
     </div>
   )

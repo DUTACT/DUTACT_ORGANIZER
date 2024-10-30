@@ -1,6 +1,3 @@
-import { EVENT_STATUS } from 'src/constants/common'
-import { EventStatus } from 'src/types/event.type'
-
 export const parseJwt = (token: string) => {
   try {
     return JSON.parse(atob(token.split('.')[1]))
@@ -9,8 +6,8 @@ export const parseJwt = (token: string) => {
   }
 }
 
-export const getStatusMessage = (status: EventStatus): string => {
-  return EVENT_STATUS[status]
+export const getStatusMessage = <T extends string>(statusMessageList: Record<T, string>, status: T): string => {
+  return statusMessageList[status]
 }
 
 export const getDefaultImageFile = () => {

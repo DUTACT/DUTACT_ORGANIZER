@@ -1,4 +1,5 @@
 import { EventStatus } from 'src/types/event.type'
+import { PostStatus } from 'src/types/post.type'
 
 export const USER_ROLE = {
   ADMIN: 'ROLE_ADMIN',
@@ -6,10 +7,41 @@ export const USER_ROLE = {
   EVENT_ORGANIZER: 'ROLE_EVENT_ORGANIZER'
 }
 
-export const EVENT_STATUS: Record<EventStatus, string> = {
+export const EVENT_STATUS_MESSAGES: Record<EventStatus, string> = {
   pending: 'Chờ duyệt',
   approved: 'Đã duyệt',
   rejected: 'Từ chối'
+}
+
+export const EVENT_STATUS_COLOR_CLASSES: Record<EventStatus, { backgroundColor: string; textColor: string }> = {
+  pending: {
+    backgroundColor: 'bg-semantic-secondary-background',
+    textColor: 'text-semantic-secondary'
+  },
+  approved: {
+    backgroundColor: 'bg-semantic-success-background',
+    textColor: 'text-semantic-success'
+  },
+  rejected: {
+    backgroundColor: 'bg-semantic-cancelled-background',
+    textColor: 'text-semantic-cancelled'
+  }
+}
+
+export const POST_STATUS_MESSAGES: Record<PostStatus, string> = {
+  published: 'Công khai',
+  hidden: 'Đã xóa'
+}
+
+export const POST_STATUS_COLOR_CLASSES: Record<PostStatus, { backgroundColor: string; textColor: string }> = {
+  published: {
+    backgroundColor: 'bg-semantic-success-background',
+    textColor: 'text-semantic-success'
+  },
+  hidden: {
+    backgroundColor: 'bg-neutral-4',
+    textColor: 'text-neutral-7'
+  }
 }
 
 export const TIMEOUT = {
