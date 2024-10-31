@@ -1,1 +1,1 @@
-export * from './registration.mutation'
+export * from './registration.query'
