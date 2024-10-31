@@ -118,7 +118,7 @@ export default function EventFilter({ onSendFilterOptions, onClosePopover, organ
         />
       </div>
       <div className='flex-end flex items-center gap-2'>
-        <Button title='Quay lại' classButton='hover:bg-neutral-3 min-w-fit' />
+        <Button type='button' title='Quay lại' classButton='hover:bg-neutral-3 min-w-fit' onClick={onClosePopover} />
         <Button
           title='Áp dụng bộ lọc'
           type='submit'

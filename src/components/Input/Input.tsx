@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useState } from 'react'
+import { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useRef, useState } from 'react'
 import { useController, type FieldPath, type FieldValues, type UseControllerProps } from 'react-hook-form'
 import FormFieldWrapper from 'src/components/FormFieldWrapper'
 import { cn } from 'src/lib/tailwind/utils'
@@ -14,11 +14,13 @@ export type Props<
   classNameInput?: string
   classNameError?: string
   classNameRequired?: string
+  className?: string
   labelName?: string
   showIsRequired?: boolean
   showError?: boolean
   name?: FieldPath<TFieldValues>
   variant?: InputVariant
+  autoResize?: boolean
 } & InputHTMLAttributes<HTMLInputElement> &
   TextareaHTMLAttributes<HTMLTextAreaElement> &
   Partial<UseControllerProps<TFieldValues, TName>>
@@ -35,12 +37,14 @@ export default function Input<
     classNameWrapper,
     classNameInput = '',
     classNameError,
+    className = '',
     showError,
     value,
     control,
     name,
     rules,
     variant = 'input',
+    autoResize = false,
     ...rest
   } = props
 
@@ -51,6 +55,7 @@ export default function Input<
   } = hasController ? useController({ control, name, rules }) : { field: {}, fieldState: {} }
 
   const [localValue, setLocalValue] = useState<string>(field.value || '')
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
     if (hasController) {
@@ -58,9 +63,21 @@ export default function Input<
     }
   }, [field.value, hasController])
 
+  const adjustHeight = () => {
+    if (textareaRef.current && autoResize) {
+      textareaRef.current.style.height = 'auto'
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+    }
+  }
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const valueFromInput = event.target.value
     setLocalValue(valueFromInput)
+
+    if (variant === 'textarea' && autoResize) {
+      adjustHeight()
+    }
+
     if ('onChange' in field && typeof field.onChange === 'function') {
       field.onChange(valueFromInput)
     }
@@ -86,6 +103,7 @@ export default function Input<
           )}
           {...rest}
           {...(hasController ? field : {})}
+          ref={textareaRef}
           onChange={handleChange}
           value={localValue}
         />

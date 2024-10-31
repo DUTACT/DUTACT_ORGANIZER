@@ -40,6 +40,8 @@ module.exports = {
       },
       height: {
         header: 'var(--h-header)',
+        'header-popup': 'var(--h-header-popup)',
+        'footer-popup': 'var(--h-footer-popup)',
         main: 'var(--h-main)',
         'main-abs': 'var(--h-main-absolute)',
         'logo-sm': 'var(--logo-sm)',
@@ -51,6 +53,9 @@ module.exports = {
         'logo-md': 'var(--logo-md)',
         'logo-lg': 'var(--logo-lg)'
       },
+      maxWidth: {
+        popup: 'var(--max-w-popup)'
+      },
       minHeight: {
         'logo-sm': 'var(--logo-sm)',
         'logo-md': 'var(--logo-md)',
@@ -58,7 +63,9 @@ module.exports = {
       },
       maxHeight: {
         main: 'var(--h-main)',
-        'main-abs': 'var(--h-main-absolute)'
+        'main-abs': 'var(--h-main-absolute)',
+        popup: 'var(--max-h-popup)',
+        'main-popup': 'var(--h-main-popup)'
       },
       margin: {
         header: 'var(--h-header)'

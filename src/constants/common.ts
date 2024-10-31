@@ -50,6 +50,8 @@ export const TIMEOUT = {
   NAVIGATE: 1000
 }
 
+export const STALE_TIME = 5 * 60 * 1000
+
 export const DATE_TIME_FORMATS = {
   ISO: 'YYYY-MM-DDTHH:mm:ss.SSS',
   DATE: 'YYYY-MM-DD',
