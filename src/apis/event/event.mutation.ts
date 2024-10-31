@@ -1,6 +1,5 @@
-import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { mutationFetch, mutationFormData, queryFetch } from 'src/config/queryClient'
-import { STALE_TIME } from 'src/constants/common'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { mutationFetch, mutationFormData } from 'src/config/queryClient'
 import {
   BASE_API_URL_ADMIN_EVENT,
   getCloseEventUrlOfOrganizer,
@@ -20,66 +19,6 @@ export const createEvent = (
         url: getEventUrlOfOrganizer(organizerId),
         method: 'POST',
         body
-      })
-      return response
-    },
-    ...options
-  })
-}
-
-export const getAllEventsOfOrganizer = (
-  organizerId: number,
-  options?: UseQueryOptions<EventOfOrganizer[], ApiError>
-) => {
-  return useQuery<EventOfOrganizer[], ApiError>({
-    queryKey: ['getAllEventsOfOrganizer'],
-    queryFn: async () => {
-      const response = await queryFetch<EventOfOrganizer[]>({
-        url: getEventUrlOfOrganizer(organizerId)
-      })
-      return response
-    },
-    ...options
-  })
-}
-
-export const getEventOfOrganizerById = (
-  organizerId: number,
-  eventId: number,
-  options?: UseQueryOptions<EventOfOrganizer, ApiError>
-) => {
-  return useQuery<EventOfOrganizer, ApiError>({
-    queryKey: ['getEventOfOrganizerById', organizerId, eventId],
-    queryFn: async () => {
-      const response = await queryFetch<EventOfOrganizer>({
-        url: getEventUrlOfOrganizer(organizerId, eventId)
-      })
-      return response
-    },
-    staleTime: options?.staleTime ?? STALE_TIME,
-    ...options
-  })
-}
-
-export const getAllEvents = (options?: UseQueryOptions<EventOfOrganizer[], ApiError>) => {
-  return useQuery<EventOfOrganizer[], ApiError>({
-    queryKey: ['getAllEvents'],
-    queryFn: async () => {
-      const response = await queryFetch<EventOfOrganizer[]>({
-        url: BASE_API_URL_ADMIN_EVENT
-      })
-      return response
-    },
-    ...options
-  })
-}
-
-export const getEventForModeration = (eventId: number, options?: UseQueryOptions<EventOfOrganizer, ApiError>) => {
-  return useQuery<EventOfOrganizer, ApiError>({
-    queryKey: ['getEvent', eventId],
-    queryFn: async () => {
-      const response = await queryFetch<EventOfOrganizer>({
-        url: getEventModerationUrl(eventId)
       })
       return response
     },

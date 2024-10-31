@@ -22,111 +22,14 @@ import { getStatusMessage } from 'src/utils/common'
 import Tag from 'src/components/Tag'
 import PostFilter from '../PostFilter'
 import Button from 'src/components/Button'
-
-const mockDataPosts: Post[] = [
-  {
-    id: 1,
-    eventId: 92,
-    content:
-      'hân dân, không phải ai cũng có thể hạ thấp bản thân mình trước đông đảo khán giả như vậy, đặc biệt là với một người có tuổi, có vị thế hàng đầu, có quân hàm. Một hình ảnh sẽ khiến nhiều ngôi sao phải nhìn lại bản thân. Với',
-    postedAt: '2024-10-29T14:42:50.376',
-    coverPhotoUrl:
-      'https://dutactstorageaccount.blob.core.windows.net/primary/4fdd9c85-c2d6-4d5d-9239-97c0d1fb5dba.jpg',
-    status: {
-      type: 'published'
-    }
-  },
-  {
-    id: 2,
-    eventId: 92,
-    content:
-      'hân dân, khôngng đảo khán giả như vậy, đặc biệt là với một người có tuổi, có vị thế hàng đầu, có quân hàm. Một hình ảnh sẽ khiến nhiều ngôi sao phải nhìn lại bản thân. Với',
-    postedAt: '2024-10-30T14:42:50.376',
-    coverPhotoUrl:
-      'https://dutactstorageaccount.blob.core.windows.net/primary/4fdd9c85-c2d6-4d5d-9239-97c0d1fb5dba.jpg',
-    status: {
-      type: 'hidden'
-    }
-  },
-  {
-    id: 3,
-    eventId: 92,
-    content:
-      'hân dân, không phải ai cũng có thể hạ thấp bản thân mình trước đông đảo khán giả như vậy, đặc biệt là với một người có tuổi, có vị thế hàng đầu, có quân hàm. Một hình ảnh sẽ khiến nhiều ngôi sao phải nhìn lại bản thân. Với',
-    postedAt: '2024-10-29T14:42:50.376',
-    coverPhotoUrl:
-      'https://dutactstorageaccount.blob.core.windows.net/primary/4fdd9c85-c2d6-4d5d-9239-97c0d1fb5dba.jpg',
-    status: {
-      type: 'published'
-    }
-  },
-  {
-    id: 4,
-    eventId: 92,
-    content:
-      'hân dân, kn giả như vậy, đặc biđầu, có quân hàm. Một hình ảnh sẽ khiến nhiều ngôi sao phải nhìn lại bản thân. Với',
-    postedAt: '2024-10-29T14:42:50.376',
-    coverPhotoUrl:
-      'https://dutactstorageaccount.blob.core.windows.net/primary/4fdd9c85-c2d6-4d5d-9239-97c0d1fb5dba.jpg',
-    status: {
-      type: 'published'
-    }
-  },
-  {
-    id: 5,
-    eventId: 92,
-    content:
-      'hân dân, không phải ai cũng có thể hạ thấp bản thân mình trước đông đảo khán giả như vậy, đặc biệt là với một người có tuổi, có vị thế hàng đầu, có quân hàm. Một hình ảnh sẽ khiến nhiều ngôi sao phải nhìn lại bản thân. Với',
-    postedAt: '2024-10-29T14:42:50.376',
-    coverPhotoUrl:
-      'https://dutactstorageaccount.blob.core.windows.net/primary/4fdd9c85-c2d6-4d5d-9239-97c0d1fb5dba.jpg',
-    status: {
-      type: 'published'
-    }
-  },
-  {
-    id: 6,
-    eventId: 92,
-    content:
-      'hân dân, khôngng đảo khán giả như vậy, đặc biệt là với một người có tuổi, có vị thế hàng đầu, có quân hàm. Một hình ảnh sẽ khiến nhiều ngôi sao phải nhìn lại bản thân. Với',
-    postedAt: '2024-10-30T14:42:50.376',
-    coverPhotoUrl:
-      'https://dutactstorageaccount.blob.core.windows.net/primary/4fdd9c85-c2d6-4d5d-9239-97c0d1fb5dba.jpg',
-    status: {
-      type: 'hidden'
-    }
-  },
-  {
-    id: 7,
-    eventId: 92,
-    content:
-      'hân dân, không phải ai cũng có thể hạ thấp bản thân mình trước đông đảo khán giả như vậy, đặc biệt là với một người có tuổi, có vị thế hàng đầu, có quân hàm. Một hình ảnh sẽ khiến nhiều ngôi sao phải nhìn lại bản thân. Với',
-    postedAt: '2024-10-29T14:42:50.376',
-    coverPhotoUrl:
-      'https://dutactstorageaccount.blob.core.windows.net/primary/4fdd9c85-c2d6-4d5d-9239-97c0d1fb5dba.jpg',
-    status: {
-      type: 'published'
-    }
-  },
-  {
-    id: 8,
-    eventId: 92,
-    content:
-      'hân dân, kn giả như vậy, đặc biđầu, có quân hàm. Một hình ảnh sẽ khiến nhiều ngôi sao phải nhìn lại bản thân. Với',
-    postedAt: '2024-10-29T14:42:50.376',
-    coverPhotoUrl:
-      'https://dutactstorageaccount.blob.core.windows.net/primary/4fdd9c85-c2d6-4d5d-9239-97c0d1fb5dba.jpg',
-    status: {
-      type: 'published'
-    }
-  }
-]
+import { useDeletePost } from '../../hooks/useDeletePost'
 
 interface PostTableListProps {
   setIsShowCreatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function PostTableList({ setIsShowCreatePostPopup }: PostTableListProps) {
+  const { openPopupDeletePost } = useDeletePost()
   const { posts: postList, error: postsError } = useEventPosts()
   const posts: Post[] = useMemo(
     () =>
@@ -337,7 +240,7 @@ export default function PostTableList({ setIsShowCreatePostPopup }: PostTableLis
                         </div>
                         <div
                           className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                          // onClick={() => openPopupDeleteEvent(event)}
+                          onClick={() => openPopupDeletePost(post.id)}
                         >
                           <DeleteIcon className='h-[20px] w-[20px]' />
                         </div>

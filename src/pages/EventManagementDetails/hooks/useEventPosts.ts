@@ -9,6 +9,7 @@ interface EventPostsResult {
   isLoading: boolean
   error: ApiError | null
   addPost: (newPost: Post) => void
+  deletePost: (postId: number) => void
 }
 
 export function useEventPosts(): EventPostsResult {
@@ -17,9 +18,15 @@ export function useEventPosts(): EventPostsResult {
 
   const { data: posts = [], isLoading, error } = getPostsOfEvent(eventId)
 
-  const addPost = (newPost: Post) => {
+  const addPost = (newPost: Post): void => {
     queryClient.setQueryData<Post[]>(['getAllPosts', eventId], (oldPosts) => {
       return oldPosts ? [newPost, ...oldPosts] : [newPost]
+    })
+  }
+
+  const deletePost = (postId: number): void => {
+    queryClient.setQueryData<Post[]>(['getAllPosts', eventId], (oldPosts) => {
+      return oldPosts ? oldPosts.filter((post) => post.id !== postId) : []
     })
   }
 
@@ -27,6 +34,7 @@ export function useEventPosts(): EventPostsResult {
     posts,
     isLoading,
     error,
-    addPost
+    addPost,
+    deletePost
   }
 }
