@@ -22,8 +22,6 @@ export default function Tabs({ children }: TabsProps) {
           </div>
         ))}
       </div>
-
-      {/* Active Tab Content */}
       <div className='p-4'>{children[activeIndex]}</div>
     </div>
   )
