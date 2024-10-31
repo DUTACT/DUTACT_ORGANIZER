@@ -5,6 +5,7 @@ import LoadingIndicator from '../LoadingIndicator'
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   title: string
   classButton?: string
+  classButtonDisabled?: string
   classTitle?: string
   classLoadingIndicator?: string
   iconComponent?: ReactNode
@@ -15,6 +16,7 @@ export default function Button({
   type = 'button',
   disabled = false,
   classButton = '',
+  classButtonDisabled = '',
   classTitle = '',
   classLoadingIndicator = '',
   iconComponent,
@@ -23,8 +25,9 @@ export default function Button({
   return (
     <button
       className={cn(
-        'flex w-full items-center justify-center gap-2 border-none px-4 py-2 outline-none hover:outline-none focus:outline-none',
-        classButton
+        'flex w-full items-center justify-center gap-2 border border-transparent px-4 py-2 outline-none hover:outline-none focus:outline-none',
+        classButton,
+        disabled ? classButtonDisabled : ''
       )}
       disabled={disabled}
       {...rest}

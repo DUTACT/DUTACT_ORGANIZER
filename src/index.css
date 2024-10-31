@@ -7,6 +7,11 @@
     --sidebar: 280px;
     --aside: 280px;
     --w-main: calc(100% - var(--sidebar) - var(--aside));
+    --max-w-popup: calc(100vw - 60px);
+    --max-h-popup: calc(100vh - 60px);
+    --h-header-popup: 50px;
+    --h-footer-popup: 70px;
+    --h-main-popup: calc(var(--max-h-popup) - var(--h-header-popup) - var(--h-footer-popup));
     --logo-sm: 32px;
     --logo-md: 40px;
     --logo-lg: 60px;

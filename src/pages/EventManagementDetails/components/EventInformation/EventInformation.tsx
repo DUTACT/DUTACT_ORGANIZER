@@ -122,7 +122,7 @@ export default function EventInformation() {
         </div>
         <div>
           <div className='font-medium'>Thông tin chi tiết</div>
-          <div>{event.content}</div>
+          <div className='whitespace-pre-wrap'>{event.content}</div>
         </div>
       </div>
     </div>
