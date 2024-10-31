@@ -26,10 +26,17 @@ export const getEventModerationUrl = (eventId?: number) => {
   return eventId ? `${BASE_API_URL_ADMIN_EVENT}/${eventId}` : BASE_API_URL_ADMIN_EVENT
 }
 
-// admin-post-controller 
+// admin-post-controller
 
 export const BASE_API_URL_POST = '/api/admin/posts'
 
 export const getPostUrl = (postId?: number) => {
   return postId ? `${BASE_API_URL_POST}/${postId}` : BASE_API_URL_POST
+}
+
+// admin-analytics-event
+export const BASE_API_URL_ANALYTICS_EVENT_REGISTRATION = '/api/admin/analytics/events'
+
+export const getEventRegistrationCountByDateUrl = (eventId: number) => {
+  return `${BASE_API_URL_ANALYTICS_EVENT_REGISTRATION}/${eventId}/registrations`
 }
