@@ -8,6 +8,7 @@ import SortIcon from 'src/components/SortIcon'
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import EditIcon from 'src/assets/icons/i-edit-secondary.svg?react'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
+import AddIcon from 'src/assets/icons/i-plus-white.svg?react'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import { toast } from 'react-toastify'
 import moment from 'moment'
@@ -20,6 +21,7 @@ import {
 import { getStatusMessage } from 'src/utils/common'
 import Tag from 'src/components/Tag'
 import PostFilter from '../PostFilter'
+import Button from 'src/components/Button'
 
 const mockDataPosts: Post[] = [
   {
@@ -120,10 +122,26 @@ const mockDataPosts: Post[] = [
   }
 ]
 
-export default function PostTableList() {
+interface PostTableListProps {
+  setIsShowCreatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export default function PostTableList({ setIsShowCreatePostPopup }: PostTableListProps) {
   const { posts: postList, error: postsError } = useEventPosts()
-  const [posts, setPosts] = useState<Post[]>([])
-  const [filteredPosts, setFilteredPosts] = useState<Post[]>(mockDataPosts)
+  const posts: Post[] = useMemo(
+    () =>
+      postList.map((post: Post) => ({
+        ...post,
+        postedAt: moment(post.postedAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
+        status: {
+          ...post.status,
+          label: getStatusMessage(POST_STATUS_MESSAGES, post.status.type)
+        }
+      })),
+    [postList]
+  )
+
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([])
 
   const [inputSearch, setInputSearch] = useState<string>('')
   const [sortCriteria, setSortCriteria] = useState<SortCriterion<Post>[]>([
@@ -193,20 +211,6 @@ export default function PostTableList() {
   }, [postsError])
 
   useEffect(() => {
-    if (postList) {
-      const newPosts = mockDataPosts.map((post: Post) => ({
-        ...post,
-        postedAt: moment(post.postedAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        status: {
-          ...post.status,
-          label: getStatusMessage(POST_STATUS_MESSAGES, post.status.type)
-        }
-      }))
-      setPosts(newPosts)
-    }
-  }, [postList])
-
-  useEffect(() => {
     const newFilteredPosts = handleSortChange(
       handleFilterEvents(handleSearchPosts(posts, inputSearch), postFilterOptions),
       sortCriteria
@@ -234,22 +238,22 @@ export default function PostTableList() {
             )}
           />
         </div>
-        {/* <div className='flex items-center gap-2'>
-        <Button
-          title='Tạo sự kiện mới'
-          type='button'
-          classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
-          iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
-          onClick={navigateToCreateEventPage}
-        />
-      </div> */}
+        <div className='flex items-center gap-2'>
+          <Button
+            title='Tạo bài đăng mới'
+            type='button'
+            classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
+            iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
+            onClick={() => setIsShowCreatePostPopup(true)}
+          />
+        </div>
       </div>
       <Pagination
         totalItems={filteredPosts.length}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
       />
-      <div className='max-h-main-abs block overflow-auto'>
+      <div className='block max-h-main-abs overflow-auto'>
         {filteredPosts.length > 0 && (
           <table className='relative min-w-full overflow-auto'>
             <thead className='sticky top-0 z-50 bg-neutral-0 before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-neutral-5'>

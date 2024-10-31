@@ -6,7 +6,7 @@ import { ChangePostStatusData, Post, PostBody } from 'src/types/post.type'
 
 export const getPostsOfEvent = (eventId: number, options?: UseQueryOptions<Post[], ApiError>) => {
   return useQuery<Post[], ApiError>({
-    queryKey: ['getAllPosts'],
+    queryKey: ['getAllPosts', eventId],
     queryFn: async () => {
       const response = await queryFetch<Post[]>({
         url: getPostUrl(),

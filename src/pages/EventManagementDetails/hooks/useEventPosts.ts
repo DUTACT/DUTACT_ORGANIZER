@@ -1,28 +1,32 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { getPostsOfEvent } from 'src/apis/post'
 import { ApiError } from 'src/types/client.type'
 import { Post } from 'src/types/post.type'
+import { useEventId } from './useEventId'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface EventPostsResult {
   posts: Post[]
-  setPosts: React.Dispatch<React.SetStateAction<Post[]>>
+  isLoading: boolean
   error: ApiError | null
+  addPost: (newPost: Post) => void
 }
 
 export function useEventPosts(): EventPostsResult {
-  const [posts, setPosts] = useState<Post[]>([])
+  const eventId = useEventId()
+  const queryClient = useQueryClient()
 
-  const { id } = useParams<{ id: string }>()
-  const eventId = parseInt(id ?? '0', 10)
+  const { data: posts = [], isLoading, error } = getPostsOfEvent(eventId)
 
-  const { data: fetchedPosts, error } = getPostsOfEvent(eventId)
+  const addPost = (newPost: Post) => {
+    queryClient.setQueryData<Post[]>(['getAllPosts', eventId], (oldPosts) => {
+      return oldPosts ? [newPost, ...oldPosts] : [newPost]
+    })
+  }
 
-  useEffect(() => {
-    if (fetchedPosts) {
-      setPosts(fetchedPosts)
-    }
-  }, [fetchedPosts])
-
-  return { posts, setPosts, error }
+  return {
+    posts,
+    isLoading,
+    error,
+    addPost
+  }
 }

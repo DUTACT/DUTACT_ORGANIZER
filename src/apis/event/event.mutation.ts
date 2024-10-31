@@ -1,5 +1,6 @@
 import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { mutationFetch, mutationFormData, queryFetch } from 'src/config/queryClient'
+import { STALE_TIME } from 'src/constants/common'
 import {
   BASE_API_URL_ADMIN_EVENT,
   getCloseEventUrlOfOrganizer,
@@ -48,13 +49,14 @@ export const getEventOfOrganizerById = (
   options?: UseQueryOptions<EventOfOrganizer, ApiError>
 ) => {
   return useQuery<EventOfOrganizer, ApiError>({
-    queryKey: ['getEventOfOrganizerById', eventId],
+    queryKey: ['getEventOfOrganizerById', organizerId, eventId],
     queryFn: async () => {
       const response = await queryFetch<EventOfOrganizer>({
         url: getEventUrlOfOrganizer(organizerId, eventId)
       })
       return response
     },
+    staleTime: options?.staleTime ?? STALE_TIME,
     ...options
   })
 }

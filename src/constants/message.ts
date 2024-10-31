@@ -11,5 +11,6 @@ export const SUCCESS_MESSAGE = {
   APPROVE_EVENT: 'Duyệt sự kiện thành công',
   REJECT_EVENT: 'Từ chối sự kiện thành công',
   UPDATE_EVENT: 'Cập nhật sự kiện thành công',
-  CLOSE_EVENT_REGISTRATION: 'Đóng đơn đăng ký sự kiện thành công'
+  CLOSE_EVENT_REGISTRATION: 'Đóng đơn đăng ký sự kiện thành công',
+  CREATE_EVENT_POST: 'Tạo bài đăng mới thành công'
 }
