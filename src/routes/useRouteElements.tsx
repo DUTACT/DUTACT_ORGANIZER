@@ -101,7 +101,7 @@ export default function useRouteElements() {
           path: path.eventModDetails.pattern,
           element: (
             <MainLayout>
-              <EventModerationDetails />
+              <EventManagementDetails />
             </MainLayout>
           )
         }

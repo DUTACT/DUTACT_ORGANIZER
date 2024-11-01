@@ -132,21 +132,39 @@ export default function EventModerationDetails() {
   }
 
   return (
-    <div className='flex h-full flex-col overflow-scroll px-6 pt-3'>
-      <div className='mb-4 mt-2'>
-        <div className='mb-2 flex items-center justify-start align-middle'>
-          <div className='mr-3 text-3xl font-semibold text-neutral-8'>
-            {event.name}
-            <span className='ml-2 inline-block align-middle'>
-              <Tag status={event.status} statusClasses={EVENT_STATUS_COLOR_CLASSES} />
-            </span>
+    <div className='flex w-full flex-col'>
+      <div className='mb-4 mt-2 flex items-start justify-between'>
+        <div className='flex flex-col gap-1'>
+          <div className='mb-2 flex items-center justify-start align-middle'>
+            <div className='mr-3 text-3xl font-semibold text-neutral-8'>
+              {event.name}
+              <span className='ml-2 inline-block align-middle'>
+                <Tag status={event.status} statusClasses={EVENT_STATUS_COLOR_CLASSES} />
+              </span>
+            </div>
+          </div>
+          <div>
+            <div className='flex items-center'>
+              <img src={event.organizer.avatarUrl} alt='avatar' className='h-6 w-6 rounded-full' />
+              <div className='ml-3'>{event.organizer.name}</div>
+            </div>
           </div>
         </div>
-        <div>
-          <div className='flex items-center'>
-            <img src={event.organizer.avatarUrl} alt='avatar' className='h-6 w-6 rounded-full' />
-            <div className='ml-3'>{event.organizer.name}</div>
-          </div>
+        <div className='flex justify-start gap-2'>
+          {event.status.type === 'pending' && (
+            <Fragment>
+              <Button
+                className='min-w-[100px] gap-1 text-nowrap rounded-md border-none bg-semantic-secondary/90 py-2 text-neutral-0 outline-none hover:bg-semantic-secondary focus:border-none focus:outline-none'
+                title='Duyệt'
+                onClick={() => handleApproveEvent(event.id)}
+              ></Button>
+              <Button
+                className='hover:bg-semantic-danger min-w-[100px] gap-1 text-nowrap rounded-md border-none bg-semantic-cancelled/90 py-2 text-neutral-0 outline-none focus:border-none focus:outline-none'
+                title='Từ chối'
+                onClick={() => openPopupRejectEvent(event)}
+              ></Button>
+            </Fragment>
+          )}
         </div>
       </div>
 
@@ -180,22 +198,6 @@ export default function EventModerationDetails() {
           <div className='font-medium'>Thông tin chi tiết</div>
           <div>{event.content}</div>
         </div>
-      </div>
-      <div className='mt-4 flex justify-start gap-4'>
-        {event.status.type === 'pending' && (
-          <Fragment>
-            <Button
-              className='min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
-              title='Duyệt'
-              onClick={() => handleApproveEvent(event.id)}
-            ></Button>
-            <Button
-              className='hover:bg-semantic-danger min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-cancelled/90 text-neutral-0'
-              title='Từ chối'
-              onClick={() => openPopupRejectEvent(event)}
-            ></Button>
-          </Fragment>
-        )}
       </div>
     </div>
   )

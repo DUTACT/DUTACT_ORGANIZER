@@ -9,6 +9,9 @@ import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import EditIcon from 'src/assets/icons/i-edit-secondary.svg?react'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
 import AddIcon from 'src/assets/icons/i-plus-white.svg?react'
+import BlockIcon from 'src/assets/icons/i-block-warning.svg?react'
+import UnlockIcon from 'src/assets/icons/i-unlock-secondary.svg?react'
+
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import { toast } from 'react-toastify'
 import moment from 'moment'
@@ -23,15 +26,24 @@ import Tag from 'src/components/Tag'
 import PostFilter from '../PostFilter'
 import Button from 'src/components/Button'
 import { useDeletePost } from '../../hooks/useDeletePost'
+import { useOrganizerId } from '../../hooks/useOrganizerId'
+import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
+import { useEventId } from '../../hooks/useEventId'
+import { useChangeStatusOfPost } from '../../hooks/useChangeStatusOfPost'
 
 interface PostTableListProps {
-  setIsShowCreatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
+  setIsShowCreateOrUpdatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
   setUpdatedPostId: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-export default function PostTableList({ setIsShowCreatePostPopup, setUpdatedPostId }: PostTableListProps) {
+export default function PostTableList({ setIsShowCreateOrUpdatePostPopup, setUpdatedPostId }: PostTableListProps) {
+  const organizerId = useOrganizerId()
+  const eventId = useEventId()
+  const { event } = useOrganizerEvent(organizerId, eventId)
   const { openPopupDeletePost } = useDeletePost()
   const { posts: postList, error: postsError } = useEventPosts()
+  const { openPopupHidePost, openPopupUnhidePost } = useChangeStatusOfPost()
+
   const posts: Post[] = useMemo(
     () =>
       postList.map((post: Post) => ({
@@ -109,12 +121,12 @@ export default function PostTableList({ setIsShowCreatePostPopup, setUpdatedPost
   }
 
   const openPopupCreatePost = () => {
-    setIsShowCreatePostPopup(true)
+    setIsShowCreateOrUpdatePostPopup(true)
     setUpdatedPostId(undefined)
   }
 
   const openPopupUpdatePost = (postId: number) => {
-    setIsShowCreatePostPopup(true)
+    setIsShowCreateOrUpdatePostPopup(true)
     setUpdatedPostId(postId)
   }
 
@@ -152,15 +164,17 @@ export default function PostTableList({ setIsShowCreatePostPopup, setUpdatedPost
             )}
           />
         </div>
-        <div className='flex items-center gap-2'>
-          <Button
-            title='Tạo bài đăng mới'
-            type='button'
-            classButton='min-w-fit text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
-            iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
-            onClick={openPopupCreatePost}
-          />
-        </div>
+        {organizerId === event?.organizer.id && (
+          <div className='flex items-center gap-2'>
+            <Button
+              title='Tạo bài đăng mới'
+              type='button'
+              classButton='min-w-fit text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
+              iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
+              onClick={openPopupCreatePost}
+            />
+          </div>
+        )}
       </div>
       <Pagination
         totalItems={filteredPosts.length}
@@ -233,7 +247,7 @@ export default function PostTableList({ setIsShowCreatePostPopup, setUpdatedPost
                       />
                     </td>
                     <td className='px-4 py-2 text-sm'>
-                      {post.status.type === 'hidden' && (
+                      {post.status.type === 'removed' && (
                         <Tag status={post.status} statusClasses={POST_STATUS_COLOR_CLASSES} />
                       )}
                     </td>
@@ -251,6 +265,22 @@ export default function PostTableList({ setIsShowCreatePostPopup, setUpdatedPost
                         >
                           <EditIcon className='h-[20px] w-[20px]' />
                         </div>
+                        {post.status.type === 'public' && (
+                          <div
+                            className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
+                            onClick={() => openPopupHidePost(post.id)}
+                          >
+                            <BlockIcon className='h-[20px] w-[20px]' />
+                          </div>
+                        )}
+                        {post.status.type === 'removed' && (
+                          <div
+                            className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
+                            onClick={() => openPopupUnhidePost(post.id)}
+                          >
+                            <UnlockIcon className='h-[20px] w-[20px]' />
+                          </div>
+                        )}
                         <div
                           className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
                           onClick={() => openPopupDeletePost(post.id)}

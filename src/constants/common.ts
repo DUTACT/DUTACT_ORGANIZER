@@ -29,16 +29,16 @@ export const EVENT_STATUS_COLOR_CLASSES: Record<EventStatus, { backgroundColor: 
 }
 
 export const POST_STATUS_MESSAGES: Record<PostStatus, string> = {
-  published: 'Công khai',
-  hidden: 'Đã xóa'
+  public: 'Công khai',
+  removed: 'Đã ẩn'
 }
 
 export const POST_STATUS_COLOR_CLASSES: Record<PostStatus, { backgroundColor: string; textColor: string }> = {
-  published: {
+  public: {
     backgroundColor: 'bg-semantic-success-background',
     textColor: 'text-semantic-success'
   },
-  hidden: {
+  removed: {
     backgroundColor: 'bg-neutral-4',
     textColor: 'text-neutral-7'
   }

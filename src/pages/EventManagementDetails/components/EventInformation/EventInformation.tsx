@@ -105,7 +105,7 @@ export default function EventInformation() {
           </div>
           <div className='flex flex-col items-start gap-2'>
             <span>{moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}</span>
-            {!registrationEnded && (
+            {organizerId === event.organizer.id && !registrationEnded && (
               <Button
                 className='min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-secondary/90 px-3 py-1 text-neutral-0 outline-none hover:bg-semantic-secondary focus:outline-none'
                 title='Đóng đơn đăng ký sớm'

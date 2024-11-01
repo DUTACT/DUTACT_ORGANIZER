@@ -188,7 +188,7 @@ export default function CreateEventPage() {
             showIsRequired={true}
             showError={false}
             classNameWrapper='text-sm w-full flex-1'
-            classNameInput='px-3'
+            classNameInput='px-3 overflow-hidden resize-none'
             control={control}
             name='content'
             autoResize

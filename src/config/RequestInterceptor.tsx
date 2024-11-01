@@ -7,24 +7,37 @@ const RequestInterceptor = () => {
   const location = useLocation()
   const interceptorId = useRef<any>()
 
-  useEffect(() => {
+  const setInterceptor = () => {
     const accessToken = localStorage.getItem('access_token')
-    const parsedToken = accessToken ? JSON.parse(accessToken) : null
-    const tokenString = parsedToken ? parsedToken.toString() : ''
-    console.log(tokenString)
+    const tokenString = accessToken ? JSON.parse(accessToken).toString() : ''
+
     interceptorId.current = client.interceptors.request.use(
-      async (config: any) => {
+      (config: any) => {
         if (tokenString && location.pathname !== path.login) {
           config.headers.Authorization = `Bearer ${tokenString}`
         }
-
         return config
       },
       (error: any) => Promise.reject(error)
     )
+  }
+
+  const onStorageChange = () => {
+    if (interceptorId.current !== undefined) {
+      client.interceptors.request.eject(interceptorId.current)
+    }
+    setInterceptor()
+  }
+
+  useEffect(() => {
+    setInterceptor()
+    window.addEventListener('storage', onStorageChange)
 
     return () => {
-      client.interceptors.response.eject(interceptorId.current)
+      window.removeEventListener('storage', onStorageChange)
+      if (interceptorId.current !== undefined) {
+        client.interceptors.request.eject(interceptorId.current)
+      }
     }
   }, [location])
 
