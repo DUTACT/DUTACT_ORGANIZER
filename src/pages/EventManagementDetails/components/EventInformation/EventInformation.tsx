@@ -3,7 +3,6 @@ import Divider from 'src/components/Divider'
 import Tag from 'src/components/Tag'
 import { DATE_TIME_FORMATS, EVENT_STATUS_COLOR_CLASSES } from 'src/constants/common'
 import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
-import { EventOfOrganizer } from 'src/types/event.type'
 import { useOrganizerId } from '../../hooks/useOrganizerId'
 import { useEventId } from '../../hooks/useEventId'
 import { useDispatch } from 'react-redux'
@@ -12,19 +11,23 @@ import { toast } from 'react-toastify'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
 import Button from 'src/components/Button'
+import { useMemo } from 'react'
 
 export default function EventInformation() {
   const organizerId = useOrganizerId()
   const eventId = useEventId()
   const dispatch = useDispatch()
-  const { event, setEvent, error } = useOrganizerEvent(organizerId, eventId)
+  const { event, updateEvent, error } = useOrganizerEvent(organizerId, eventId)
 
-  const registrationEnded = (event: EventOfOrganizer): boolean => moment(event.endRegistrationAt).isBefore(moment())
+  const registrationEnded = useMemo(
+    () => !!event && moment(event.endRegistrationAt).startOf('minute').isSameOrBefore(moment().startOf('minute')),
+    [event]
+  )
 
   const { mutate: mutateCloseEvent } = closeEvent(organizerId, eventId, {
     onSuccess: (data) => {
       toast.success(SUCCESS_MESSAGE.CLOSE_EVENT_REGISTRATION)
-      setEvent(data)
+      updateEvent(data)
       dispatch(clearModal())
     },
     onError: (error) => {
@@ -37,7 +40,7 @@ export default function EventInformation() {
       return
     }
 
-    if (registrationEnded(event)) {
+    if (registrationEnded) {
       toast.error('Sự kiên đã hết hạn đăng ký, không thể đóng đơn đăng ký sự kiện này')
       return
     }
@@ -98,11 +101,11 @@ export default function EventInformation() {
         <div>
           <div className='font-medium'>
             Thời gian kết thúc đăng ký
-            {registrationEnded(event) && <span className='text-semantic-danger'> (Đã hết hạn đăng ký)</span>}
+            {registrationEnded && <span className='text-semantic-danger'> (Đã hết hạn đăng ký)</span>}
           </div>
           <div className='flex flex-col items-start gap-2'>
             <span>{moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}</span>
-            {!registrationEnded(event) && (
+            {!registrationEnded && (
               <Button
                 className='min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-secondary/90 px-3 py-1 text-neutral-0 outline-none hover:bg-semantic-secondary focus:outline-none'
                 title='Đóng đơn đăng ký sớm'

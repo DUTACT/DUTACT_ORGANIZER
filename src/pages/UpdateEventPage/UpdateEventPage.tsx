@@ -1,4 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useQueryClient } from '@tanstack/react-query'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -9,11 +10,12 @@ import Button from 'src/components/Button'
 import Divider from 'src/components/Divider'
 import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInputFile'
 import Input from 'src/components/Input'
-import { DATE_TIME_FORMATS, TIMEOUT } from 'src/constants/common'
+import { DATE_TIME_FORMATS } from 'src/constants/common'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import useLocalStorage from 'src/hooks/useLocalStorage'
+import { cn } from 'src/lib/tailwind/utils'
 import { path } from 'src/routes/path'
-import { EventBody } from 'src/types/event.type'
+import { EventBody, EventOfOrganizer } from 'src/types/event.type'
 import { getDefaultImageFile, parseJwt } from 'src/utils/common'
 import { eventSchema, EventSchemaType } from 'src/utils/rules'
 
@@ -22,6 +24,7 @@ type FormData = EventSchemaType
 export default function UpdateEventPage() {
   const [accessToken, _] = useLocalStorage<string>('access_token')
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const { id } = useParams()
   const eventId = Number(id) ?? 0
   const organizerId = parseJwt(accessToken)?.organizerId ?? 0
@@ -38,12 +41,11 @@ export default function UpdateEventPage() {
 
   const { data, error, isSuccess } = getEventOfOrganizerById(organizerId, Number(eventId) ?? 0)
 
-  const { mutate } = updateEvent(organizerId, eventId, {
-    onSuccess: () => {
+  const { mutate, isPending } = updateEvent(organizerId, eventId, {
+    onSuccess: (data) => {
       toast.success(SUCCESS_MESSAGE.UPDATE_EVENT)
-      setTimeout(() => {
-        navigate(path.event)
-      }, TIMEOUT.NAVIGATE)
+      queryClient.setQueryData<EventOfOrganizer>(['getEventOfOrganizerById', organizerId, eventId], () => data)
+      navigate(path.event)
     },
     onError: (error) => {
       toast.error(error.message)
@@ -60,7 +62,6 @@ export default function UpdateEventPage() {
       endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.ISO)
     }
     if (removedCoverPhoto) {
-      console.log('true')
       eventBody.coverPhoto = data.coverPhoto
     }
     mutate(eventBody)
@@ -72,7 +73,14 @@ export default function UpdateEventPage() {
 
   useEffect(() => {
     if (isSuccess && data) {
-      reset({ ...data, coverPhoto: getDefaultImageFile() })
+      reset({
+        ...data,
+        startAt: moment(data.startAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
+        endAt: moment(data.endAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
+        startRegistrationAt: moment(data.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
+        endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
+        coverPhoto: getDefaultImageFile()
+      })
     } else if (error) {
       toast.error(error.message)
     }
@@ -88,16 +96,20 @@ export default function UpdateEventPage() {
               Thay đổi kịp thời các thông tin sự kiện của tổ chức
             </div>
           </div>
-          <div className='flex gap-1'>
+          <div className='flex gap-2'>
             <Button
-              title='Cập nhật sự kiện'
+              title={isPending ? 'Đang cập nhật...' : 'Cập nhật sự kiện'}
               type='submit'
-              classButton='min-w-[150px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md'
+              classButton={cn(
+                'min-w-fit text-neutral-0 border-none bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md',
+                { 'cursor-progress opacity-50': isPending }
+              )}
               onClick={onSubmit}
+              disabled={isPending}
             />
             <Button
               title='Quay lại'
-              classButton='min-w-[100px] text-neutral-7 bg-neutral-2 hover:bg-neutral-3 text-nowrap rounded-md'
+              classButton='min-w-[100px] text-neutral-7 border-none bg-neutral-2 hover:bg-neutral-3 text-nowrap rounded-md'
               onClick={navigateToEventManagementPage}
             />
           </div>

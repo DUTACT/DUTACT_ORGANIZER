@@ -14,6 +14,7 @@ import { toast } from 'react-toastify'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { PostBody } from 'src/types/post.type'
 import { useEventPosts } from '../../hooks/useEventPosts'
+import { cn } from 'src/lib/tailwind/utils'
 
 interface CreatePostPopupProps {
   setIsShowCreatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
@@ -35,7 +36,7 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
 
   const isButtonDisabled = !content || !coverPhoto
 
-  const { mutate: mutateCreatePost } = createPost({
+  const { mutate: mutateCreatePost, isPending } = createPost({
     onSuccess: (data) => {
       toast.success(SUCCESS_MESSAGE.CREATE_EVENT_POST)
       addPost(data)
@@ -60,10 +61,10 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
       onClick={() => setIsShowCreatePostPopup(false)}
     >
       <div
-        className='max-w-popup max-h-popup h-fit w-[600px] overflow-hidden rounded-lg bg-neutral-0 shadow-custom'
+        className='h-fit max-h-popup w-[600px] max-w-popup overflow-hidden rounded-lg bg-neutral-0 shadow-custom'
         onClick={(e) => e.stopPropagation()}
       >
-        <div className='h-header-popup flex items-center justify-between px-6'>
+        <div className='flex h-header-popup items-center justify-between px-6'>
           <div className='text-base font-medium text-neutral-7'>Bài đăng mới</div>
           <div
             className='-mr-1 cursor-pointer p-1 opacity-70 hover:opacity-100'
@@ -73,7 +74,7 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
           </div>
         </div>
         <Divider />
-        <div className='max-h-main-popup block overflow-auto px-6 py-4'>
+        <div className='block max-h-main-popup overflow-auto px-6 py-4'>
           <div className='flex w-full flex-1 items-start gap-2'>
             <div className='relative h-logo-md min-h-logo-md w-logo-md min-w-logo-md'>
               <img
@@ -97,7 +98,7 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
             </div>
           </div>
         </div>
-        <div className='h-footer-popup flex items-center justify-between px-6 text-sm'>
+        <div className='flex h-footer-popup items-center justify-between px-6 text-sm'>
           {event && (
             <div className='flex items-center gap-1 text-neutral-5'>
               <span className='min-w-fit'>Sự kiện:</span>
@@ -110,7 +111,10 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
             onClick={onSubmit}
             classButton='w-fit rounded-lg border-neutral-5 bg-neutral-0 px-4 py-[6px] text-base font-medium text-neutral-7 hover:border-neutral-5'
             classButtonDisabled='cursor-not-allowed opacity-40'
-            disabled={isButtonDisabled}
+            disabled={isButtonDisabled || isPending}
+            classLoadingIndicator={cn('', {
+              block: isPending
+            })}
           />
         </div>
       </div>

@@ -13,7 +13,7 @@ import ModalConfirm from 'src/components/ModalConfirm'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: true,
       retry: 0
     }
   }

@@ -1,11 +1,6 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { mutationFetch, mutationFormData } from 'src/config/queryClient'
-import {
-  BASE_API_URL_ADMIN_EVENT,
-  getCloseEventUrlOfOrganizer,
-  getEventModerationUrl,
-  getEventUrlOfOrganizer
-} from 'src/constants/endpoints'
+import { getCloseEventUrlOfOrganizer, getEventModerationUrl, getEventUrlOfOrganizer } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
 import { ChangeEventStatusData, EventBody, EventOfOrganizer } from 'src/types/event.type'
 
@@ -43,8 +38,7 @@ export const approveEvent = (options?: UseMutationOptions<ChangeEventStatusData,
   return useMutation<ChangeEventStatusData, ApiError, number>({
     mutationFn: async (eventId: number) => {
       const response = await mutationFetch<ChangeEventStatusData>({
-        baseURL: getEventModerationUrl(eventId),
-        url: 'approve',
+        url: `${getEventModerationUrl(eventId)}/approve`,
         method: 'POST'
       })
       return { ...response, eventId }
@@ -59,8 +53,7 @@ export const rejectEvent = (
   return useMutation<ChangeEventStatusData, ApiError, { eventId: number; reason: string }>({
     mutationFn: async ({ eventId, reason }) => {
       const response = await mutationFetch<ChangeEventStatusData>({
-        baseURL: getEventModerationUrl(eventId),
-        url: 'reject',
+        url: `${getEventModerationUrl(eventId)}/reject`,
         method: 'POST',
         body: {
           reason

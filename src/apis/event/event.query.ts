@@ -35,6 +35,7 @@ export const getEventOfOrganizerById = (
       return response
     },
     staleTime: options?.staleTime ?? STALE_TIME,
+    refetchOnWindowFocus: true,
     ...options
   })
 }
