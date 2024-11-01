@@ -26,9 +26,10 @@ import { useDeletePost } from '../../hooks/useDeletePost'
 
 interface PostTableListProps {
   setIsShowCreatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
+  setUpdatedPostId: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-export default function PostTableList({ setIsShowCreatePostPopup }: PostTableListProps) {
+export default function PostTableList({ setIsShowCreatePostPopup, setUpdatedPostId }: PostTableListProps) {
   const { openPopupDeletePost } = useDeletePost()
   const { posts: postList, error: postsError } = useEventPosts()
   const posts: Post[] = useMemo(
@@ -107,6 +108,16 @@ export default function PostTableList({ setIsShowCreatePostPopup }: PostTableLis
     setCurrentPage(1)
   }
 
+  const openPopupCreatePost = () => {
+    setIsShowCreatePostPopup(true)
+    setUpdatedPostId(undefined)
+  }
+
+  const openPopupUpdatePost = (postId: number) => {
+    setIsShowCreatePostPopup(true)
+    setUpdatedPostId(postId)
+  }
+
   useEffect(() => {
     if (postsError) {
       toast.error(postsError.message)
@@ -145,9 +156,9 @@ export default function PostTableList({ setIsShowCreatePostPopup }: PostTableLis
           <Button
             title='Tạo bài đăng mới'
             type='button'
-            classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
+            classButton='min-w-fit text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
             iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
-            onClick={() => setIsShowCreatePostPopup(true)}
+            onClick={openPopupCreatePost}
           />
         </div>
       </div>
@@ -209,7 +220,9 @@ export default function PostTableList({ setIsShowCreatePostPopup }: PostTableLis
                       </div>
                     </td>
                     <td className='px-4 py-2'>
-                      <div className='line-clamp-6 overflow-hidden text-sm font-normal'>{post.content}</div>
+                      <div className='line-clamp-6 overflow-hidden whitespace-pre-wrap text-sm font-normal'>
+                        {post.content}
+                      </div>
                     </td>
                     <td className='px-4 py-2 text-sm'>{post.postedAt}</td>
                     <td className='flex items-center justify-center px-4 py-2 text-sm'>
@@ -234,7 +247,7 @@ export default function PostTableList({ setIsShowCreatePostPopup }: PostTableLis
                         </div>
                         <div
                           className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                          // onClick={() => navigateToUpdateEventPage(event.id)}
+                          onClick={() => openPopupUpdatePost(post.id)}
                         >
                           <EditIcon className='h-[20px] w-[20px]' />
                         </div>

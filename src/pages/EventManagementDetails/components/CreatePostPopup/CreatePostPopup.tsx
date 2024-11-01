@@ -9,24 +9,34 @@ import { useOrganizerId } from '../../hooks/useOrganizerId'
 import { useEventId } from '../../hooks/useEventId'
 import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
 import { useForm, useWatch } from 'react-hook-form'
-import { createPost } from 'src/apis/post'
+import { createPost, updatePost } from 'src/apis/post'
 import { toast } from 'react-toastify'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { PostBody } from 'src/types/post.type'
 import { useEventPosts } from '../../hooks/useEventPosts'
 import { cn } from 'src/lib/tailwind/utils'
+import { usePost } from '../../hooks/usePost'
+import { useEffect, useState } from 'react'
+import { getDefaultImageFile } from 'src/utils/common'
 
 interface CreatePostPopupProps {
   setIsShowCreatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
+  updatedPostId: number | undefined
+  setUpdatedPostId: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePostPopupProps) {
+export default function CreatePostPopup({
+  setIsShowCreatePostPopup,
+  updatedPostId,
+  setUpdatedPostId
+}: CreatePostPopupProps) {
   const organizerId = useOrganizerId()
   const eventId = useEventId()
   const { event } = useOrganizerEvent(organizerId, eventId)
   const { addPost } = useEventPosts()
+  const [removedCoverPhoto, setRemovedCoverPhoto] = useState<boolean>(false)
 
-  const { control, handleSubmit } = useForm<{
+  const { control, handleSubmit, setValue, reset } = useForm<{
     content: string
     coverPhoto: File
   }>()
@@ -36,7 +46,20 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
 
   const isButtonDisabled = !content || !coverPhoto
 
-  const { mutate: mutateCreatePost, isPending } = createPost({
+  const { post, updatePostInList } = updatedPostId
+    ? usePost(updatedPostId)
+    : { post: undefined, updatePostInList: undefined }
+
+  useEffect(() => {
+    if (updatedPostId && post) {
+      setValue('content', post.content)
+      setValue('coverPhoto', getDefaultImageFile())
+    } else {
+      reset()
+    }
+  }, [post, updatedPostId, setValue])
+
+  const { mutate: mutateCreatePost, isPending: isCreatingPostPending } = createPost({
     onSuccess: (data) => {
       toast.success(SUCCESS_MESSAGE.CREATE_EVENT_POST)
       addPost(data)
@@ -47,12 +70,33 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
     }
   })
 
-  const onSubmit = handleSubmit((data) => {
-    const postBody: PostBody = {
-      ...data,
-      eventId
+  const { mutate: mutateUpdatePost, isPending: isUpdatingPostPending } = updatePost(updatedPostId as number, {
+    onSuccess: (data) => {
+      toast.success(SUCCESS_MESSAGE.UPDATE_EVENT_POST)
+      updatePostInList && updatePostInList(data)
+      setIsShowCreatePostPopup(false)
+    },
+    onError: (error) => {
+      toast.error(error.message)
     }
-    mutateCreatePost(postBody)
+  })
+
+  const onSubmit = handleSubmit((data) => {
+    if (updatedPostId) {
+      const postBody: Partial<PostBody> = {
+        content: data.content
+      }
+      if (removedCoverPhoto) {
+        postBody.coverPhoto = data.coverPhoto
+      }
+      mutateUpdatePost(postBody)
+    } else {
+      const postBody: PostBody = {
+        ...data,
+        eventId
+      }
+      mutateCreatePost(postBody)
+    }
   })
 
   return createPortal(
@@ -65,7 +109,9 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
         onClick={(e) => e.stopPropagation()}
       >
         <div className='flex h-header-popup items-center justify-between px-6'>
-          <div className='text-base font-medium text-neutral-7'>Bài đăng mới</div>
+          <div className='text-base font-medium text-neutral-7'>
+            {updatedPostId ? 'Chỉnh sửa bài đăng' : 'Bài đăng mới'}
+          </div>
           <div
             className='-mr-1 cursor-pointer p-1 opacity-70 hover:opacity-100'
             onClick={() => setIsShowCreatePostPopup(false)}
@@ -94,7 +140,14 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
                 classNameInput='mt-0 h-auto min-h-fit w-full resize-none overflow-hidden rounded-none border-none p-0 text-sm focus:outline-transparent'
                 autoResize
               />
-              <DraggableInputFile name='coverPhoto' control={control} classNameWrapper='text-sm w-full flex-1' />
+              <DraggableInputFile
+                name='coverPhoto'
+                control={control}
+                classNameWrapper='text-sm w-full flex-1'
+                initialImageUrl={post?.coverPhotoUrl}
+                removedInitialImage={removedCoverPhoto}
+                setRemovedInitialImage={setRemovedCoverPhoto}
+              />
             </div>
           </div>
         </div>
@@ -111,10 +164,11 @@ export default function CreatePostPopup({ setIsShowCreatePostPopup }: CreatePost
             onClick={onSubmit}
             classButton='w-fit rounded-lg border-neutral-5 bg-neutral-0 px-4 py-[6px] text-base font-medium text-neutral-7 hover:border-neutral-5'
             classButtonDisabled='cursor-not-allowed opacity-40'
-            disabled={isButtonDisabled || isPending}
-            classLoadingIndicator={cn('', {
-              block: isPending
+            disabled={isButtonDisabled || isCreatingPostPending || isUpdatingPostPending}
+            classWrapperLoading={cn('', {
+              block: isCreatingPostPending || isUpdatingPostPending
             })}
+            classLoadingIndicator='text-neutral-7 fill-neutral-7'
           />
         </div>
       </div>

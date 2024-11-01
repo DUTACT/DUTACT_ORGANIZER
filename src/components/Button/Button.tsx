@@ -7,6 +7,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   classButton?: string
   classButtonDisabled?: string
   classTitle?: string
+  classWrapperLoading?: string
   classLoadingIndicator?: string
   iconComponent?: ReactNode
 }
@@ -18,6 +19,7 @@ export default function Button({
   classButton = '',
   classButtonDisabled = '',
   classTitle = '',
+  classWrapperLoading = '',
   classLoadingIndicator = '',
   iconComponent,
   ...rest
@@ -32,7 +34,7 @@ export default function Button({
       disabled={disabled}
       {...rest}
     >
-      <LoadingIndicator classWrapper={classLoadingIndicator} />
+      <LoadingIndicator classWrapper={classWrapperLoading} classLoadingIndicator={classLoadingIndicator} />
       {iconComponent && iconComponent}
       <span className={cn('test-base font-medium', classTitle)}>{title}</span>
     </button>

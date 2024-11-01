@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useRef, useState } from 'react'
+import { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useController, type FieldPath, type FieldValues, type UseControllerProps } from 'react-hook-form'
 import FormFieldWrapper from 'src/components/FormFieldWrapper'
 import { cn } from 'src/lib/tailwind/utils'
@@ -62,6 +62,12 @@ export default function Input<
       setLocalValue(field.value || '')
     }
   }, [field.value, hasController])
+
+  useLayoutEffect(() => {
+    if (variant === 'textarea' && autoResize) {
+      adjustHeight()
+    }
+  }, [localValue, autoResize, variant])
 
   const adjustHeight = () => {
     if (textareaRef.current && autoResize) {

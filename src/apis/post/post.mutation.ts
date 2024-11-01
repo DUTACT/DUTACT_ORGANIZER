@@ -48,8 +48,8 @@ export const deletePost = (options?: UseMutationOptions<number, ApiError, number
   })
 }
 
-export const updatePost = (postId: number, options?: UseMutationOptions<Post, ApiError, Partial<Post>>) => {
-  return useMutation<Post, ApiError, Partial<Post>>({
+export const updatePost = (postId: number, options?: UseMutationOptions<Post, ApiError, Partial<PostBody>>) => {
+  return useMutation<Post, ApiError, Partial<PostBody>>({
     mutationFn: async (body) => {
       const response = await mutationFormData<Post>({
         url: getPostUrl(postId),

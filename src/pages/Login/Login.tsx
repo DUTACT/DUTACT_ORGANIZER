@@ -76,7 +76,7 @@ export default function Login() {
           type='button'
           classButton='bg-primary/90 hover:bg-primary mt-4'
           classTitle='uppercase font-semibold text-neutral-0 test-base tracking-wide'
-          classLoadingIndicator={cn('', {
+          classWrapperLoading={cn('', {
             block: isPending
           })}
           disabled={isPending}

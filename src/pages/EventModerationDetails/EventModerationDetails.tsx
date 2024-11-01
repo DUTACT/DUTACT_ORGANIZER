@@ -119,6 +119,7 @@ export default function EventModerationDetails() {
   const handleRejectEvent = ({ eventId, reason }: { eventId: number; reason: string }) => {
     if (reason) {
       mutateRejectEvent({ eventId, reason })
+      dispatch(clearModal())
     }
   }
 
