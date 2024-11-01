@@ -19,17 +19,15 @@ import { usePost } from '../../hooks/usePost'
 import { useEffect, useState } from 'react'
 import { getDefaultImageFile } from 'src/utils/common'
 
-interface CreatePostPopupProps {
-  setIsShowCreatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
+interface CreateOrUpdatePostPopupProps {
+  setIsShowCreateOrUpdatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
   updatedPostId: number | undefined
-  setUpdatedPostId: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-export default function CreatePostPopup({
-  setIsShowCreatePostPopup,
-  updatedPostId,
-  setUpdatedPostId
-}: CreatePostPopupProps) {
+export default function CreateOrUpdatePostPopup({
+  setIsShowCreateOrUpdatePostPopup,
+  updatedPostId
+}: CreateOrUpdatePostPopupProps) {
   const organizerId = useOrganizerId()
   const eventId = useEventId()
   const { event } = useOrganizerEvent(organizerId, eventId)
@@ -63,7 +61,7 @@ export default function CreatePostPopup({
     onSuccess: (data) => {
       toast.success(SUCCESS_MESSAGE.CREATE_EVENT_POST)
       addPost(data)
-      setIsShowCreatePostPopup(false)
+      setIsShowCreateOrUpdatePostPopup(false)
     },
     onError: (error) => {
       toast.error(error.message)
@@ -74,7 +72,7 @@ export default function CreatePostPopup({
     onSuccess: (data) => {
       toast.success(SUCCESS_MESSAGE.UPDATE_EVENT_POST)
       updatePostInList && updatePostInList(data)
-      setIsShowCreatePostPopup(false)
+      setIsShowCreateOrUpdatePostPopup(false)
     },
     onError: (error) => {
       toast.error(error.message)
@@ -102,7 +100,7 @@ export default function CreatePostPopup({
   return createPortal(
     <div
       className='fixed left-0 right-0 top-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-overlay'
-      onClick={() => setIsShowCreatePostPopup(false)}
+      onClick={() => setIsShowCreateOrUpdatePostPopup(false)}
     >
       <div
         className='h-fit max-h-popup w-[600px] max-w-popup overflow-hidden rounded-lg bg-neutral-0 shadow-custom'
@@ -114,7 +112,7 @@ export default function CreatePostPopup({
           </div>
           <div
             className='-mr-1 cursor-pointer p-1 opacity-70 hover:opacity-100'
-            onClick={() => setIsShowCreatePostPopup(false)}
+            onClick={() => setIsShowCreateOrUpdatePostPopup(false)}
           >
             <CloseIcon className='h-[20px] w-[20px]' />
           </div>

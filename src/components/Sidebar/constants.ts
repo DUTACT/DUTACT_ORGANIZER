@@ -36,6 +36,6 @@ export const SIDEBAR_ROUTES = [
     name: 'Kiểm duyệt sự kiện',
     icon: EventModIcon,
     iconActive: EventModActiveIcon,
-    userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
+    userRoles: [USER_ROLE.ADMIN, USER_ROLE.STUDENT_AFFAIRS_OFFICE]
   }
 ]

@@ -54,7 +54,7 @@ export default function PostFilter({ onSendFilterOptions, onClosePopover }: Prop
             />
           </div>
           <div className='flex items-center'>
-            <div className='min-w-[50px] text-sm font-medium text-neutral-7'>Đến: </div>
+          <div className='min-w-[50px] text-sm font-medium text-neutral-7'>Đến: </div>
             <Input
               type='date'
               showIsRequired={true}

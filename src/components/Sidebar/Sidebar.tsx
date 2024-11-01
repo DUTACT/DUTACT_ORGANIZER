@@ -8,6 +8,7 @@ import LogOutIcon from 'src/assets/icons/i-logout.svg?react'
 import { useAppContext } from 'src/contexts/app.context'
 import useLocalStorage from 'src/hooks/useLocalStorage'
 import { parseJwt } from 'src/utils/common'
+import { setupToken } from 'src/config/queryClient'
 
 export default function Sidebar() {
   const { setIsAuthenticated } = useAppContext()
@@ -17,6 +18,7 @@ export default function Sidebar() {
   const handleLogOut = () => {
     localStorage.removeItem('access_token')
     setIsAuthenticated(false)
+    setupToken('')
   }
 
   return (

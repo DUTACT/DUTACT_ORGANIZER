@@ -14,5 +14,7 @@ export const SUCCESS_MESSAGE = {
   CLOSE_EVENT_REGISTRATION: 'Đóng đơn đăng ký sự kiện thành công',
   CREATE_EVENT_POST: 'Tạo bài đăng mới thành công',
   DELETE_EVENT_POST: 'Xóa bài đăng thành công',
-  UPDATE_EVENT_POST: 'Cập nhật bài đăng thành công'
+  UPDATE_EVENT_POST: 'Cập nhật bài đăng thành công',
+  HIDE_EVENT_POST: 'Ẩn bài đăng thành công',
+  UNHIDE_EVENT_POST: 'Hiện lại bài đăng thành công',
 }

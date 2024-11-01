@@ -1,4 +1,4 @@
-export type PostStatus = 'published' | 'hidden'
+export type PostStatus = 'public' | 'removed'
 
 export interface Post {
   id: number

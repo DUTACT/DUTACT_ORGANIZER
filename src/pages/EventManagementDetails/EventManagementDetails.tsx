@@ -1,38 +1,42 @@
 import PostTableList from './components/PostTableList'
 import EventInformation from './components/EventInformation'
-import CreatePostPopup from './components/CreatePostPopup/CreatePostPopup'
+import CreateOrUpdatePostPopup from './components/CreateOrUpdatePostPopup'
 import { useState } from 'react'
 import { Tab, Tabs } from 'src/components/Tab'
 import EventRegistrations from './components/EventRegistrations'
+import { matchPath, useLocation } from 'react-router-dom'
+import { path } from 'src/routes/path'
+import EventModerationDetails from 'src/pages/EventModerationDetails'
 
 export default function EventManagementDetails() {
-  const [isShowCreatePostPopup, setIsShowCreatePostPopup] = useState<boolean>(false)
+  const location = useLocation()
+  const isEventModDetails = matchPath({ path: path.eventModDetails.pattern, end: true }, location.pathname)
+
+  const [isShowCreateOrUpdatePostPopup, setIsShowCreateOrUpdatePostPopup] = useState<boolean>(false)
   const [updatedPostId, setUpdatedPostId] = useState<number | undefined>()
   return (
     <>
       <div className='relative flex h-full flex-col overflow-y-auto px-6 py-3'>
         <Tabs>
           <Tab label='Tổng quan'>
-            <EventInformation />
+            {isEventModDetails && <EventModerationDetails />}
+            {!isEventModDetails && <EventInformation />}
           </Tab>
           <Tab label='Bài đăng'>
-            <PostTableList setIsShowCreatePostPopup={setIsShowCreatePostPopup} setUpdatedPostId={setUpdatedPostId} />
+            <PostTableList
+              setIsShowCreateOrUpdatePostPopup={setIsShowCreateOrUpdatePostPopup}
+              setUpdatedPostId={setUpdatedPostId}
+            />
           </Tab>
           <Tab label='Đơn đăng ký'>
             <EventRegistrations />
           </Tab>
         </Tabs>
-        {/* <div>
-          <header className='mb-4 text-2xl font-semibold'>Bài đăng về sự kiện</header>
-          <main>
-          </main>
-        </div> */}
       </div>
-      {isShowCreatePostPopup && (
-        <CreatePostPopup
-          setIsShowCreatePostPopup={setIsShowCreatePostPopup}
+      {isShowCreateOrUpdatePostPopup && (
+        <CreateOrUpdatePostPopup
+          setIsShowCreateOrUpdatePostPopup={setIsShowCreateOrUpdatePostPopup}
           updatedPostId={updatedPostId}
-          setUpdatedPostId={setUpdatedPostId}
         />
       )}
     </>
