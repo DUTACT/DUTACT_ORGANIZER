@@ -25,8 +25,7 @@ export const changeStatusOfPost = (
   return useMutation<ChangePostStatusData, ApiError, ChangePostStatusData>({
     mutationFn: async (body) => {
       const response = await mutationFetch<ChangePostStatusData>({
-        baseURL: getPostUrl(postId),
-        url: '/status',
+        url: `${getPostUrl(postId)}/status`,
         method: 'PUT',
         body
       })
@@ -44,6 +43,20 @@ export const deletePost = (options?: UseMutationOptions<number, ApiError, number
         method: 'DELETE'
       })
       return postId
+    },
+    ...options
+  })
+}
+
+export const updatePost = (postId: number, options?: UseMutationOptions<Post, ApiError, Partial<Post>>) => {
+  return useMutation<Post, ApiError, Partial<Post>>({
+    mutationFn: async (body) => {
+      const response = await mutationFormData<Post>({
+        url: getPostUrl(postId),
+        method: 'PATCH',
+        body
+      })
+      return response
     },
     ...options
   })

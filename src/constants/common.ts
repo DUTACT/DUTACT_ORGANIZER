@@ -50,7 +50,7 @@ export const TIMEOUT = {
   NAVIGATE: 1000
 }
 
-export const STALE_TIME = 5 * 60 * 1000
+export const STALE_TIME = 60 * 1000
 
 export const DATE_TIME_FORMATS = {
   ISO: 'YYYY-MM-DDTHH:mm:ss.SSS',
@@ -58,7 +58,8 @@ export const DATE_TIME_FORMATS = {
   DATE_WITHOUT_YEAR: 'DD/MM',
   TIME: 'HH:mm:ss',
   DATE_TIME: 'YYYY-MM-DD HH:mm:ss',
-  DATE_TIME_COMMON: 'DD/MM/YYYY HH:mm'
+  DATE_TIME_COMMON: 'DD/MM/YYYY HH:mm',
+  DATE_TIME_LOCAL: 'YYYY-MM-DDTHH:mm'
 }
 
 export const INITIAL_ITEMS_PER_PAGE = 10

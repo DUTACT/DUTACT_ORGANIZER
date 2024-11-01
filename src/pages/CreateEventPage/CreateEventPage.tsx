@@ -8,9 +8,10 @@ import Button from 'src/components/Button'
 import Divider from 'src/components/Divider'
 import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInputFile'
 import Input from 'src/components/Input'
-import { DATE_TIME_FORMATS, TIMEOUT } from 'src/constants/common'
+import { DATE_TIME_FORMATS } from 'src/constants/common'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import useLocalStorage from 'src/hooks/useLocalStorage'
+import { cn } from 'src/lib/tailwind/utils'
 import { path } from 'src/routes/path'
 import { EventBody } from 'src/types/event.type'
 import { parseJwt } from 'src/utils/common'
@@ -30,12 +31,10 @@ export default function CreateEventPage() {
     resolver: yupResolver(eventSchema)
   })
 
-  const { mutate } = createEvent(parseJwt(accessToken)?.organizerId, {
+  const { mutate, isPending } = createEvent(parseJwt(accessToken)?.organizerId, {
     onSuccess: () => {
       toast.success(SUCCESS_MESSAGE.CREATE_EVENT)
-      setTimeout(() => {
-        navigate(path.event)
-      }, TIMEOUT.NAVIGATE)
+      navigate(path.event)
     },
     onError: (error) => {
       toast.error(error.message)
@@ -69,16 +68,20 @@ export default function CreateEventPage() {
               Tạo ra các sự kiện mới tiếp cận các sinh viên Trường Đại học Bách khoa Đà Nẵng
             </div>
           </div>
-          <div className='flex gap-1'>
+          <div className='flex gap-2'>
             <Button
-              title='Tạo sự kiện'
+              title={isPending ? 'Đang tạo...' : 'Tạo sự kiện'}
               type='submit'
-              classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md'
+              classButton={cn(
+                'min-w-fit text-neutral-0 border-none bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md',
+                { 'cursor-progress opacity-50': isPending }
+              )}
               onClick={onSubmit}
+              disabled={isPending}
             />
             <Button
               title='Quay lại'
-              classButton='min-w-[100px] text-neutral-7 bg-neutral-2 hover:bg-neutral-3 text-nowrap rounded-md'
+              classButton='min-w-[100px] text-neutral-7 border-none bg-neutral-2 hover:bg-neutral-3 text-nowrap rounded-md'
               onClick={navigateToEventManagementPage}
             />
           </div>
@@ -188,6 +191,7 @@ export default function CreateEventPage() {
             classNameInput='px-3'
             control={control}
             name='content'
+            autoResize
           />
         </div>
         <div className='flex w-full gap-4'>

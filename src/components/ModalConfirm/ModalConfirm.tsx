@@ -39,13 +39,13 @@ export default function ModalConfirm() {
           <div className='mt-6 flex items-center gap-2'>
             <Button
               title={titleCancel}
-              classButton='text-neutral-7 text-nowrap rounded-md bg-neutral-0 hover:bg-neutral-2'
+              classButton='text-neutral-7 text-nowrap border-none rounded-md bg-neutral-0 hover:bg-neutral-2'
               onClick={actionCancel}
             />
             <Button
               title={titleConfirm}
               classButton={cn(
-                'text-neutral-0 text-nowrap rounded-md bg-semantic-secondary/90 hover:bg-semantic-secondary',
+                'text-neutral-0 text-nowrap border-none rounded-md bg-semantic-secondary/90 hover:bg-semantic-secondary',
                 {
                   'bg-semantic-cancelled/90 hover:bg-semantic-cancelled': isWarning
                 }
