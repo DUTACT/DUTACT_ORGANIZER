@@ -7,13 +7,20 @@ import EventRegistrations from './components/EventRegistrations'
 import { matchPath, useLocation } from 'react-router-dom'
 import { path } from 'src/routes/path'
 import EventModerationDetails from 'src/pages/EventModerationDetails'
+import { useSelector } from 'react-redux'
+import { eventPostDetailState } from 'src/redux/store'
+import EventPostDetailPopup from './components/EventPostDetailPopup'
+import { EventOfOrganizer } from 'src/types/event.type'
+import { Post } from 'src/types/post.type'
 
 export default function EventManagementDetails() {
   const location = useLocation()
   const isEventModDetails = matchPath({ path: path.eventModDetails.pattern, end: true }, location.pathname)
 
+  const { isShowEventPostDetailPopup, event, post } = useSelector(eventPostDetailState)
   const [isShowCreateOrUpdatePostPopup, setIsShowCreateOrUpdatePostPopup] = useState<boolean>(false)
   const [updatedPostId, setUpdatedPostId] = useState<number | undefined>()
+
   return (
     <>
       <div className='relative flex h-full flex-col overflow-y-auto px-6 py-3'>
@@ -39,6 +46,7 @@ export default function EventManagementDetails() {
           updatedPostId={updatedPostId}
         />
       )}
+      {isShowEventPostDetailPopup && <EventPostDetailPopup event={event as EventOfOrganizer} post={post as Post} />}
     </>
   )
 }

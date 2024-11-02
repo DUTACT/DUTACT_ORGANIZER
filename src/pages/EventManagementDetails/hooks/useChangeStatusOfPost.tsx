@@ -23,6 +23,7 @@ export const useChangeStatusOfPost = (): UseChangeStatusOfPostResult => {
   const renderUnlockIcon: ReactNode = <UnlockIcon className='h-[20px] w-[20px]' />
   const [postId, setPostId] = useState<number>(0)
 
+
   const { mutate: mutateChangeStatusOfPost } = changeStatusOfPost(postId, {
     onSuccess: (data: ChangePostStatusData) => {
       toast.success(data.type === 'removed' ? SUCCESS_MESSAGE.HIDE_EVENT_POST : SUCCESS_MESSAGE.UNHIDE_EVENT_POST)
