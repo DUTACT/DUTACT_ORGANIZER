@@ -19,7 +19,8 @@ import {
   DATE_TIME_FORMATS,
   INITIAL_ITEMS_PER_PAGE,
   POST_STATUS_COLOR_CLASSES,
-  POST_STATUS_MESSAGES
+  POST_STATUS_MESSAGES,
+  USER_ROLE
 } from 'src/constants/common'
 import { getStatusMessage } from 'src/utils/common'
 import Tag from 'src/components/Tag'
@@ -30,6 +31,8 @@ import { useOrganizerId } from '../../hooks/useOrganizerId'
 import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
 import { useEventId } from '../../hooks/useEventId'
 import { useChangeStatusOfPost } from '../../hooks/useChangeStatusOfPost'
+import { useUserRole } from '../../hooks/useUserRole'
+import { useEventForModeration } from '../../hooks/useEventForModeration'
 
 interface PostTableListProps {
   setIsShowCreateOrUpdatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
@@ -39,7 +42,11 @@ interface PostTableListProps {
 export default function PostTableList({ setIsShowCreateOrUpdatePostPopup, setUpdatedPostId }: PostTableListProps) {
   const organizerId = useOrganizerId()
   const eventId = useEventId()
-  const { event } = useOrganizerEvent(organizerId, eventId)
+  const userRole = useUserRole()
+  const { event } =
+    userRole === USER_ROLE.STUDENT_AFFAIRS_OFFICE
+      ? useEventForModeration(eventId)
+      : useOrganizerEvent(organizerId, eventId)
   const { openPopupDeletePost } = useDeletePost()
   const { posts: postList, error: postsError } = useEventPosts()
   const { openPopupHidePost, openPopupUnhidePost } = useChangeStatusOfPost()
@@ -265,7 +272,7 @@ export default function PostTableList({ setIsShowCreateOrUpdatePostPopup, setUpd
                         >
                           <EditIcon className='h-[20px] w-[20px]' />
                         </div>
-                        {post.status.type === 'public' && (
+                        {userRole === USER_ROLE.STUDENT_AFFAIRS_OFFICE && post.status.type === 'public' && (
                           <div
                             className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
                             onClick={() => openPopupHidePost(post.id)}
@@ -273,7 +280,7 @@ export default function PostTableList({ setIsShowCreateOrUpdatePostPopup, setUpd
                             <BlockIcon className='h-[20px] w-[20px]' />
                           </div>
                         )}
-                        {post.status.type === 'removed' && (
+                        {userRole === USER_ROLE.STUDENT_AFFAIRS_OFFICE && post.status.type === 'removed' && (
                           <div
                             className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
                             onClick={() => openPopupUnhidePost(post.id)}

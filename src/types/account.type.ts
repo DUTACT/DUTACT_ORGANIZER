@@ -6,3 +6,5 @@ export interface AuthBody {
 export interface AuthResponse {
   accessToken: string
 }
+
+export type UserRole = 'ADMIN' | 'STUDENT_AFFAIRS_OFFICE' | 'EVENT_ORGANIZER'
