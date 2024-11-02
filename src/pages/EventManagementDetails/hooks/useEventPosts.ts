@@ -1,7 +1,7 @@
 import { getPostsOfEvent } from 'src/apis/post'
 import { ApiError } from 'src/types/client.type'
 import { Post, PostStatus } from 'src/types/post.type'
-import { useEventId } from './useEventId'
+import { useEventId } from '../../../hooks/useEventId'
 import { useQueryClient } from '@tanstack/react-query'
 import { getStatusMessage } from 'src/utils/common'
 import { POST_STATUS_MESSAGES } from 'src/constants/common'

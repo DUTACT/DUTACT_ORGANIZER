@@ -36,6 +36,7 @@ export default function FilterPopover({ content }: Props) {
           {content(onClosePopover)}
         </div>
       }
+      onClose={() => setIsPopoverOpen(false)}
     >
       <div
         ref={setReferenceElement}
