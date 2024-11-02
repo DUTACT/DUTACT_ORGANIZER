@@ -216,9 +216,10 @@ export default function UpdateEventPage() {
             showIsRequired={true}
             showError={false}
             classNameWrapper='text-sm w-full flex-1'
-            classNameInput='px-3'
+            classNameInput='px-3 overflow-hidden'
             control={control}
             name='content'
+            autoResize
           />
         </div>
         <div className='flex w-full gap-4'>

@@ -33,6 +33,9 @@ import { useEventId } from '../../hooks/useEventId'
 import { useChangeStatusOfPost } from '../../hooks/useChangeStatusOfPost'
 import { useUserRole } from '../../hooks/useUserRole'
 import { useEventForModeration } from '../../hooks/useEventForModeration'
+import { EventOfOrganizer } from 'src/types/event.type'
+import { useDispatch } from 'react-redux'
+import { setEventPostDetailState } from 'src/redux/slices/eventPostDetail'
 
 interface PostTableListProps {
   setIsShowCreateOrUpdatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
@@ -40,6 +43,7 @@ interface PostTableListProps {
 }
 
 export default function PostTableList({ setIsShowCreateOrUpdatePostPopup, setUpdatedPostId }: PostTableListProps) {
+  const dispatch = useDispatch()
   const organizerId = useOrganizerId()
   const eventId = useEventId()
   const userRole = useUserRole()
@@ -61,7 +65,7 @@ export default function PostTableList({ setIsShowCreateOrUpdatePostPopup, setUpd
           label: getStatusMessage(POST_STATUS_MESSAGES, post.status.type)
         }
       })),
-    [postList]
+    [JSON.stringify(postList)]
   )
 
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([])
@@ -135,6 +139,16 @@ export default function PostTableList({ setIsShowCreateOrUpdatePostPopup, setUpd
   const openPopupUpdatePost = (postId: number) => {
     setIsShowCreateOrUpdatePostPopup(true)
     setUpdatedPostId(postId)
+  }
+
+  const openPopupDetailPost = (event: EventOfOrganizer, post: Post) => {
+    dispatch(
+      setEventPostDetailState({
+        isShowEventPostDetailPopup: true,
+        event,
+        post
+      })
+    )
   }
 
   useEffect(() => {
@@ -262,7 +276,7 @@ export default function PostTableList({ setIsShowCreateOrUpdatePostPopup, setUpd
                       <div className='flex items-center justify-center gap-1'>
                         <div
                           className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                          // onClick={() => navigateToEventDetailsPage(event.id)}
+                          onClick={() => openPopupDetailPost(event as EventOfOrganizer, post)}
                         >
                           <ShowDetailIcon className='h-[20px] w-[20px]' />
                         </div>
