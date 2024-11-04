@@ -8,6 +8,7 @@ import CreateCheckInCodePopup from './CreateCheckInCodePopup'
 import { useEventCheckInCodes } from '../../hooks/useCheckInCode'
 import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { toast } from 'react-toastify'
+import { SUCCESS_MESSAGE } from 'src/constants/message'
 
 export default function CheckInCodeManagement() {
   const dispatch = useDispatch()
@@ -18,11 +19,10 @@ export default function CheckInCodeManagement() {
   const handleDeleteCode = (id: string) => {
     deleteCheckInCode.mutate(id, {
       onSuccess: () => {
-        toast.success('Xóa mã check-in thành công')
+        toast.success(SUCCESS_MESSAGE.DELETE_CHECK_IN_CODE)
       },
       onError: (error) => {
-        console.error(error)
-        toast.error('Xóa mã check-in thất bại')
+        toast.error(error.message)
       },
       onSettled: () => {
         dispatch(clearModal())
