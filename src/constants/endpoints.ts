@@ -40,3 +40,10 @@ export const BASE_API_URL_ANALYTICS_EVENT_REGISTRATION = '/api/admin/analytics/e
 export const getEventRegistrationCountByDateUrl = (eventId: number) => {
   return `${BASE_API_URL_ANALYTICS_EVENT_REGISTRATION}/${eventId}/registrations`
 }
+
+// admin check-in code controller
+export const BASE_API_URL_CHECK_IN_CODE = '/api/admin/events/checkin-codes'
+
+export const getCheckInCodeUrl = (id?: string) => {
+  return id ? `${BASE_API_URL_CHECK_IN_CODE}/${id}` : BASE_API_URL_CHECK_IN_CODE
+}
