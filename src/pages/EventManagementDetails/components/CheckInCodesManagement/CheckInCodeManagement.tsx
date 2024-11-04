@@ -48,24 +48,29 @@ export default function CheckInCodeManagement() {
 
   return (
     <>
-      <div>
-        <Button
-          title='Tạo mã check-in'
-          type='button'
-          classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
-          iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
-          onClick={() => setIsShowCreateCheckInCodePopup(true)}
-        />
+      <div className='mb-4 flex items-center justify-between'>
+        <div className='flex-1'>
+          <h2 className='text-lg font-semibold'>Quản lý mã check-in</h2>
+        </div>
+        <div>
+          <Button
+            title='Tạo mã check-in'
+            type='button'
+            classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
+            iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
+            onClick={() => setIsShowCreateCheckInCodePopup(true)}
+          />
+        </div>
       </div>
       <table className='relative min-w-full overflow-auto'>
         <thead className='sticky top-0 z-50 bg-neutral-0 before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-neutral-5'>
           <tr>
-            <th className='min-w-[150px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'>
+            <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
               <div className='flex items-center justify-between'>
                 <span>Tên</span>
               </div>
             </th>
-            <th className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'>
+            <th className='min-w-[140px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
               <div className='flex items-center justify-between'>
                 <span>Thời gian hiệu lực</span>
               </div>
