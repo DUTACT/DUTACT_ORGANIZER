@@ -206,5 +206,12 @@ export const eventSchema = yup.object({
   coverPhoto: yup.mixed<File>().required(ERROR_REQUIRED_FIELD)
 })
 
+export const checkInCodeSchema = yup.object({
+  title: yup.string().trim().required(ERROR_REQUIRED_FIELD),
+  startAt: validateTimeRange('startAt', 'endAt', ERROR_START_TIME_GREATER_THAN_END_TIME, ERROR_REQUIRED_FIELD),
+  endAt: validateTimeRange('startAt', 'endAt', ERROR_START_TIME_GREATER_THAN_END_TIME, ERROR_REQUIRED_FIELD)
+})
+
 export type AuthenSchemaType = yup.InferType<typeof authenSchema>
 export type EventSchemaType = yup.InferType<typeof eventSchema>
+export type CheckInCodeSchemaType = yup.InferType<typeof checkInCodeSchema>

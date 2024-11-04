@@ -17,4 +17,5 @@ export const SUCCESS_MESSAGE = {
   UPDATE_EVENT_POST: 'Cập nhật bài đăng thành công',
   HIDE_EVENT_POST: 'Ẩn bài đăng thành công',
   UNHIDE_EVENT_POST: 'Hiện lại bài đăng thành công',
+  DELETE_CHECK_IN_CODE: 'Xóa mã check-in thành công'
 }
