@@ -3,7 +3,7 @@ import { EventRegistrationCountByDate } from 'src/types/eventRegistration.type'
 import { DATE_TIME_FORMATS } from 'src/constants/common'
 import moment from 'moment'
 import { getRegistrationCountByDate } from 'src/apis/registration'
-import { useEventId } from '../../hooks/useEventId'
+import { useEventId } from '../../../../hooks/useEventId'
 
 export default function EventRegistrations() {
   const eventId = useEventId()

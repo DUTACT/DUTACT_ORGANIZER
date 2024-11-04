@@ -1,6 +1,5 @@
 import NotificationIcon from 'src/assets/icons/i-notification.svg?react'
-import ExpandIcon from 'src/assets/icons/i-chevron-down.svg?react'
-import DUTLogo from 'src/assets/img/dut-logo.jpg'
+import Profile from '../Profile'
 
 export default function Aside() {
   return (
@@ -11,16 +10,7 @@ export default function Aside() {
           <NotificationIcon className='h-[20px] w-[20px]' />
         </div>
         {/* Personal information */}
-        <div className='flex items-center gap-0 rounded-full hover:cursor-pointer hover:bg-neutral-2'>
-          <div className='relative h-logo-sm min-h-logo-sm w-logo-sm min-w-logo-sm'>
-            <img
-              className='absolute left-0 top-0 mx-auto h-full w-full rounded-full border-[1px] border-gray-200 object-cover'
-              src={DUTLogo}
-              alt='dut-logo'
-            />
-          </div>
-          <ExpandIcon className='h-[20px] w-[20px]' />
-        </div>
+        <Profile />
       </div>
     </div>
   )

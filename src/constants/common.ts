@@ -8,6 +8,12 @@ export const USER_ROLE: Record<UserRole, string> = {
   EVENT_ORGANIZER: 'ROLE_EVENT_ORGANIZER'
 }
 
+export const USER_ROLE_LABEL: Record<string, string> = {
+  [USER_ROLE.ADMIN]: 'ADMIN',
+  [USER_ROLE.STUDENT_AFFAIRS_OFFICE]: 'PCTSV',
+  [USER_ROLE.EVENT_ORGANIZER]: 'Tổ chức'
+}
+
 export const EVENT_STATUS_MESSAGES: Record<EventStatus, string> = {
   pending: 'Chờ duyệt',
   approved: 'Đã duyệt',

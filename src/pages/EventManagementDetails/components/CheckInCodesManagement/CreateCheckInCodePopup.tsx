@@ -8,10 +8,10 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { checkInCodeSchema, CheckInCodeSchemaType } from 'src/utils/rules'
 import { useEventCheckInCodes } from '../../hooks/useCheckInCode'
 import { toast } from 'react-toastify'
-import { useEventId } from '../../hooks/useEventId'
+import { useEventId } from '../../../../hooks/useEventId'
 import { CheckInCodeBody } from 'src/types/checkInCode.type'
 import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
-import { useOrganizerId } from '../../hooks/useOrganizerId'
+import { useOrganizerId } from '../../../../hooks/useOrganizerId'
 import moment from 'moment'
 
 interface CreateCheckInCodePopup {

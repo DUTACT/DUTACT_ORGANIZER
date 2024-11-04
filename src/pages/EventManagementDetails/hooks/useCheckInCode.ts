@@ -1,8 +1,8 @@
 import { ApiError } from 'src/types/client.type'
-import { useEventId } from './useEventId'
-import { MutateOptions, UseMutationOptions, UseMutationResult, useQueryClient } from '@tanstack/react-query'
-import { getCheckInCodesOfEvent } from 'src/apis/checkInCode/checkInCode.query'
-import { createCheckInCode, deleteCheckInCode } from 'src/apis/checkInCode/checkInCode.mutation'
+import { useEventId } from '../../../hooks/useEventId'
+import { UseMutationResult, useQueryClient } from '@tanstack/react-query'
+import { getCheckInCodesOfEvent } from 'src/apis/checkInCode'
+import { createCheckInCode, deleteCheckInCode } from 'src/apis/checkInCode'
 import { CheckInCode, CheckInCodeBody } from 'src/types/checkInCode.type'
 
 interface CheckInCodesResult {
