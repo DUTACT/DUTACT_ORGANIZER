@@ -49,7 +49,6 @@ export default function CreateCheckInCodePopup({ setIsShowPopup }: CreateCheckIn
       ...data
     }
 
-    // validate startAt and endAt should be in the range of event startAt and endAt
     const startAt = moment(data.startAt)
     const endAt = moment(data.endAt)
     const eventStartAt = moment(event.startAt)
