@@ -79,20 +79,20 @@ export default function CheckInCodeManagement() {
         </thead>
         {checkInCodes.length > 0 && (
           <tbody>
-            {checkInCodes.map((qrCode) => (
-              <tr key={qrCode.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
+            {checkInCodes.map((checkInCode) => (
+              <tr key={checkInCode.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
                 <td className='px-4 py-2'>
                   <div className='line-clamp-6 overflow-hidden whitespace-pre-wrap text-sm font-normal'>
-                    {qrCode.title}
+                    {checkInCode.title}
                   </div>
                 </td>
                 <td className='px-4 py-2 text-sm'>
-                  {new Date(qrCode.startAt).toLocaleString()} - {new Date(qrCode.endAt).toLocaleString()}
+                  {new Date(checkInCode.startAt).toLocaleString()} - {new Date(checkInCode.endAt).toLocaleString()}
                 </td>
                 <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                   <div className='flex items-center justify-center gap-1'>
                     <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
-                      <DeleteIcon className='h-[20px] w-[20px]' onClick={() => openPopupDeleteCode(qrCode)} />
+                      <DeleteIcon className='h-[20px] w-[20px]' onClick={() => openPopupDeleteCode(checkInCode)} />
                     </div>
                   </div>
                 </td>
