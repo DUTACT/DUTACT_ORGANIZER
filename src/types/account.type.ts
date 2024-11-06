@@ -17,6 +17,11 @@ export interface Profile {
   personInChargeName: string
 }
 
-export type ProfileBody = Omit<Profile, 'id' | 'avatarUrl'> & {
-  avatar?: string
+export type ProfileBody = Omit<Profile, 'avatarUrl'> & {
+  avatar?: File
+}
+
+export interface ChangePasswordBody {
+  oldPassword: string
+  newPassword: string
 }
