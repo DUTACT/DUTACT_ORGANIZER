@@ -10,17 +10,16 @@ import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInput
 import Input from 'src/components/Input'
 import { DATE_TIME_FORMATS } from 'src/constants/common'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
-import useLocalStorage from 'src/hooks/useLocalStorage'
+import { useOrganizerId } from 'src/hooks/useOrganizerId'
 import { cn } from 'src/lib/tailwind/utils'
 import { path } from 'src/routes/path'
 import { EventBody } from 'src/types/event.type'
-import { parseJwt } from 'src/utils/common'
 import { eventSchema, EventSchemaType } from 'src/utils/rules'
 
 type FormData = EventSchemaType
 
 export default function CreateEventPage() {
-  const [accessToken, _] = useLocalStorage<string>('access_token')
+  const organizerId = useOrganizerId()
   const navigate = useNavigate()
   const {
     control,
@@ -31,7 +30,7 @@ export default function CreateEventPage() {
     resolver: yupResolver(eventSchema)
   })
 
-  const { mutate, isPending } = createEvent(parseJwt(accessToken)?.organizerId, {
+  const { mutate, isPending } = createEvent(organizerId, {
     onSuccess: () => {
       toast.success(SUCCESS_MESSAGE.CREATE_EVENT)
       navigate(path.event)

@@ -19,7 +19,9 @@ import {
   ERROR_REQUIRED_FIELD,
   ERROR_START_TIME_GREATER_THAN_END_TIME,
   EVENT_START_AFTER_REGISTRATION_END,
-  REGISTRATION_END_BEFORE_EVENT_START
+  REGISTRATION_END_BEFORE_EVENT_START,
+  REGEX_PHONE,
+  ERROR_INVALID_PHONE
 } from 'src/constants/validate'
 import * as yup from 'yup'
 
@@ -212,6 +214,27 @@ export const checkInCodeSchema = yup.object({
   endAt: validateTimeRange('startAt', 'endAt', ERROR_START_TIME_GREATER_THAN_END_TIME, ERROR_REQUIRED_FIELD)
 })
 
+export const profileSchema = yup.object({
+  name: yup.string().trim().required(ERROR_REQUIRED_FIELD),
+  address: yup.string().trim().required(ERROR_REQUIRED_FIELD),
+  phone: yup.string().trim().required(ERROR_REQUIRED_FIELD).matches(REGEX_PHONE, ERROR_INVALID_PHONE),
+  personInChargeName: yup.string().trim().required(ERROR_REQUIRED_FIELD)
+})
+
+export const changePasswordSchema = yup.object({
+  oldPassword: yup.string().trim().required(ERROR_REQUIRED_PASSWORD),
+  newPassword: yup
+    .string()
+    .trim()
+    .required(ERROR_REQUIRED_PASSWORD)
+    .min(MIN_LENGTH_PASSWORD, ERROR_MIN_LENGTH_PASSWORD)
+    .max(MAX_LENGTH_PASSWORD, ERROR_MAX_LENGTH_PASSWORD)
+    .matches(REGEX_PASSWORD, ERROR_INCORRECT_FORMAT_PASSWORD),
+  confirmPassword: handleConfirmPasswordYup('newPassword')
+})
+
 export type AuthenSchemaType = yup.InferType<typeof authenSchema>
 export type EventSchemaType = yup.InferType<typeof eventSchema>
 export type CheckInCodeSchemaType = yup.InferType<typeof checkInCodeSchema>
+export type ProfileSchemaType = yup.InferType<typeof profileSchema>
+export type ChangePasswordSchema = yup.InferType<typeof changePasswordSchema>

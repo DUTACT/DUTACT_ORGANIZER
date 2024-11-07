@@ -1,7 +1,10 @@
 export const ERROR_MESSAGE = {
   invalid_credentials: 'Tên tài khoản hoặc mật khẩu không đúng',
   forbidden: 'Bạn không được phép truy cập trang này',
-  payload_too_large: 'Nội dung tải lên của bạn có dung lượng quá lớn'
+  payload_too_large: 'Nội dung tải lên của bạn có dung lượng quá lớn',
+  UNEXPECTED_ERROR: 'An unexpected error occurred',
+  IMAGE_SIZE_EXCEEDS_LIMIT: 'Dung lượng ảnh tải lên của bạn quá lớn. Vui lòng chỉ chọn ảnh có kích thước nhỏ hơn 5MB',
+  INVALID_PASSWORD: 'Mật khẩu hiện tại không đúng'
 }
 
 export const SUCCESS_MESSAGE = {
@@ -17,5 +20,8 @@ export const SUCCESS_MESSAGE = {
   UPDATE_EVENT_POST: 'Cập nhật bài đăng thành công',
   HIDE_EVENT_POST: 'Ẩn bài đăng thành công',
   UNHIDE_EVENT_POST: 'Hiện lại bài đăng thành công',
-  DELETE_CHECK_IN_CODE: 'Xóa mã check-in thành công'
+  DELETE_CHECK_IN_CODE: 'Xóa mã check-in thành công',
+  UPLOAD_AVATAR: 'Cập nhật ảnh đại diện thành công',
+  UPDATE_PERSONAL_INFORMATION: 'Cập nhật thông tin cá nhân thành công',
+  CHANGE_PASSWORD: 'Thay đổi mật khẩu thành công'
 }

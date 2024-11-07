@@ -52,3 +52,7 @@ export const getCheckInCodeUrl = (id?: string) => {
 export const getOrganizerProfileUrl = (organizerId: number) => {
   return `/api/admin/organizer/${organizerId}/profile`
 }
+
+export const getChangePasswordUrl = (organizerId: number) => {
+  return `/api/admin/organizer/${organizerId}/profile/change-password`
+}

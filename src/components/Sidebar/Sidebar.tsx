@@ -6,14 +6,15 @@ import { NavLink } from 'react-router-dom'
 import { cn } from 'src/lib/tailwind/utils'
 import LogOutIcon from 'src/assets/icons/i-logout.svg?react'
 import { useAppContext } from 'src/contexts/app.context'
-import useLocalStorage from 'src/hooks/useLocalStorage'
-import { parseJwt } from 'src/utils/common'
 import { setupToken } from 'src/config/queryClient'
+import { useUserRole } from 'src/hooks/useUserRole'
+import { useProfile } from 'src/hooks/useProfile'
+import { USER_ROLE_LABEL } from 'src/constants/common'
 
 export default function Sidebar() {
   const { setIsAuthenticated } = useAppContext()
-  const [accessToken, _] = useLocalStorage<string>('access_token')
-  const userRole = parseJwt(accessToken).scp[0]
+  const userRole = useUserRole()
+  const { profile } = useProfile()
 
   const handleLogOut = () => {
     localStorage.removeItem('access_token')
@@ -33,15 +34,15 @@ export default function Sidebar() {
         <div className='relative h-logo-md min-h-logo-md w-logo-md min-w-logo-md'>
           <img
             className='absolute left-0 top-0 mx-auto h-full w-full rounded-full border-[1px] border-gray-200 object-cover'
-            src={DUTLogo}
+            src={profile?.avatarUrl || DUTLogo}
             alt='dut-logo'
           />
         </div>
         <div className='flex flex-col'>
-          <div className='line-clamp-2 overflow-ellipsis text-sm font-semibold text-neutral-8'>
-            Phòng Công tác sinh viên
+          <div className='line-clamp-2 overflow-ellipsis text-sm font-semibold text-neutral-8'>{profile?.name}</div>
+          <div className='mt-1 line-clamp-1 overflow-ellipsis text-xs font-medium text-neutral-5'>
+            #{USER_ROLE_LABEL[userRole]}
           </div>
-          <div className='mt-1 line-clamp-1 overflow-ellipsis text-xs font-medium text-neutral-5'>@Tổ chức</div>
         </div>
       </div>
       <Divider className='mt-4' />

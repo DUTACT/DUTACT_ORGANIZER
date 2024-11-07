@@ -14,7 +14,7 @@ export interface MutationFetchOptions {
 }
 
 export interface ApiError {
-  status: string
+  status: number
   message?: string
 }
 

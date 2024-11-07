@@ -16,8 +16,8 @@ const ResponseInterceptor = () => {
   useEffect(() => {
     interceptorId.current = client.interceptors.response.use(undefined, (error: any) => {
       if (error.response.status === HttpStatusCode.Unauthorized) {
-        setAccessToken('')
         navigate(path.login)
+        setAccessToken('')
       } else if (error.response.status === HttpStatusCode.Forbidden) {
         toast.warn(ERROR_MESSAGE.forbidden)
       } else if (error.response.status === HttpStatusCode.PayloadTooLarge) {

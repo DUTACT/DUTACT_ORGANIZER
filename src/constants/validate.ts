@@ -29,3 +29,7 @@ export const ERROR_REQUIRED_NAME = 'Tên là bắt buộc'
 // TIME RANGE
 export const REGISTRATION_END_BEFORE_EVENT_START = 'Thời gian kết thúc đăng ký phải trước thời gian bắt đầu sự kiện'
 export const EVENT_START_AFTER_REGISTRATION_END = 'Thời gian sự kiện diễn ra phải sau thời gian kết thúc đăng ký'
+
+// PHONE
+export const REGEX_PHONE = /(?:\+84|0084|0)[235789][0-9]{1,2}[0-9]{7}(?:[^\d]+|$)/g
+export const ERROR_INVALID_PHONE = 'Số điện thoại không hợp lệ'
