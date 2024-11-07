@@ -162,7 +162,7 @@ export default function DraggableInputFile<
               hoặc <span className='text-primary/80 hover:text-primary'>tải ảnh lên</span>
             </p>
             <p className='mt-2 text-xs font-normal text-neutral-5'>Tệp hỗ trợ: .JPG, .JPEG, .PNG</p>
-            <p className='text-xs font-normal text-neutral-5'>Kích thước file: &lt; 1MB</p>
+            <p className='text-xs font-normal text-neutral-5'>Kích thước file: &lt; 5MB</p>
           </Fragment>
         ) : (
           <Fragment>
