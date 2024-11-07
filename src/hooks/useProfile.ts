@@ -22,9 +22,7 @@ export function useProfile(): ProfileResult {
   const { data: profile, isLoading, error } = getOrganizerProfile(organizerId)
 
   const updateProfileData = (profile: Profile) => {
-    queryClient.setQueryData<Profile>(['getOrganizerProfile', organizerId], (oldProfile) => {
-      return oldProfile ? { ...oldProfile, avatarUrl: profile.avatarUrl } : profile
-    })
+    queryClient.setQueryData<Profile>(['getOrganizerProfile', organizerId], () => profile)
   }
 
   const updateAvatarMutation = updateProfile(organizerId, {

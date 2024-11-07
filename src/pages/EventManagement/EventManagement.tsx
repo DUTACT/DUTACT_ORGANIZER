@@ -308,13 +308,9 @@ export default function EventManagement() {
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'endAt')} />
                   </div>
                 </th>
-                <th
-                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('endRegistrationAt')}
-                >
+                <th className='min-w-[140px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
                   <div className='flex items-center justify-between'>
                     <span>Trạng thái</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'endRegistrationAt')} />
                   </div>
                 </th>
                 <th className='sticky right-0 z-20 whitespace-normal break-words bg-neutral-0 px-4 py-2 text-left text-sm before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-neutral-5'>
