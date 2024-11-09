@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { CheckInCode } from 'src/types/checkInCode.type'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
 import AddIcon from 'src/assets/icons/i-plus-white.svg?react'
 import ShowIcon from 'src/assets/icons/i-eye-secondary.svg?react'
@@ -11,6 +10,7 @@ import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { toast } from 'react-toastify'
 import QRCodePopup from './QRCodePopup'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
+import { CheckInCode } from 'src/types/checkInCode.type'
 
 export default function CheckInCodeManagement() {
   const dispatch = useDispatch()

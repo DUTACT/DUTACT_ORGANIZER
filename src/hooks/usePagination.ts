@@ -1,13 +1,18 @@
 import { useState } from 'react'
-import { INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
+import { INITIAL_ITEMS_PER_PAGE, INITIAL_PAGE } from 'src/constants/common'
 
 interface UsePaginationProps {
   totalItems: number
+  intialPage?: number
   initialItemsPerPage?: number
 }
 
-export function usePagination({ totalItems, initialItemsPerPage = INITIAL_ITEMS_PER_PAGE }: UsePaginationProps) {
-  const [currentPage, setCurrentPage] = useState<number>(1)
+export function usePagination({
+  totalItems,
+  intialPage = INITIAL_PAGE,
+  initialItemsPerPage = INITIAL_ITEMS_PER_PAGE
+}: UsePaginationProps) {
+  const [currentPage, setCurrentPage] = useState<number>(intialPage)
   const [itemsPerPage, setItemsPerPage] = useState<number>(initialItemsPerPage)
 
   const totalPages = itemsPerPage === -1 ? 1 : Math.ceil(totalItems / itemsPerPage)

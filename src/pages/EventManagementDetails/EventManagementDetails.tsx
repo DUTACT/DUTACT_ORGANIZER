@@ -13,6 +13,7 @@ import EventPostDetailPopup from './components/EventPostDetailPopup'
 import { EventOfOrganizer } from 'src/types/event.type'
 import { Post } from 'src/types/post.type'
 import CheckInCodeManagement from './components/CheckInCodesManagement'
+import ParticipationManagement from './components/ParticipationManagement'
 
 export default function EventManagementDetails() {
   const location = useLocation()
@@ -38,6 +39,9 @@ export default function EventManagementDetails() {
           </Tab>
           <Tab label='Đơn đăng ký'>
             <EventRegistrations />
+          </Tab>
+          <Tab label='Thông tin tham gia'>
+            <ParticipationManagement />
           </Tab>
           <Tab label='Mã check-in'>
             <CheckInCodeManagement />

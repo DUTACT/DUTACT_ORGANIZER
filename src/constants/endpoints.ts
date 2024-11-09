@@ -48,6 +48,10 @@ export const getCheckInCodeUrl = (id?: string) => {
   return id ? `${BASE_API_URL_CHECK_IN_CODE}/${id}` : BASE_API_URL_CHECK_IN_CODE
 }
 
+export const getParticipationsUrl = (eventId: number) => {
+  return `/api/admin/events/${eventId}/check-in`
+}
+
 // organizer-profile-controller
 export const getOrganizerProfileUrl = (organizerId: number) => {
   return `/api/admin/organizer/${organizerId}/profile`
