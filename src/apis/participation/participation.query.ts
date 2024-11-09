@@ -5,14 +5,14 @@ import { ApiError } from 'src/types/client.type'
 import { PageInfo } from 'src/types/pagination.type'
 import { ParticipationPreview } from 'src/types/participation.type'
 
-interface GetCheckInProps {
+interface GetParticipationsProps {
   eventId: number
   searchQuery?: string
   page?: number
   pageSize?: number
   options?: UseQueryOptions<PageInfo<ParticipationPreview>, ApiError>
 }
-export const getParticipationsOfEvent = ({ eventId, searchQuery, page, pageSize, options }: GetCheckInProps) => {
+export const getParticipationsOfEvent = ({ eventId, searchQuery, page, pageSize, options }: GetParticipationsProps) => {
   return useQuery<PageInfo<ParticipationPreview>, ApiError>({
     queryKey: ['getParticipationsOfEvent', eventId, searchQuery, page, pageSize],
     queryFn: async () => {

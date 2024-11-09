@@ -1,6 +1,6 @@
 import { UserRole } from 'src/types/account.type'
-import { ParticipationCertificateStatusType as CertificateStatusType } from 'src/types/checkInCode.type'
 import { EventStatus } from 'src/types/event.type'
+import { ParticipationCertificateStatusType } from 'src/types/participation.type'
 import { PostStatus } from 'src/types/post.type'
 
 export const USER_ROLE: Record<UserRole, string> = {
@@ -37,7 +37,7 @@ export const EVENT_STATUS_COLOR_CLASSES: Record<EventStatus, { backgroundColor: 
 }
 
 export const CERTIFICATE_STATUS_COLOR_CLASSES: Record<
-  CertificateStatusType,
+  ParticipationCertificateStatusType,
   { backgroundColor: string; textColor: string }
 > = {
   pending: {
