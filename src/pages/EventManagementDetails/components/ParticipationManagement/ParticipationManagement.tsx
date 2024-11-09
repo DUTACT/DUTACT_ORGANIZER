@@ -4,7 +4,7 @@ import InputSearch from 'src/components/InputSearch'
 import Pagination from 'src/components/Pagination/Pagination'
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import Tag from 'src/components/Tag'
-import { CERTIFICATE_STATUS_COLOR_CLASSES } from 'src/constants/common'
+import { CERTIFICATE_STATUS_COLOR_CLASSES, TIMEOUT } from 'src/constants/common'
 import { ParticipationCertificateStatus, ParticipationCertificateStatusType } from 'src/types/participation.type'
 import { useEventId } from 'src/hooks/useEventId'
 
@@ -28,11 +28,12 @@ export default function ParticipationManagement() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      console.log('Search:', inputSearch)
       setAppliedInputSearch(inputSearch)
-    }, 200)
+    }, TIMEOUT.DEBOUNCE)
 
     return () => clearTimeout(timer)
-  })
+  }, [inputSearch])
 
   if (firstLoad && !isLoading) {
     setFirstLoad(false)
