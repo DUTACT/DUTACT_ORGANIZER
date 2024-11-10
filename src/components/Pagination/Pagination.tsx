@@ -9,13 +9,17 @@ import { ROWS_PER_PAGE_OPTIONS } from 'src/constants/common'
 
 interface Props {
   totalItems: number
+  page?: number
   onPageChange: (page: number) => void
+  rowsPerPage?: number
   onRowsPerPageChange: (rowsPerPage: number) => void
 }
 
-export default function Pagination({ totalItems, onPageChange, onRowsPerPageChange }: Props) {
+export default function Pagination({ totalItems, page, onPageChange, rowsPerPage, onRowsPerPageChange }: Props) {
   const { currentPage, itemsPerPage, totalPages, nextPage, prevPage, goToPage, changeItemsPerPage } = usePagination({
-    totalItems
+    totalItems,
+    intialPage: page,
+    initialItemsPerPage: rowsPerPage
   })
 
   const startItem = (currentPage - 1) * itemsPerPage + 1

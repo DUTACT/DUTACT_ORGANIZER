@@ -1,5 +1,6 @@
 import { UserRole } from 'src/types/account.type'
 import { EventStatus } from 'src/types/event.type'
+import { ParticipationCertificateStatusType } from 'src/types/participation.type'
 import { PostStatus } from 'src/types/post.type'
 
 export const USER_ROLE: Record<UserRole, string> = {
@@ -26,6 +27,24 @@ export const EVENT_STATUS_COLOR_CLASSES: Record<EventStatus, { backgroundColor: 
     textColor: 'text-semantic-secondary'
   },
   approved: {
+    backgroundColor: 'bg-semantic-success-background',
+    textColor: 'text-semantic-success'
+  },
+  rejected: {
+    backgroundColor: 'bg-semantic-cancelled-background',
+    textColor: 'text-semantic-cancelled'
+  }
+}
+
+export const CERTIFICATE_STATUS_COLOR_CLASSES: Record<
+  ParticipationCertificateStatusType,
+  { backgroundColor: string; textColor: string }
+> = {
+  pending: {
+    backgroundColor: 'bg-semantic-secondary-background',
+    textColor: 'text-semantic-secondary'
+  },
+  confirmed: {
     backgroundColor: 'bg-semantic-success-background',
     textColor: 'text-semantic-success'
   },
@@ -70,4 +89,5 @@ export const DATE_TIME_FORMATS = {
 }
 
 export const INITIAL_ITEMS_PER_PAGE = 10
+export const INITIAL_PAGE = 1
 export const ROWS_PER_PAGE_OPTIONS = [5, 10, 20, -1]
