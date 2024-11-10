@@ -1,14 +1,14 @@
-import { useMutation, UseMutationOptions, useQuery, useQueryClient } from '@tanstack/react-query'
-import { mutationFetch, queryFetch } from 'src/config/queryClient'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { mutationFetch } from 'src/config/queryClient'
 import { getConfirmEventParticipationUrl, getRejectEventParticipationUrl } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
-import { ConfirmParticipationCriteria, RejectParticipationCriterion } from 'src/types/participation.type'
+import { ConfirmParticipationCriterion, RejectParticipationCriterion } from 'src/types/participation.type'
 
 export const confirmParticipation = async (
   eventId: number,
-  options?: UseMutationOptions<void, ApiError, ConfirmParticipationCriteria>
+  options?: UseMutationOptions<void, ApiError, ConfirmParticipationCriterion>
 ) => {
-  return useMutation<void, ApiError, ConfirmParticipationCriteria>({
+  return useMutation<void, ApiError, ConfirmParticipationCriterion>({
     mutationFn: async (criteria) => {
       const response = await mutationFetch<void>({
         url: getConfirmEventParticipationUrl(eventId),

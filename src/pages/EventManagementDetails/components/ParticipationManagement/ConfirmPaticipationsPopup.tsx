@@ -7,16 +7,8 @@ import { ConfirmAllParticipation, ConfirmPaticipationWithCheckedInAtLeast } from
 import CloseIcon from 'src/assets/icons/i-close.svg?react'
 import { useEventCheckInCodes } from '../../hooks/useCheckInCode'
 
-type AllowedConfimrConditions = ConfirmAllParticipation | ConfirmPaticipationWithCheckedInAtLeast
-type AllowedConfirmConditionType = AllowedConfimrConditions['type']
-
-const allowedConfirmConditionTypes: {
-  type: AllowedConfirmConditionType
-  label: string
-}[] = [
-  { type: 'all', label: 'Tất cả' },
-  { type: 'checkedInAtLeast', label: 'Đã check-in ít nhất ... lần' }
-]
+type AllowedConfimrCriterion = ConfirmAllParticipation | ConfirmPaticipationWithCheckedInAtLeast
+type AllowedConfirmCriterion = AllowedConfimrCriterion['type']
 
 interface Props {
   onClose: () => void
@@ -25,26 +17,23 @@ interface Props {
 
 export default function ConfirmParticipationPopup({ onClose, onSubmit }: Props) {
   const { checkInCodes } = useEventCheckInCodes()
-  const [confirmCondition, setConfirmCondition] = useState<AllowedConfimrConditions>({
+  const [confirmCriterion, setConfirmCriterion] = useState<AllowedConfimrCriterion>({
     type: 'all'
   })
 
-  const handleConditionTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const conditionType = e.target.value as AllowedConfirmConditionType
-    if (conditionType === 'all') {
-      setConfirmCondition({ type: 'all' })
+  const handleCriterionTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const criterionType = e.target.value as AllowedConfirmCriterion
+    if (criterionType === 'all') {
+      setConfirmCriterion({ type: 'all' })
     } else {
-      setConfirmCondition({ type: 'checkedInAtLeast', count: 1 })
+      setConfirmCriterion({ type: 'checkedInAtLeast', count: 1 })
     }
 
     e.preventDefault()
   }
 
   return createPortal(
-    <div
-      className='fixed left-0 right-0 top-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-overlay'
-      onClick={onClose}
-    >
+    <div className='fixed left-0 right-0 top-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-overlay'>
       <div
         className='h-fit max-h-popup w-[600px] max-w-popup overflow-hidden rounded-lg bg-neutral-0 shadow-custom'
         onClick={(e) => e.stopPropagation()}
@@ -65,26 +54,23 @@ export default function ConfirmParticipationPopup({ onClose, onSubmit }: Props) 
               <label className='mb-6 block text-neutral-5'>
                 <span className='text-sm font-semibold tracking-wide text-neutral-8'>Điều kiện xác nhận</span>
                 <select
-                  value={confirmCondition.type}
-                  onChange={handleConditionTypeChange}
+                  value={confirmCriterion.type}
+                  onChange={handleCriterionTypeChange}
                   className='w-full rounded-lg border border-neutral-3 p-2'
                 >
-                  {allowedConfirmConditionTypes.map((condition) => (
-                    <option key={condition.type} value={condition.type}>
-                      {condition.label}
-                    </option>
-                  ))}
+                  <option value='all'>Tất cả</option>
+                  {checkInCodes.length > 0 && <option value='checkedInAtLeast'>Check-in ít nhất</option>}
                 </select>
               </label>
-              {confirmCondition.type === 'checkedInAtLeast' && (
+              {confirmCriterion.type === 'checkedInAtLeast' && (
                 <Input
                   labelName={`Số lần check-in ít nhất (1-${checkInCodes.length})`}
                   type='number'
                   min={1}
                   max={checkInCodes.length}
-                  value={(confirmCondition as ConfirmPaticipationWithCheckedInAtLeast).count}
+                  value={(confirmCriterion as ConfirmPaticipationWithCheckedInAtLeast).count}
                   onChange={(count) =>
-                    setConfirmCondition({
+                    setConfirmCriterion({
                       type: 'checkedInAtLeast',
                       count: parseInt(count.target.value, 10)
                     })
@@ -92,18 +78,18 @@ export default function ConfirmParticipationPopup({ onClose, onSubmit }: Props) 
                 />
               )}
               <div>
-                {confirmCondition.type === 'checkedInAtLeast' && (
+                {confirmCriterion.type === 'checkedInAtLeast' && (
                   <span>
                     Xác nhận tham gia cho sinh viên đã check-in ít nhất{' '}
-                    {(confirmCondition as ConfirmPaticipationWithCheckedInAtLeast).count} lần đang và trong trạng thái
+                    {(confirmCriterion as ConfirmPaticipationWithCheckedInAtLeast).count} lần đang và trong trạng thái
                     chờ xác nhận
                   </span>
                 )}
-                {confirmCondition.type === 'all' && (
+                {confirmCriterion.type === 'all' && (
                   <span>Xác nhận tham gia cho tất cả sinh viên đang trong trạng thái chờ xác nhận</span>
                 )}
               </div>
-              <div>
+              <div className='mt-6 flex justify-end gap-4'>
                 <Button
                   title='Hủy'
                   className='gap-1 text-nowrap rounded-md bg-neutral-3 text-neutral-9 hover:bg-neutral-2'

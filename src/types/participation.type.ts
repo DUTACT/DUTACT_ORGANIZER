@@ -20,13 +20,13 @@ export interface RejectedParticipationCertificateStatus {
   reason?: string
 }
 
-// Confirm participation criteria
-export type ConfirmParticipationCriteria =
+// Confirm participation criterion
+export type ConfirmParticipationCriterion =
   | ConfirmAllParticipation
   | ConfirmParticipationWithStudentsIds
   | ConfirmPaticipationWithCheckedInAtLeast
 
-export type ConfirmParticipationCriteriaType = ConfirmParticipationCriteria['type']
+export type ConfirmParticipationCriterionType = ConfirmParticipationCriterion['type']
 
 export interface ConfirmAllParticipation {
   type: 'all'
@@ -42,10 +42,10 @@ export interface ConfirmPaticipationWithCheckedInAtLeast {
   count: number
 }
 
-// Reject participation criteria
+// Reject participation criterion
 export type RejectParticipationCriterion = RejectAllParticipation | RejectParticipationWithStudentsIds
 
-export type RejectParticipationCriteriaType = RejectParticipationCriterion['type']
+export type RejectParticipationCriterionType = RejectParticipationCriterion['type']
 
 export interface RejectAllParticipation {
   type: 'all'
