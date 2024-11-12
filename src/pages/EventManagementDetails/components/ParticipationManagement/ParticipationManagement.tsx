@@ -9,6 +9,9 @@ import { ParticipationCertificateStatus, ParticipationCertificateStatusType } fr
 import { useEventId } from 'src/hooks/useEventId'
 import ConfirmParticipationPopup from './ConfirmPaticipationsPopup'
 import Button from 'src/components/Button'
+import RejectParticipationPopup from './RejectPaticipationsPopup'
+import { useQueryClient } from '@tanstack/react-query'
+import { ref } from 'yup'
 
 export default function ParticipationManagement() {
   const eventId = useEventId()
@@ -18,7 +21,9 @@ export default function ParticipationManagement() {
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
   const [isOpenConfirmPopup, setIsOpenConfirmPopup] = useState<boolean>(false)
+  const [isOpenRejectPopup, setIsOpenRejectPopup] = useState<boolean>(false)
 
+  const queryClient = useQueryClient()
   const {
     data: participationsPage,
     isLoading,
@@ -32,7 +37,6 @@ export default function ParticipationManagement() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log('Search:', inputSearch)
       setAppliedInputSearch(inputSearch)
     }, TIMEOUT.DEBOUNCE)
 
@@ -54,6 +58,12 @@ export default function ParticipationManagement() {
   const participations = participationsPage?.data
   const totalParticipations = participationsPage?.pagination.totalData
 
+  const refreshParticipations = () => {
+    queryClient.invalidateQueries({
+      queryKey: ['getParticipationsOfEvent']
+    })
+  }
+
   return (
     <>
       <div className='flex h-full flex-col gap-4 p-4'>
@@ -65,7 +75,12 @@ export default function ParticipationManagement() {
               setInputSearch={setInputSearch}
             />
           </div>
-          <div>
+          <div className='flex gap-4'>
+            <Button
+              className='bg-semantic-cancelled/90 text-neutral-0 hover:bg-semantic-cancelled'
+              title='Xác nhận không tham gia'
+              onClick={() => setIsOpenRejectPopup(true)}
+            ></Button>
             <Button
               className='bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
               title='Xác nhận tham gia'
@@ -97,7 +112,7 @@ export default function ParticipationManagement() {
                   </th>
                   <th className='min-w-[140px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
                     <div className='flex items-center justify-between'>
-                      <span>Xác nhận tham gia</span>
+                      <span>Trạng thái</span>
                     </div>
                   </th>
                   <th className='sticky right-0 z-20 whitespace-normal break-words bg-neutral-0 px-4 py-2 text-left text-sm before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-neutral-5'>
@@ -140,10 +155,22 @@ export default function ParticipationManagement() {
           )}
         </div>
       </div>
+      {isOpenRejectPopup && (
+        <RejectParticipationPopup
+          onClose={() => setIsOpenRejectPopup(false)}
+          onSubmit={() => {
+            setIsOpenRejectPopup(false)
+            refreshParticipations()
+          }}
+        ></RejectParticipationPopup>
+      )}
       {isOpenConfirmPopup && (
         <ConfirmParticipationPopup
           onClose={() => setIsOpenConfirmPopup(false)}
-          onSubmit={() => setIsOpenConfirmPopup(false)}
+          onSubmit={() => {
+            setIsOpenConfirmPopup(false)
+            refreshParticipations()
+          }}
         ></ConfirmParticipationPopup>
       )}
     </>
@@ -162,7 +189,7 @@ function getTagStatus(certificateStatus?: ParticipationCertificateStatus): {
         : 'pending'
 
   const statusLabel =
-    statusType === 'confirmed' ? 'Đã xác nhận' : statusType === 'rejected' ? 'Đã từ chối' : 'Chờ xác nhận'
+    statusType === 'confirmed' ? 'Đã tham gia' : statusType === 'rejected' ? 'Không tham gia' : 'Chờ xác nhận'
 
   return {
     type: statusType,

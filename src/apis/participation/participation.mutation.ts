@@ -4,7 +4,7 @@ import { getConfirmEventParticipationUrl, getRejectEventParticipationUrl } from 
 import { ApiError } from 'src/types/client.type'
 import { ConfirmParticipationCriterion, RejectParticipationCriterion } from 'src/types/participation.type'
 
-export const confirmParticipation = async (
+export const confirmParticipation = (
   eventId: number,
   options?: UseMutationOptions<void, ApiError, ConfirmParticipationCriterion>
 ) => {
@@ -22,7 +22,7 @@ export const confirmParticipation = async (
   })
 }
 
-export const rejectParticipation = async (
+export const rejectParticipation = (
   eventId: number,
   options?: UseMutationOptions<void, ApiError, RejectParticipationCriterion>
 ) => {

@@ -6,9 +6,12 @@ import Input from 'src/components/Input'
 import { ConfirmAllParticipation, ConfirmPaticipationWithCheckedInAtLeast } from 'src/types/participation.type'
 import CloseIcon from 'src/assets/icons/i-close.svg?react'
 import { useEventCheckInCodes } from '../../hooks/useCheckInCode'
+import { confirmParticipation } from 'src/apis/participation/participation.mutation'
+import { toast } from 'react-toastify'
+import { useEventId } from 'src/hooks/useEventId'
 
-type AllowedConfimrCriterion = ConfirmAllParticipation | ConfirmPaticipationWithCheckedInAtLeast
-type AllowedConfirmCriterion = AllowedConfimrCriterion['type']
+type ConfirmCriterion = ConfirmAllParticipation | ConfirmPaticipationWithCheckedInAtLeast
+type ConfirmCriterionType = ConfirmCriterion['type']
 
 interface Props {
   onClose: () => void
@@ -16,13 +19,16 @@ interface Props {
 }
 
 export default function ConfirmParticipationPopup({ onClose, onSubmit }: Props) {
+  const eventId = useEventId()
   const { checkInCodes } = useEventCheckInCodes()
-  const [confirmCriterion, setConfirmCriterion] = useState<AllowedConfimrCriterion>({
+  const [confirmCriterion, setConfirmCriterion] = useState<ConfirmCriterion>({
     type: 'all'
   })
 
+  const { mutate: confirmMutate, isPending } = confirmParticipation(eventId)
+
   const handleCriterionTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const criterionType = e.target.value as AllowedConfirmCriterion
+    const criterionType = e.target.value as ConfirmCriterionType
     if (criterionType === 'all') {
       setConfirmCriterion({ type: 'all' })
     } else {
@@ -30,6 +36,20 @@ export default function ConfirmParticipationPopup({ onClose, onSubmit }: Props) 
     }
 
     e.preventDefault()
+  }
+
+  const handleSubmitConfirmation = () => {
+    const submitCriterion = confirmCriterion as ConfirmCriterion
+
+    confirmMutate(submitCriterion, {
+      onSuccess: () => {
+        toast.success('Đã xác nhận tham gia')
+        onSubmit()
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      }
+    })
   }
 
   return createPortal(
@@ -80,13 +100,12 @@ export default function ConfirmParticipationPopup({ onClose, onSubmit }: Props) 
               <div>
                 {confirmCriterion.type === 'checkedInAtLeast' && (
                   <span>
-                    Xác nhận tham gia cho sinh viên đã check-in ít nhất{' '}
-                    {(confirmCriterion as ConfirmPaticipationWithCheckedInAtLeast).count} lần đang và trong trạng thái
-                    chờ xác nhận
+                    Xác nhận sinh viên (đang trong trạng thái chờ xác nhận) đã check-in ít nhất{' '}
+                    {(confirmCriterion as ConfirmPaticipationWithCheckedInAtLeast).count} lần đã tham gia sự kiện
                   </span>
                 )}
                 {confirmCriterion.type === 'all' && (
-                  <span>Xác nhận tham gia cho tất cả sinh viên đang trong trạng thái chờ xác nhận</span>
+                  <span>Xác nhận tất cả sinh viên (đang trong trạng thái chờ xác nhận) đã tham gia sự kiện</span>
                 )}
               </div>
               <div className='mt-6 flex justify-end gap-4'>
@@ -96,12 +115,9 @@ export default function ConfirmParticipationPopup({ onClose, onSubmit }: Props) 
                   onClick={onClose}
                 />
                 <Button
-                  title='Xác nhận'
+                  title={isPending ? 'Đang xử lý...' : 'Xác nhận tham gia'}
                   className='gap-1 text-nowrap rounded-md bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
-                  onClick={() => {
-                    onSubmit()
-                    onClose()
-                  }}
+                  onClick={handleSubmitConfirmation}
                 />
               </div>
             </div>

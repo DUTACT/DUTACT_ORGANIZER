@@ -49,9 +49,11 @@ export type RejectParticipationCriterionType = RejectParticipationCriterion['typ
 
 export interface RejectAllParticipation {
   type: 'all'
+  reason?: string
 }
 
 export interface RejectParticipationWithStudentsIds {
   type: 'withStudentsIds'
   studentIds: number[]
+  reason?: string
 }
