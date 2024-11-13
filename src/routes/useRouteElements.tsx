@@ -12,7 +12,6 @@ import { useEffect } from 'react'
 import { ROUTE_CONFIG } from 'src/constants/routeConfig'
 import CreateEventPage from 'src/pages/CreateEventPage'
 import EventModeration from 'src/pages/EventModeration'
-import EventModerationDetails from 'src/pages/EventModerationDetails'
 import UpdateEventPage from 'src/pages/UpdateEventPage'
 import EventManagementDetails from 'src/pages/EventManagementDetails'
 
