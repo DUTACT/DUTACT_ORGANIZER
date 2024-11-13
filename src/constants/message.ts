@@ -23,5 +23,7 @@ export const SUCCESS_MESSAGE = {
   DELETE_CHECK_IN_CODE: 'Xóa mã check-in thành công',
   UPLOAD_AVATAR: 'Cập nhật ảnh đại diện thành công',
   UPDATE_PERSONAL_INFORMATION: 'Cập nhật thông tin cá nhân thành công',
-  CHANGE_PASSWORD: 'Thay đổi mật khẩu thành công'
+  CHANGE_PASSWORD: 'Thay đổi mật khẩu thành công',
+  REJECT_PARTICIPATION: 'Đã xác nhận không tham gia',
+  CONFIRM_PARTICIPATION: 'Đã xác nhận tham gia'
 }

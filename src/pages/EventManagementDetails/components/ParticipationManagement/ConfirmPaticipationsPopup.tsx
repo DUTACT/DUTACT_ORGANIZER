@@ -9,6 +9,7 @@ import { useEventCheckInCodes } from '../../hooks/useCheckInCode'
 import { confirmParticipation } from 'src/apis/participation/participation.mutation'
 import { toast } from 'react-toastify'
 import { useEventId } from 'src/hooks/useEventId'
+import { SUCCESS_MESSAGE } from 'src/constants/message'
 
 type ConfirmCriterion = ConfirmAllParticipation | ConfirmPaticipationWithCheckedInAtLeast
 type ConfirmCriterionType = ConfirmCriterion['type']
@@ -43,7 +44,7 @@ export default function ConfirmParticipationPopup({ onClose, onSubmit }: Props) 
 
     confirmMutate(submitCriterion, {
       onSuccess: () => {
-        toast.success('Đã xác nhận tham gia')
+        toast.success(SUCCESS_MESSAGE.CONFIRM_PARTICIPATION)
         onSubmit()
       },
       onError: (error) => {

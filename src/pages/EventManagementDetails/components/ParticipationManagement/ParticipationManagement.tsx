@@ -11,7 +11,6 @@ import ConfirmParticipationPopup from './ConfirmPaticipationsPopup'
 import Button from 'src/components/Button'
 import RejectParticipationPopup from './RejectPaticipationsPopup'
 import { useQueryClient } from '@tanstack/react-query'
-import { ref } from 'yup'
 
 export default function ParticipationManagement() {
   const eventId = useEventId()
@@ -162,7 +161,7 @@ export default function ParticipationManagement() {
             setIsOpenRejectPopup(false)
             refreshParticipations()
           }}
-        ></RejectParticipationPopup>
+        />
       )}
       {isOpenConfirmPopup && (
         <ConfirmParticipationPopup
@@ -171,7 +170,7 @@ export default function ParticipationManagement() {
             setIsOpenConfirmPopup(false)
             refreshParticipations()
           }}
-        ></ConfirmParticipationPopup>
+        />
       )}
     </>
   )

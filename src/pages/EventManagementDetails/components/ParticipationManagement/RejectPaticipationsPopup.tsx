@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form'
 import { rejectParticipation } from 'src/apis/participation/participation.mutation'
 import { useEventId } from 'src/hooks/useEventId'
 import { toast } from 'react-toastify'
+import { SUCCESS_MESSAGE } from 'src/constants/message'
 
 type RejectCriterion = RejectAllParticipation
 type RejectCriterionType = RejectCriterion['type']
@@ -51,7 +52,7 @@ export default function RejectParticipationPopup({ onClose, onSubmit }: Props) {
 
     rejectMutate(submitCriterion, {
       onSuccess: () => {
-        toast.success('Đã xác nhận không tham gia')
+        toast.success(SUCCESS_MESSAGE.REJECT_PARTICIPATION)
         onSubmit()
       },
       onError: (error) => {
