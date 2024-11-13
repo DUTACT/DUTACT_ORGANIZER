@@ -233,8 +233,13 @@ export const changePasswordSchema = yup.object({
   confirmPassword: handleConfirmPasswordYup('newPassword')
 })
 
+export const rejectParticipationSchema = yup.object({
+  reason: yup.string().trim().required(ERROR_REQUIRED_FIELD)
+})
+
 export type AuthenSchemaType = yup.InferType<typeof authenSchema>
 export type EventSchemaType = yup.InferType<typeof eventSchema>
 export type CheckInCodeSchemaType = yup.InferType<typeof checkInCodeSchema>
 export type ProfileSchemaType = yup.InferType<typeof profileSchema>
 export type ChangePasswordSchema = yup.InferType<typeof changePasswordSchema>
+export type RejectParticipationSchemaType = yup.InferType<typeof rejectParticipationSchema>
