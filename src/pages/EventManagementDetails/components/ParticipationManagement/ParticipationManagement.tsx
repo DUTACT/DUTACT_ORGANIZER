@@ -7,6 +7,7 @@ import Tag from 'src/components/Tag'
 import { CERTIFICATE_STATUS_COLOR_CLASSES, TIMEOUT } from 'src/constants/common'
 import { ParticipationCertificateStatus, ParticipationCertificateStatusType } from 'src/types/participation.type'
 import { useEventId } from 'src/hooks/useEventId'
+import ParticipationDetailsPopup from './ParticipationDetailsPopup'
 
 export default function ParticipationManagement() {
   const eventId = useEventId()
@@ -15,6 +16,7 @@ export default function ParticipationManagement() {
   const [page, setPage] = useState<number>(1)
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
+  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null)
   const {
     data: participationsPage,
     isLoading,
@@ -110,8 +112,11 @@ export default function ParticipationManagement() {
                   </td>
                   <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                     <div className='flex items-center justify-center gap-1'>
-                      <div className='flex items-center justify-center p-2 opacity-70 hover:opacity-100'>
-                        <ShowDetailIcon className='h-[20px] w-[20px]' />
+                      <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
+                        <ShowDetailIcon
+                          className='h-[20px] w-[20px]'
+                          onClick={() => setSelectedStudentId(participation.studentId)}
+                        />
                       </div>
                     </div>
                   </td>
@@ -122,6 +127,9 @@ export default function ParticipationManagement() {
         )}
         {participations && participations.length === 0 && (
           <div className='flex h-[200px] items-center justify-center text-neutral-6'>Không có dữ liệu</div>
+        )}
+        {selectedStudentId && (
+          <ParticipationDetailsPopup studentId={selectedStudentId} onClose={() => setSelectedStudentId(null)} />
         )}
       </div>
     </div>

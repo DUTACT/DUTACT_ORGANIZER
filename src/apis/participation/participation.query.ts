@@ -1,9 +1,9 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { queryFetch } from 'src/config/queryClient'
-import { getParticipationsUrl } from 'src/constants/endpoints'
+import { getParticipationsUrl, getParticipationUrl } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
 import { PageInfo } from 'src/types/pagination.type'
-import { ParticipationPreview } from 'src/types/participation.type'
+import { Participation, ParticipationPreview } from 'src/types/participation.type'
 
 interface GetParticipationsProps {
   eventId: number
@@ -23,6 +23,27 @@ export const getParticipationsOfEvent = ({ eventId, searchQuery, page, pageSize,
           page,
           pageSize
         }
+      })
+      return response
+    },
+    ...options
+  })
+}
+
+export const getParticipationOfEvent = ({
+  eventId,
+  studentId,
+  options
+}: {
+  eventId: number
+  studentId: number
+  options?: UseQueryOptions<Participation, ApiError>
+}) => {
+  return useQuery<Participation, ApiError>({
+    queryKey: ['getParticipationOfEvent', eventId, studentId],
+    queryFn: async () => {
+      const response = await queryFetch<Participation>({
+        url: getParticipationUrl(eventId, studentId)
       })
       return response
     },

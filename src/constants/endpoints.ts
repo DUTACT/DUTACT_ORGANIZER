@@ -52,6 +52,10 @@ export const getParticipationsUrl = (eventId: number) => {
   return `/api/admin/events/${eventId}/check-in`
 }
 
+export const getParticipationUrl = (eventId: number, studentId: number) => {
+  return `/api/admin/events/${eventId}/check-in/${studentId}`
+}
+
 // organizer-profile-controller
 export const getOrganizerProfileUrl = (organizerId: number) => {
   return `/api/admin/organizer/${organizerId}/profile`
