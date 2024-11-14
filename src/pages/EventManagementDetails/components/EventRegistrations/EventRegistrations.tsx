@@ -42,7 +42,6 @@ export default function EventRegistrations() {
             <Label value='Số đơn đăng ký' offset={0} dx={-20} angle={-90} position='center' />
           </YAxis>
           <Tooltip />
-          {/* <Line type='monotone' dataKey='count' stroke='#8884d8' name='Số lượng đăng ký' /> */}
           <Bar dataKey='count' fill='#8884d8' name={'Số đơn đăng ký'} />
         </BarChart>
       </ResponsiveContainer>

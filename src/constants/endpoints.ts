@@ -64,3 +64,12 @@ export const getOrganizerProfileUrl = (organizerId: number) => {
 export const getChangePasswordUrl = (organizerId: number) => {
   return `/api/admin/organizer/${organizerId}/profile/change-password`
 }
+
+// admin-event-participation-controller
+export const getConfirmEventParticipationUrl = (eventId: number) => {
+  return `/api/admin/events/${eventId}/participation/confirm`
+}
+
+export const getRejectEventParticipationUrl = (eventId: number) => {
+  return `/api/admin/events/${eventId}/participation/reject`
+}

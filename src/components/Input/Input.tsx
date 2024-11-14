@@ -52,7 +52,14 @@ export default function Input<
   const {
     field,
     fieldState: { error }
-  } = hasController ? useController({ control, name, rules }) : { field: {}, fieldState: {} }
+  } = hasController
+    ? useController({ control, name, rules })
+    : {
+        field: {
+          value: value?.toString() || ''
+        },
+        fieldState: {}
+      }
 
   const [localValue, setLocalValue] = useState<string>(field.value || '')
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
