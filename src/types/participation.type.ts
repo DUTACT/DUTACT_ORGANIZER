@@ -23,6 +23,10 @@ export interface RejectedParticipationCertificateStatus {
   reason?: string
 }
 
+export interface PendingParticipationCertificateStatus {
+  type: 'pending'
+}
+
 // Confirm participation criterion
 export type ConfirmParticipationCriterion =
   | ConfirmAllParticipation
@@ -37,7 +41,7 @@ export interface ConfirmAllParticipation {
 
 export interface ConfirmParticipationWithStudentsIds {
   type: 'withStudentsIds'
-  studentIds: number[]
+  studentsIds: number[]
 }
 
 export interface ConfirmPaticipationWithCheckedInAtLeast {
@@ -57,7 +61,7 @@ export interface RejectAllParticipation {
 
 export interface RejectParticipationWithStudentsIds {
   type: 'withStudentsIds'
-  studentIds: number[]
+  studentsIds: number[]
   reason?: string
 }
 
