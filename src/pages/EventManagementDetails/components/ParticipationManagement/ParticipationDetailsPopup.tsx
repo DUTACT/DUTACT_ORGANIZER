@@ -60,8 +60,7 @@ export default function ParticipationDetailsPopup({ onClose, onSubmit, studentId
                   <div className='line-clamp-1 text-sm font-semibold text-neutral-7'>{participation.studentName}</div>
                   <div
                     className={cn(
-                      'text-sm',
-                      'text-neutral-5',
+                      'text-sm text-neutral-5',
                       CERTIFICATE_STATUS_COLOR_CLASSES[participation.certificateStatus.type].textColor
                     )}
                   >
@@ -111,12 +110,12 @@ export default function ParticipationDetailsPopup({ onClose, onSubmit, studentId
                     title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.REJECT}
                     className='bg-semantic-cancelled/90 text-neutral-0 hover:bg-semantic-cancelled'
                     onClick={() => setActionConfirmation('rejectParticipation')}
-                  ></Button>
+                  />
                   <Button
                     className='bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
                     title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.CONFIRM}
                     onClick={() => setActionConfirmation('confirmParticipation')}
-                  ></Button>
+                  />
                 </div>
               )}
               {actionConfirmation === 'confirmParticipation' && (
@@ -150,14 +149,14 @@ export default function ParticipationDetailsPopup({ onClose, onSubmit, studentId
   )
 }
 
-interface ConfirmConfirmationProps {
+interface ConfirmationProps {
   eventId: number
   studentId: number
   onSubmit: () => void
   onCancel: () => void
 }
 
-function ConfirmConfirmation({ eventId, studentId, onSubmit, onCancel }: ConfirmConfirmationProps) {
+function ConfirmConfirmation({ eventId, studentId, onSubmit, onCancel }: ConfirmationProps) {
   const { mutate: confirmMutate, isPending: confirmPending } = confirmParticipation(eventId)
 
   const handleConfirmParticipation = () => {
@@ -186,26 +185,19 @@ function ConfirmConfirmation({ eventId, studentId, onSubmit, onCancel }: Confirm
           className='bg-neutral-2 text-neutral-0 text-neutral-7 hover:bg-neutral-3'
           title='Hủy'
           onClick={onCancel}
-        ></Button>
+        />
         <Button
           className='bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
           title={confirmPending ? 'Đang xử lý...' : 'Xác nhận'}
           onClick={handleConfirmParticipation}
           disabled={confirmPending}
-        ></Button>
+        />
       </div>
     </div>
   )
 }
 
-interface RejectConfirmationProps {
-  eventId: number
-  studentId: number
-  onSubmit: () => void
-  onCancel: () => void
-}
-
-function RejectConfirmation({ eventId, studentId, onSubmit, onCancel }: RejectConfirmationProps) {
+function RejectConfirmation({ eventId, studentId, onSubmit, onCancel }: ConfirmationProps) {
   const { mutate: rejectMutate, isPending: rejectPending } = rejectParticipation(eventId)
 
   const { control, handleSubmit } = useForm<RejectParticipationSchemaType>({
