@@ -5,12 +5,14 @@ import Pagination from 'src/components/Pagination/Pagination'
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import Tag from 'src/components/Tag'
 import { CERTIFICATE_STATUS_COLOR_CLASSES, TIMEOUT } from 'src/constants/common'
-import { ParticipationCertificateStatus, ParticipationCertificateStatusType } from 'src/types/participation.type'
 import { useEventId } from 'src/hooks/useEventId'
 import ConfirmParticipationPopup from './ConfirmPaticipationsPopup'
 import Button from 'src/components/Button'
 import RejectParticipationPopup from './RejectPaticipationsPopup'
 import { useQueryClient } from '@tanstack/react-query'
+import ParticipationDetailsPopup from './ParticipationDetailsPopup'
+import { ParticipationCertificateStatus, ParticipationCertificateStatusType } from 'src/types/participation.type'
+import { getParticipationStatusDisplayText, PARTICIPATION_CONFIRM_ACTIONS_TEXT } from 'src/constants/participation'
 
 export default function ParticipationManagement() {
   const eventId = useEventId()
@@ -19,6 +21,7 @@ export default function ParticipationManagement() {
   const [page, setPage] = useState<number>(1)
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
+  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null)
   const [isOpenConfirmPopup, setIsOpenConfirmPopup] = useState<boolean>(false)
   const [isOpenRejectPopup, setIsOpenRejectPopup] = useState<boolean>(false)
 
@@ -77,12 +80,12 @@ export default function ParticipationManagement() {
           <div className='flex gap-4'>
             <Button
               className='bg-semantic-cancelled/90 text-neutral-0 hover:bg-semantic-cancelled'
-              title='Xác nhận không tham gia'
+              title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.REJECT}
               onClick={() => setIsOpenRejectPopup(true)}
             ></Button>
             <Button
               className='bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
-              title='Xác nhận tham gia'
+              title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.CONFIRM}
               onClick={() => setIsOpenConfirmPopup(true)}
             ></Button>
           </div>
@@ -139,8 +142,11 @@ export default function ParticipationManagement() {
                     </td>
                     <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                       <div className='flex items-center justify-center gap-1'>
-                        <div className='flex items-center justify-center p-2 opacity-70 hover:opacity-100'>
-                          <ShowDetailIcon className='h-[20px] w-[20px]' />
+                        <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
+                          <ShowDetailIcon
+                            className='h-[20px] w-[20px]'
+                            onClick={() => setSelectedStudentId(participation.studentId)}
+                          />
                         </div>
                       </div>
                     </td>
@@ -151,6 +157,16 @@ export default function ParticipationManagement() {
           )}
           {participations && participations.length === 0 && (
             <div className='flex h-[200px] items-center justify-center text-neutral-6'>Không có dữ liệu</div>
+          )}
+          {selectedStudentId && (
+            <ParticipationDetailsPopup
+              studentId={selectedStudentId}
+              onClose={() => setSelectedStudentId(null)}
+              onSubmit={() => {
+                setSelectedStudentId(null)
+                refreshParticipations()
+              }}
+            />
           )}
         </div>
       </div>
@@ -176,19 +192,12 @@ export default function ParticipationManagement() {
   )
 }
 
-function getTagStatus(certificateStatus?: ParticipationCertificateStatus): {
+function getTagStatus(certificateStatus: ParticipationCertificateStatus): {
   type: ParticipationCertificateStatusType
   label: string
 } {
-  const statusType =
-    certificateStatus?.type === 'confirmed'
-      ? 'confirmed'
-      : certificateStatus?.type === 'rejected'
-        ? 'rejected'
-        : 'pending'
-
-  const statusLabel =
-    statusType === 'confirmed' ? 'Đã tham gia' : statusType === 'rejected' ? 'Không tham gia' : 'Chờ xác nhận'
+  const statusType = certificateStatus.type
+  const statusLabel = getParticipationStatusDisplayText(statusType)
 
   return {
     type: statusType,

@@ -12,6 +12,7 @@ import { rejectParticipation } from 'src/apis/participation/participation.mutati
 import { useEventId } from 'src/hooks/useEventId'
 import { toast } from 'react-toastify'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
+import { PARTICIPATION_CONFIRM_ACTIONS_TEXT } from 'src/constants/participation'
 
 type RejectCriterion = RejectAllParticipation
 type RejectCriterionType = RejectCriterion['type']
@@ -69,7 +70,7 @@ export default function RejectParticipationPopup({ onClose, onSubmit }: Props) {
       >
         <div className='block flex max-h-main-popup items-start justify-between overflow-auto px-6 py-4'>
           <div>
-            <div className='text-lg font-semibold text-neutral-9'>Xác nhận không tham gia</div>
+            <div className='text-lg font-semibold text-neutral-9'>{PARTICIPATION_CONFIRM_ACTIONS_TEXT.REJECT}</div>
             <div className='text-neutral-5'>Xác nhận sinh viên không tham gia sự kiện</div>
           </div>
           <div className='-mr-1 cursor-pointer p-1 opacity-70 hover:opacity-100' onClick={onClose}>
@@ -111,7 +112,7 @@ export default function RejectParticipationPopup({ onClose, onSubmit }: Props) {
                   onClick={onClose}
                 />
                 <Button
-                  title={isPending ? 'Đang xử lý...' : 'Xác nhận không tham gia'}
+                  title={isPending ? 'Đang xử lý...' : PARTICIPATION_CONFIRM_ACTIONS_TEXT.REJECT}
                   disabled={isPending}
                   className='gap-1 text-nowrap rounded-md bg-semantic-cancelled/90 text-neutral-0 hover:bg-semantic-cancelled'
                   onClick={handleSubmitRejection}
