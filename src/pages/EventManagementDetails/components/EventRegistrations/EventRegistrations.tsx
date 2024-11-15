@@ -4,9 +4,13 @@ import { DATE_TIME_FORMATS } from 'src/constants/common'
 import moment from 'moment'
 import { getRegistrationCountByDate } from 'src/apis/registration'
 import { useEventId } from '../../../../hooks/useEventId'
+import { useOrganizerId } from 'src/hooks/useOrganizerId'
+import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
 
 export default function EventRegistrations() {
   const eventId = useEventId()
+  const organizerId = useOrganizerId()
+  const event = useOrganizerEvent(organizerId, eventId)
   const { registrations, error } = useRegistrations(eventId)
 
   if (error) {
@@ -14,7 +18,7 @@ export default function EventRegistrations() {
     return <div>Đã có lỗi xảy ra</div>
   }
 
-  if (!registrations) {
+  if (!registrations || !event) {
     return <div>Đang tải dữ liệu...</div>
   }
 
@@ -26,7 +30,7 @@ export default function EventRegistrations() {
   const endDate = moment(registrations[registrations.length - 1].date).format(DATE_TIME_FORMATS.DATE)
   const total = registrations.reduce((acc, registration) => acc + registration.count, 0)
   const legendName = 'Số đơn đăng ký, từ ngày ' + startDate + ' đến ngày ' + endDate
-  const registrationsChartData = mapRegistrationsToChartData(registrations)
+  const registrationsChartData = mapRegistrationsToChartData(registrations, moment.min(moment(), moment(endDate)))
 
   return (
     <>
@@ -55,14 +59,13 @@ function useRegistrations(eventId: number) {
   return { registrations: fetchedData, error }
 }
 
-function mapRegistrationsToChartData(registrations: EventRegistrationCountByDate[]) {
+function mapRegistrationsToChartData(registrations: EventRegistrationCountByDate[], endDate: moment.Moment) {
   if (registrations.length === 0) {
     return []
   }
 
   const sortedDate = registrations.sort((a, b) => moment(a.date).diff(moment(b.date)))
   const startDate = moment(sortedDate[0].date)
-  const endDate = moment()
 
   var filledResult: EventRegistrationCountByDate[] = []
   var currentDate = startDate
