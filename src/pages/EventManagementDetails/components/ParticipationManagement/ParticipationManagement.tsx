@@ -13,9 +13,14 @@ import { useQueryClient } from '@tanstack/react-query'
 import ParticipationDetailsPopup from './ParticipationDetailsPopup'
 import { ParticipationCertificateStatus, ParticipationCertificateStatusType } from 'src/types/participation.type'
 import { getParticipationStatusDisplayText, PARTICIPATION_CONFIRM_ACTIONS_TEXT } from 'src/constants/participation'
+import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
+import { useOrganizerId } from 'src/hooks/useOrganizerId'
+import moment from 'moment'
 
 export default function ParticipationManagement() {
   const eventId = useEventId()
+  const organierId = useOrganizerId()
+  const { event } = useOrganizerEvent(organierId, eventId)
   const [inputSearch, setInputSearch] = useState<string>('')
   const [appliedInputSearch, setAppliedInputSearch] = useState<string>('')
   const [page, setPage] = useState<number>(1)
@@ -53,10 +58,11 @@ export default function ParticipationManagement() {
     return <div>Đã có lỗi xảy ra</div>
   }
 
-  if (firstLoad) {
+  if (firstLoad || !event) {
     return <div>Loading...</div>
   }
 
+  const allowPariticipationConfirmation = moment().isAfter(event.endAt)
   const participations = participationsPage?.data
   const totalParticipations = participationsPage?.pagination.totalData
 
@@ -77,18 +83,20 @@ export default function ParticipationManagement() {
               setInputSearch={setInputSearch}
             />
           </div>
-          <div className='flex gap-4'>
-            <Button
-              className='bg-semantic-cancelled/90 text-neutral-0 hover:bg-semantic-cancelled'
-              title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.REJECT}
-              onClick={() => setIsOpenRejectPopup(true)}
-            ></Button>
-            <Button
-              className='bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
-              title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.CONFIRM}
-              onClick={() => setIsOpenConfirmPopup(true)}
-            ></Button>
-          </div>
+          {allowPariticipationConfirmation && (
+            <div className='flex gap-4'>
+              <Button
+                className='bg-semantic-cancelled/90 text-neutral-0 hover:bg-semantic-cancelled'
+                title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.REJECT}
+                onClick={() => setIsOpenRejectPopup(true)}
+              ></Button>
+              <Button
+                className='bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
+                title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.CONFIRM}
+                onClick={() => setIsOpenConfirmPopup(true)}
+              ></Button>
+            </div>
+          )}
         </div>
         <Pagination
           totalItems={totalParticipations || 0}
@@ -166,6 +174,7 @@ export default function ParticipationManagement() {
                 setSelectedStudentId(null)
                 refreshParticipations()
               }}
+              allowParticipationConfirmation={allowPariticipationConfirmation}
             />
           )}
         </div>

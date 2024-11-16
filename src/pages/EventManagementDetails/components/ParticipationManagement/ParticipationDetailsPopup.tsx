@@ -20,10 +20,16 @@ import { yupResolver } from '@hookform/resolvers/yup'
 interface ParticipationDetailsPopupProps {
   onClose: () => void
   onSubmit: () => void
+  allowParticipationConfirmation?: boolean
   studentId: number
 }
 
-export default function ParticipationDetailsPopup({ onClose, onSubmit, studentId }: ParticipationDetailsPopupProps) {
+export default function ParticipationDetailsPopup({
+  onClose,
+  allowParticipationConfirmation,
+  onSubmit,
+  studentId
+}: ParticipationDetailsPopupProps) {
   const eventId = useEventId()
   const { data: participation, error } = getParticipationOfEvent({ eventId, studentId })
   const { checkInCodes } = useEventCheckInCodes()
@@ -104,20 +110,22 @@ export default function ParticipationDetailsPopup({ onClose, onSubmit, studentId
                   </table>
                 )}
               </div>
-              {participation.certificateStatus.type === 'pending' && !actionConfirmation && (
-                <div className='mt-4 flex justify-center gap-2'>
-                  <Button
-                    title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.REJECT}
-                    className='bg-semantic-cancelled/90 text-neutral-0 hover:bg-semantic-cancelled'
-                    onClick={() => setActionConfirmation('rejectParticipation')}
-                  />
-                  <Button
-                    className='bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
-                    title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.CONFIRM}
-                    onClick={() => setActionConfirmation('confirmParticipation')}
-                  />
-                </div>
-              )}
+              {participation.certificateStatus.type === 'pending' &&
+                !actionConfirmation &&
+                allowParticipationConfirmation && (
+                  <div className='mt-4 flex justify-center gap-2'>
+                    <Button
+                      title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.REJECT}
+                      className='bg-semantic-cancelled/90 text-neutral-0 hover:bg-semantic-cancelled'
+                      onClick={() => setActionConfirmation('rejectParticipation')}
+                    />
+                    <Button
+                      className='bg-semantic-secondary/90 text-neutral-0 hover:bg-semantic-secondary'
+                      title={PARTICIPATION_CONFIRM_ACTIONS_TEXT.CONFIRM}
+                      onClick={() => setActionConfirmation('confirmParticipation')}
+                    />
+                  </div>
+                )}
               {actionConfirmation === 'confirmParticipation' && (
                 <ConfirmConfirmation
                   eventId={eventId}
