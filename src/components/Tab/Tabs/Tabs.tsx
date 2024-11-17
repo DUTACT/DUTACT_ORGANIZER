@@ -15,8 +15,9 @@ export default function Tabs({ children }: TabsProps) {
           <div
             key={index}
             className={cn(
-              'cursor-pointer px-4 py-2 focus:outline-none',
-              index === activeIndex ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700'
+              'cursor-pointer py-2 focus:outline-none',
+              index === activeIndex ? 'border-b-2 border-blue-500 text-blue-500' : 'text-gray-500 hover:text-gray-700',
+              index === 0 ? 'ml-0' : 'ml-4'
             )}
             onClick={() => setActiveIndex(index)}
           >
@@ -24,7 +25,7 @@ export default function Tabs({ children }: TabsProps) {
           </div>
         ))}
       </div>
-      <div className='p-4'>{children[activeIndex]}</div>
+      <div className='py-4'>{children[activeIndex]}</div>
     </div>
   )
 }

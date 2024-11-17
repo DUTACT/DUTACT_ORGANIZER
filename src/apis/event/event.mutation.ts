@@ -1,6 +1,10 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { mutationFetch, mutationFormData } from 'src/config/queryClient'
-import { getCloseEventUrlOfOrganizer, getEventModerationUrl, getEventUrlOfOrganizer } from 'src/constants/endpoints'
+import {
+  getCloseEventRegistrationUrlOfOrganizer,
+  getEventModerationUrl,
+  getEventUrlOfOrganizer
+} from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
 import { ChangeEventStatusData, EventBody, EventOfOrganizer } from 'src/types/event.type'
 
@@ -92,7 +96,7 @@ export const closeEvent = (
     mutationFn: async () => {
       try {
         const response = await mutationFetch<EventOfOrganizer>({
-          url: getCloseEventUrlOfOrganizer(organizerId, eventId),
+          url: getCloseEventRegistrationUrlOfOrganizer(organizerId, eventId),
           method: 'POST'
         })
         return response

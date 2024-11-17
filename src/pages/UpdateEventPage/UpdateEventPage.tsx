@@ -1,241 +1,155 @@
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useQueryClient } from '@tanstack/react-query'
-import moment from 'moment'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { getEventOfOrganizerById, updateEvent } from 'src/apis/event'
+import { useNavigate } from 'react-router-dom'
+import { getEventChangeHistory } from 'src/apis/eventChange'
 import Button from 'src/components/Button'
 import Divider from 'src/components/Divider'
-import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInputFile'
-import Input from 'src/components/Input'
-import { DATE_TIME_FORMATS } from 'src/constants/common'
-import { SUCCESS_MESSAGE } from 'src/constants/message'
-import useLocalStorage from 'src/hooks/useLocalStorage'
-import { cn } from 'src/lib/tailwind/utils'
+import { useEventId } from 'src/hooks/useEventId'
+import { useOrganizerId } from 'src/hooks/useOrganizerId'
 import { path } from 'src/routes/path'
-import { EventBody, EventOfOrganizer } from 'src/types/event.type'
-import { getDefaultImageFile, parseJwt } from 'src/utils/common'
-import { eventSchema, EventSchemaType } from 'src/utils/rules'
+import { EventSchemaType } from 'src/utils/rules'
+import EventInformation from '../EventManagementDetails/components/EventInformation'
+import { Tab, Tabs } from 'src/components/Tab'
+import Popover from 'src/components/Popover'
+import { useState } from 'react'
+import UpdateEventDetails from './components/UpdateEventDetails'
 
 type FormData = EventSchemaType
 
 export default function UpdateEventPage() {
-  const [accessToken, _] = useLocalStorage<string>('access_token')
+  const organizerId = useOrganizerId()
+  const eventId = useEventId()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const { id } = useParams()
-  const eventId = Number(id) ?? 0
-  const organizerId = parseJwt(accessToken)?.organizerId ?? 0
-  const [removedCoverPhoto, setRemovedCoverPhoto] = useState<boolean>(false)
-  const {
-    control,
-    trigger,
-    handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm<FormData>({
-    resolver: yupResolver(eventSchema)
-  })
+  const [isOpenEditPopover, setIsOpenEditPopover] = useState(false)
+  const [editOption, setEditOption] = useState<EditOption | null>(null)
 
-  const { data, error, isSuccess } = getEventOfOrganizerById(organizerId, Number(eventId) ?? 0)
+  const { data: changes, error: changesError } = getEventChangeHistory(organizerId, eventId)
 
-  const { mutate, isPending } = updateEvent(organizerId, eventId, {
-    onSuccess: (data) => {
-      toast.success(SUCCESS_MESSAGE.UPDATE_EVENT)
-      queryClient.setQueryData<EventOfOrganizer>(['getEventOfOrganizerById', organizerId, eventId], () => data)
-      navigate(path.event)
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    }
-  })
+  if (changesError) {
+    return <div>Error: {changesError.message}</div>
+  }
 
-  const onSubmit = handleSubmit((data) => {
-    const eventBody: Partial<EventBody> = {
-      name: data.name,
-      content: data.content,
-      startAt: moment(data.startAt).format(DATE_TIME_FORMATS.ISO),
-      endAt: moment(data.endAt).format(DATE_TIME_FORMATS.ISO),
-      startRegistrationAt: moment(data.startRegistrationAt).format(DATE_TIME_FORMATS.ISO),
-      endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.ISO)
-    }
-    if (removedCoverPhoto) {
-      eventBody.coverPhoto = data.coverPhoto
-    }
-    mutate(eventBody)
-  })
+  if (!changes) {
+    return <div>Loading...</div>
+  }
 
   const navigateToEventManagementPage = () => {
     navigate(path.event)
   }
 
-  useEffect(() => {
-    if (isSuccess && data) {
-      reset({
-        ...data,
-        startAt: moment(data.startAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
-        endAt: moment(data.endAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
-        startRegistrationAt: moment(data.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
-        endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
-        coverPhoto: getDefaultImageFile()
-      })
-    } else if (error) {
-      toast.error(error.message)
+  const handleEditOptionClick = (option: EditOption) => {
+    switch (option) {
+      case 'editEventInfo':
+        console.log('Edit event info')
+        break
+      case 'renewRegistration':
+        console.log('Renew registration')
+        break
+      case 'closeRegistration':
+        console.log('Close registration')
+        break
     }
-  }, [isSuccess, data, error, reset])
+
+    setIsOpenEditPopover(false)
+  }
 
   return (
-    <div className='flex h-full w-full flex-1 flex-col'>
-      <div className='sticky left-0 top-0 px-6 pt-3'>
-        <div className='flex items-center justify-between'>
-          <div className='flex flex-col gap-1'>
-            <div className='text-xl font-semibold text-neutral-8'>Cập nhật sự kiện</div>
-            <div className='text-sm font-normal text-neutral-5'>
-              Thay đổi kịp thời các thông tin sự kiện của tổ chức
-            </div>
-          </div>
-          <div className='flex gap-2'>
-            <Button
-              title={isPending ? 'Đang cập nhật...' : 'Cập nhật sự kiện'}
-              type='submit'
-              classButton={cn(
-                'min-w-fit text-neutral-0 border-none bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md',
-                { 'cursor-progress opacity-50': isPending }
-              )}
-              onClick={onSubmit}
-              disabled={isPending}
-            />
-            <Button
-              title='Quay lại'
-              classButton='min-w-[100px] text-neutral-7 border-none bg-neutral-2 hover:bg-neutral-3 text-nowrap rounded-md'
-              onClick={navigateToEventManagementPage}
-            />
-          </div>
+    <div className='px-6 py-3'>
+      <div className='mb-2 flex items-center justify-between'>
+        <div className='flex flex-col gap-1'>
+          <div className='text-xl font-semibold text-neutral-8'>Chỉnh sửa sự kiện</div>
+          <div className='text-sm font-normal text-neutral-5'>Chỉnh sửa thông tin sự kiện, xem lịch sử chỉnh sửa</div>
         </div>
-        <Divider className='mt-4' />
+        <div className='flex gap-2'>
+          <Popover
+            isOpen={isOpenEditPopover}
+            onClose={() => setIsOpenEditPopover(false)}
+            content={<EditOptionsPopover onEditOptionClick={handleEditOptionClick} />}
+            containerClass='relative'
+          >
+            <Button
+              onClick={() => setIsOpenEditPopover(true)}
+              title='Chỉnh sửa'
+              semantic='secondary'
+              classButton='min-w-[150px]'
+            ></Button>
+          </Popover>
+          <Button
+            title='Quay lại'
+            classButton='min-w-[100px] text-neutral-7 border-none bg-neutral-2 hover:bg-neutral-3 text-nowrap rounded-md'
+            onClick={navigateToEventManagementPage}
+          />
+        </div>
       </div>
-
-      <form action='' className='flex-1 overflow-auto px-6 py-3'>
-        <div className='flex w-full gap-4'>
-          <Input
-            name='name'
-            control={control}
-            type='text'
-            placeholder='Nhập tên sự kiện'
-            labelName='Tên sự kiện'
-            showIsRequired={true}
-            classNameWrapper='w-full flex-1'
-          />
-          <Input
-            type='text'
-            placeholder={data?.organizer.name}
-            labelName='Được tạo bởi'
-            disabled={true}
-            classNameWrapper='w-full flex-1'
-          />
-        </div>
-        <div className='flex w-full gap-4'>
-          <div className='flex w-full flex-col'>
-            <div className='flex w-full flex-1 gap-4'>
-              <Input
-                type='datetime-local'
-                labelName='Ngày bắt đầu sự kiện'
-                showIsRequired={true}
-                showError={false}
-                classNameWrapper='text-sm w-full flex-1'
-                classNameInput='px-3'
-                control={control}
-                name='startAt'
-                onChange={() => {
-                  trigger('endAt')
-                  trigger('endRegistrationAt')
-                }}
-              />
-
-              <Input
-                type='datetime-local'
-                labelName='Ngày kết thúc sự kiện'
-                showIsRequired={true}
-                showError={false}
-                classNameWrapper='text-sm w-full flex-1'
-                classNameInput='px-3'
-                control={control}
-                name='endAt'
-                onChange={() => {
-                  trigger('startAt')
-                }}
-              />
+      <Tabs>
+        <Tab label='Thông tin sự kiện'>
+          <EventInformation />
+        </Tab>
+        <Tab label='Lịch sử chỉnh sửa'>
+          <div>
+            <div>
+              <h1 className='text-lg font-bold'>Lịch sử chỉnh sửa sự kiện</h1>
             </div>
-            <div className='mt-1 min-h-[18px] text-xs font-semibold text-semantic-cancelled'>
-              {errors.startAt?.message}
-            </div>
+            {changes.length === 0 && <div className='text-neutral-5'>Không có lịch sử chỉnh sửa</div>}
+            {changes.length > 0 && (
+              <table className='relative min-w-full overflow-auto'>
+                <thead className='sticky top-0 z-50 bg-neutral-0 before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-neutral-5'>
+                  <tr>
+                    <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
+                      Nội dung chỉnh sửa
+                    </th>
+                    <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
+                      Thời gian chỉnh sửa
+                    </th>
+                    <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
+                      Hành động
+                    </th>
+                  </tr>
+
+                  <tr>
+                    {changes.map((change) => (
+                      <tr key={change.id}>
+                        <td className='px-4 py-2 text-sm'>{change.details.type}</td>
+                        <td className='px-4 py-2 text-sm'>{change.changedAt}</td>
+                        <td className='px-4 py-2 text-sm'>Xem</td>
+                      </tr>
+                    ))}
+                  </tr>
+                </thead>
+              </table>
+            )}
           </div>
-          <div className='flex w-full flex-col'>
-            <div className='flex w-full flex-1 gap-4'>
-              <Input
-                type='datetime-local'
-                labelName='Ngày bắt đầu đăng ký'
-                showIsRequired={true}
-                showError={false}
-                classNameWrapper='text-sm w-full flex-1'
-                classNameInput='px-3'
-                control={control}
-                name='startRegistrationAt'
-                onChange={() => {
-                  trigger('endRegistrationAt')
-                }}
-              />
+        </Tab>
+        <Tab label='Thay đổi thông tin'>
+          <UpdateEventDetails />
+        </Tab>
+      </Tabs>
+    </div>
+  )
+}
 
-              <Input
-                type='datetime-local'
-                labelName='Ngày kết thúc đăng ký'
-                showIsRequired={true}
-                showError={false}
-                classNameWrapper='text-sm w-full flex-1'
-                classNameInput='px-3'
-                control={control}
-                name='endRegistrationAt'
-                onChange={() => {
-                  trigger('startRegistrationAt')
-                  trigger('startAt')
-                }}
-              />
-            </div>
-            <div className='mt-1 min-h-[18px] text-xs font-semibold text-semantic-cancelled'>
-              {errors.startRegistrationAt?.message}
-            </div>
-          </div>
+interface EditOptionsPopoverProps {
+  onEditOptionClick: (option: EditOption) => void
+}
+
+type EditOption = 'editEventInfo' | 'renewRegistration' | 'closeRegistration' | 'changeEventTime'
+
+function EditOptionsPopover({ onEditOptionClick }: EditOptionsPopoverProps) {
+  const options = [
+    {
+      title: 'Sửa thông tin',
+      onClick: () => onEditOptionClick('editEventInfo')
+    },
+    {
+      title: 'Thay đổi thời gian sự kiện',
+      onClick: () => onEditOptionClick('changeEventTime')
+    }
+  ]
+  return (
+    <div className='absolute flex flex-col gap-2 rounded-md border border-neutral-4 bg-neutral-0 p-2'>
+      {options.map((option) => (
+        <div key={option.title} className='cursor-pointer rounded-md p-2 hover:bg-neutral-2' onClick={option.onClick}>
+          {option.title}
         </div>
-        <div className='flex w-full gap-4'>
-          <Input
-            variant='textarea'
-            placeholder='Nhập thông tin sự kiện'
-            labelName='Thông tin sự kiện'
-            showIsRequired={true}
-            showError={false}
-            classNameWrapper='text-sm w-full flex-1'
-            classNameInput='px-3 overflow-hidden'
-            control={control}
-            name='content'
-            autoResize
-          />
-        </div>
-        <div className='flex w-full gap-4'>
-          <DraggableInputFile
-            name='coverPhoto'
-            control={control}
-            labelName='Ảnh sự kiện'
-            showIsRequired={true}
-            classNameWrapper='text-sm w-full flex-1'
-            initialImageUrl={data?.coverPhotoUrl}
-            removedInitialImage={removedCoverPhoto}
-            setRemovedInitialImage={setRemovedCoverPhoto}
-          />
-          <div className='w-full flex-1'></div>
-        </div>
-      </form>
+      ))}
     </div>
   )
 }

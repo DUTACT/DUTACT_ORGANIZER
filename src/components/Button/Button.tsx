@@ -10,6 +10,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   classWrapperLoading?: string
   classLoadingIndicator?: string
   iconComponent?: ReactNode
+  semantic?: 'secondary' | 'cancelled' | 'success'
 }
 
 export default function Button({
@@ -22,6 +23,7 @@ export default function Button({
   classWrapperLoading = '',
   classLoadingIndicator = '',
   iconComponent,
+  semantic,
   ...rest
 }: Props) {
   return (
@@ -29,7 +31,14 @@ export default function Button({
       className={cn(
         'flex w-full items-center justify-center gap-2 border border-transparent px-4 py-2 outline-none hover:outline-none focus:outline-none',
         classButton,
-        disabled ? classButtonDisabled : ''
+        disabled ? classButtonDisabled : '',
+        semantic === 'secondary'
+          ? 'bg-semantic-secondary text-neutral-0 hover:bg-semantic-secondary/90'
+          : semantic === 'cancelled'
+            ? 'bg-semantic-cancelled text-neutral-0 hover:bg-semantic-cancelled/90'
+            : semantic === 'success'
+              ? 'bg-semantic-success text-neutral-0 hover:bg-semantic-success/90'
+              : ''
       )}
       disabled={disabled}
       {...rest}

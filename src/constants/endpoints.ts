@@ -1,5 +1,7 @@
 // account-controller
 
+import exp from 'constants'
+
 export const ACCOUNT_URL = {
   LOGIN: '/api/login'
 }
@@ -14,8 +16,20 @@ export const getEventUrlOfOrganizer = (organizerId: number, eventId?: number) =>
     : `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events`
 }
 
-export const getCloseEventUrlOfOrganizer = (organizerId: number, eventId: number) => {
-  return `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events/${eventId}/close`
+export const getCloseEventRegistrationUrlOfOrganizer = (organizerId: number, eventId: number) => {
+  return `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events/${eventId}/close-registration`
+}
+
+export const getRenewEventRegistrationUrlOfOrganizer = (organizerId: number, eventId: number) => {
+  return `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events/${eventId}/renew-registration`
+}
+
+export const getChangeEventTimeUrlOfOrganizer = (organizerId: number, eventId: number) => {
+  return `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events/${eventId}/change-time`
+}
+
+export const getEventChangeHistoryUrlOfOrganizer = (organizerId: number, eventId: number) => {
+  return `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events/${eventId}/change-history`
 }
 
 // admin-event-controller

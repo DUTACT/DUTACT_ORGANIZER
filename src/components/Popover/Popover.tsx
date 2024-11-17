@@ -4,10 +4,11 @@ interface Props {
   isOpen: boolean
   content: JSX.Element
   children: JSX.Element
+  containerClass?: string
   onClose?: () => void
 }
 
-export default function Popover({ isOpen, content, children, onClose }: Props) {
+export default function Popover({ isOpen, content, children, containerClass, onClose }: Props) {
   const popoverRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export default function Popover({ isOpen, content, children, onClose }: Props) {
   }, [isOpen, onClose])
 
   return (
-    <div>
+    <div className={containerClass}>
       {children}
       {isOpen && <div ref={popoverRef}>{content}</div>}
     </div>
