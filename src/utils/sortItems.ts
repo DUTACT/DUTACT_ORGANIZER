@@ -5,21 +5,26 @@ export interface SortCriterion<T> {
   direction: SortDirection
 }
 
-export const sortItems = <T>(items: T[], sortCriteria: SortCriterion<T>[]): T[] => {
+export const sortItems = <T>(
+  items: T[],
+  sortCriteria: SortCriterion<T>[],
+  compareFns?: Partial<Record<keyof T, (a: T, b: T) => number>>
+): T[] => {
   return [...items].sort((a, b) => {
     for (const { field, direction } of sortCriteria) {
       if (direction === null) continue
 
-      const aValue = a[field]
-      const bValue = b[field]
+      const compareFn =
+        compareFns?.[field] ||
+        ((a, b) => {
+          const aValue = a[field]
+          const bValue = b[field]
 
-      if (direction === 'asc') {
-        if (aValue < bValue) return -1
-        if (aValue > bValue) return 1
-      } else if (direction === 'desc') {
-        if (aValue > bValue) return -1
-        if (aValue < bValue) return 1
-      }
+          return aValue > bValue ? 1 : aValue < bValue ? -1 : 0
+        })
+
+      const result = compareFn(a, b)
+      return direction === 'asc' ? result : -result
     }
     return 0
   })

@@ -11,17 +11,22 @@ import { toast } from 'react-toastify'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
 import Button from 'src/components/Button'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { EventOfOrganizer } from 'src/types/event.type'
+import { mapEventOfOrganizer } from 'src/utils/eventMapping'
 
 export default function EventInformation() {
   const organizerId = useOrganizerId()
   const eventId = useEventId()
   const dispatch = useDispatch()
-  const { event, updateEvent, error } = useOrganizerEvent(organizerId, eventId)
+  const { event: fetchedEvent, updateEvent, error } = useOrganizerEvent(organizerId, eventId)
+  const [event, setEvent] = useState<EventOfOrganizer | undefined>(undefined)
 
   const registrationEnded = useMemo(
-    () => !!event && moment(event.endRegistrationAt).startOf('minute').isSameOrBefore(moment().startOf('minute')),
-    [event]
+    () =>
+      !!fetchedEvent &&
+      moment(fetchedEvent.endRegistrationAt).startOf('minute').isSameOrBefore(moment().startOf('minute')),
+    [fetchedEvent]
   )
 
   const { mutate: mutateCloseEvent } = closeEvent(organizerId, eventId, {
@@ -36,7 +41,7 @@ export default function EventInformation() {
   })
 
   const handleCloseRegistration = () => {
-    if (!event) {
+    if (!fetchedEvent) {
       return
     }
 
@@ -64,11 +69,17 @@ export default function EventInformation() {
     )
   }
 
+  useEffect(() => {
+    if (fetchedEvent) {
+      setEvent(mapEventOfOrganizer(fetchedEvent))
+    }
+  }, [fetchedEvent])
+
   if (error) {
     return <div>Error: {error.message}</div>
   }
 
-  if (!event) {
+  if (!fetchedEvent || !event) {
     return <div>Loading...</div>
   }
 
@@ -88,15 +99,15 @@ export default function EventInformation() {
       <div className='grid grid-cols-2 gap-y-4'>
         <div>
           <div className='font-medium'>Thời gian bắt đầu</div>
-          <div>{moment(event.startAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}</div>
+          <div>{event.startAt}</div>
         </div>
         <div>
           <div className='font-medium'>Thời gian kết thúc</div>
-          <div>{moment(event.endAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}</div>
+          <div>{event.endAt}</div>
         </div>
         <div>
           <div className='font-medium'>Thời gian bắt đầu đăng ký</div>
-          <div>{moment(event.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}</div>
+          <div>{event.startRegistrationAt}</div>
         </div>
         <div>
           <div className='font-medium'>
@@ -104,7 +115,7 @@ export default function EventInformation() {
             {registrationEnded && <span className='text-semantic-danger'> (Đã hết hạn đăng ký)</span>}
           </div>
           <div className='flex flex-col items-start gap-2'>
-            <span>{moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)}</span>
+            <span>{event?.endRegistrationAt}</span>
             {organizerId === event.organizer.id && !registrationEnded && (
               <Button
                 className='min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-secondary/90 px-3 py-1 text-neutral-0 outline-none hover:bg-semantic-secondary focus:outline-none'
