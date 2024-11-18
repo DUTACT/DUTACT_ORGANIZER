@@ -11,10 +11,17 @@ import { clearModal, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { toast } from 'react-toastify'
 import QRCodePopup from './QRCodePopup'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
+import { useEventId } from 'src/hooks/useEventId'
+import { useOrganizerId } from 'src/hooks/useOrganizerId'
+import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
+import moment from 'moment'
 
 export default function CheckInCodeManagement() {
   const dispatch = useDispatch()
+  const eventId = useEventId()
+  const organizerId = useOrganizerId()
 
+  const { event } = useOrganizerEvent(organizerId, eventId)
   const { checkInCodes, deleteCode: deleteCheckInCode } = useEventCheckInCodes()
   const [isShowCreateCheckInCodePopup, setIsShowCreateCheckInCodePopup] = useState<boolean>(false)
   const [seletedCode, setSeletedCode] = useState<CheckInCode | null>(null)
@@ -56,13 +63,15 @@ export default function CheckInCodeManagement() {
           <h2 className='text-lg font-semibold'>Quản lý mã check-in</h2>
         </div>
         <div>
-          <Button
-            title='Tạo mã check-in'
-            type='button'
-            classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
-            iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
-            onClick={() => setIsShowCreateCheckInCodePopup(true)}
-          />
+          {moment().isBefore(event?.endAt) && (
+            <Button
+              title='Tạo mã check-in'
+              type='button'
+              classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
+              iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
+              onClick={() => setIsShowCreateCheckInCodePopup(true)}
+            />
+          )}
         </div>
       </div>
       <table className='relative min-w-full overflow-auto'>
