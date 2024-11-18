@@ -258,7 +258,6 @@ export default function EventManagement() {
           />
         </div>
       </div>
-      <div className='flex items-center justify-between'></div>
       <Pagination
         totalItems={filteredEvents.length}
         onPageChange={handlePageChange}
