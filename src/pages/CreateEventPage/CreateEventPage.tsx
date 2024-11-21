@@ -11,6 +11,7 @@ import Input from 'src/components/Input'
 import { DATE_TIME_FORMATS } from 'src/constants/common'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
 import { useOrganizerId } from 'src/hooks/useOrganizerId'
+import { useProfile } from 'src/hooks/useProfile'
 import { cn } from 'src/lib/tailwind/utils'
 import { path } from 'src/routes/path'
 import { EventBody } from 'src/types/event.type'
@@ -21,6 +22,7 @@ type FormData = EventSchemaType
 export default function CreateEventPage() {
   const organizerId = useOrganizerId()
   const navigate = useNavigate()
+  const { profile } = useProfile()
   const {
     control,
     trigger,
@@ -101,7 +103,7 @@ export default function CreateEventPage() {
           />
           <Input
             type='text'
-            placeholder='Phòng Công tác Sinh viên'
+            placeholder={profile?.name}
             labelName='Được tạo bởi'
             disabled={true}
             classNameWrapper='w-full flex-1'

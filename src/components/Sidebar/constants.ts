@@ -26,7 +26,7 @@ export const SIDEBAR_ROUTES = [
   },
   {
     path: path.event,
-    name: 'Quản lý sự kiện',
+    name: 'Quản lý sự kiện nội bộ',
     icon: EventIcon,
     iconActive: EventActiveIcon,
     userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE, USER_ROLE.EVENT_ORGANIZER]
