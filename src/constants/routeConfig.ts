@@ -11,7 +11,7 @@ export const ROUTE_CONFIG = [
   },
   {
     path: path.event,
-    title: 'Quản lý sự kiện',
+    title: 'Quản lý sự kiện nội bộ',
     icon: EventIcon
   },
   {
