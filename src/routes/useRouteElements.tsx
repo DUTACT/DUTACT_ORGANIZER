@@ -14,6 +14,7 @@ import CreateEventPage from 'src/pages/CreateEventPage'
 import EventModeration from 'src/pages/EventModeration'
 import UpdateEventPage from 'src/pages/UpdateEventPage'
 import EventManagementDetails from 'src/pages/EventManagementDetails'
+import EventModerationDetails from 'src/pages/EventModerationDetails'
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAppContext()
@@ -100,7 +101,7 @@ export default function useRouteElements() {
           path: path.eventModDetails.pattern,
           element: (
             <MainLayout>
-              <EventManagementDetails />
+              <EventModerationDetails />
             </MainLayout>
           )
         }

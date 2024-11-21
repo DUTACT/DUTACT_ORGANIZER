@@ -1,4 +1,5 @@
-export type EventStatus = 'pending' | 'approved' | 'rejected'
+// Only pending, rejected, approved are returned from the server, the rest are calculated in the frontend
+export type EventStatus = 'pending' | 'rejected' | 'approved' | 'commingSoon' | 'ongoing' | 'ended'
 export interface EventOfOrganizer {
   id: number
   name: string

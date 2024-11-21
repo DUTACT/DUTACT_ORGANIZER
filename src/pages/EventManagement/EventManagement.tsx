@@ -2,12 +2,7 @@ import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
 import EditIcon from 'src/assets/icons/i-edit-secondary.svg?react'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
 import { deleteEvent, getAllEventsOfOrganizer } from 'src/apis/event'
-import {
-  DATE_TIME_FORMATS,
-  EVENT_STATUS_COLOR_CLASSES,
-  EVENT_STATUS_MESSAGES,
-  INITIAL_ITEMS_PER_PAGE
-} from 'src/constants/common'
+import { DATE_TIME_FORMATS, EVENT_STATUS_COLOR_CLASSES, INITIAL_ITEMS_PER_PAGE } from 'src/constants/common'
 import moment from 'moment'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -24,7 +19,7 @@ import { path } from 'src/routes/path'
 import { useDispatch } from 'react-redux'
 import { clearModal, setIsShowModalConfirm, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
-import { getStatusMessage, parseJwt } from 'src/utils/common'
+import { parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
 import useLocalStorage from 'src/hooks/useLocalStorage'
 import FilterPopover from 'src/components/FilterPopover'
@@ -32,6 +27,7 @@ import EventFilter from './components/EventFilter'
 import _ from 'lodash'
 import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
+import { mapEventOfOrganizer } from 'src/utils/eventMapping'
 
 export default function EventManagement() {
   const navigate = useNavigate()
@@ -48,7 +44,8 @@ export default function EventManagement() {
     { field: 'startAt', direction: null },
     { field: 'endAt', direction: null },
     { field: 'startRegistrationAt', direction: null },
-    { field: 'endRegistrationAt', direction: null }
+    { field: 'endRegistrationAt', direction: null },
+    { field: 'status', direction: 'asc' }
   ])
   const [eventFilterOptions, setEventFilterOptions] = useState<EventFilterType>({
     organizerIds: [],
@@ -102,7 +99,15 @@ export default function EventManagement() {
     events: EventOfOrganizer[],
     criteria: SortCriterion<EventOfOrganizer>[]
   ): EventOfOrganizer[] => {
-    return sortItems<EventOfOrganizer>(events, criteria)
+    return sortItems<EventOfOrganizer>(events, criteria, {
+      status: (a, b) => {
+        const statusOrder = ['ongoing', 'commingSoon', 'ended', 'pending', 'rejected', 'approved']
+        const aStatus = a.status.type
+        const bStatus = b.status.type
+
+        return statusOrder.indexOf(aStatus) - statusOrder.indexOf(bStatus)
+      }
+    })
   }
 
   const handleFilterEvents = (events: EventOfOrganizer[], eventFilterOptions: EventFilterType) => {
@@ -203,20 +208,7 @@ export default function EventManagement() {
 
   useEffect(() => {
     if (eventList) {
-      const newEvents = eventList.map((event: EventOfOrganizer) => ({
-        ...event,
-        createdAt: moment(event.createdAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        startAt: moment(event.startAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        endAt: moment(event.endAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        startRegistrationAt: moment(event.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        endRegistrationAt: moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        status: {
-          ...event.status,
-          label: getStatusMessage(EVENT_STATUS_MESSAGES, event.status.type),
-          moderatedAt: moment(event.status.moderatedAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)
-        }
-      }))
-      setEvents(newEvents)
+      setEvents(eventList.map(mapEventOfOrganizer))
     }
   }, [eventList])
 
@@ -308,9 +300,13 @@ export default function EventManagement() {
                     <SortIcon sortDirection={getSortDirection(sortCriteria, 'endAt')} />
                   </div>
                 </th>
-                <th className='min-w-[140px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
+                <th
+                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
+                  onClick={() => toggleSortCriteria('status')}
+                >
                   <div className='flex items-center justify-between'>
                     <span>Trạng thái</span>
+                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'status')} />
                   </div>
                 </th>
                 <th className='sticky right-0 z-20 whitespace-normal break-words bg-neutral-0 px-4 py-2 text-left text-sm before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-neutral-5'>

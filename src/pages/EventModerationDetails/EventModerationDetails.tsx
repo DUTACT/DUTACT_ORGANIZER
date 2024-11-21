@@ -132,7 +132,7 @@ export default function EventModerationDetails() {
   }
 
   return (
-    <div className='flex w-full flex-col'>
+    <div className='flex w-full flex-col p-4'>
       <div className='mb-4 mt-2 flex items-start justify-between'>
         <div className='flex flex-col gap-1'>
           <div className='mb-2 flex items-center justify-start align-middle'>

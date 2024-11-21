@@ -18,6 +18,9 @@ export const USER_ROLE_LABEL: Record<string, string> = {
 export const EVENT_STATUS_MESSAGES: Record<EventStatus, string> = {
   pending: 'Chờ duyệt',
   approved: 'Đã duyệt',
+  commingSoon: 'Sắp diễn ra',
+  ongoing: 'Đang diễn ra',
+  ended: 'Đã kết thúc',
   rejected: 'Từ chối'
 }
 
@@ -29,6 +32,18 @@ export const EVENT_STATUS_COLOR_CLASSES: Record<EventStatus, { backgroundColor: 
   approved: {
     backgroundColor: 'bg-semantic-success-background',
     textColor: 'text-semantic-success'
+  },
+  commingSoon: {
+    backgroundColor: 'bg-semantic-secondary-background',
+    textColor: 'text-semantic-secondary'
+  },
+  ongoing: {
+    backgroundColor: 'bg-semantic-success-background',
+    textColor: 'text-semantic-success'
+  },
+  ended: {
+    backgroundColor: 'bg-semantic-cancelled-background',
+    textColor: 'text-semantic-cancelled'
   },
   rejected: {
     backgroundColor: 'bg-semantic-cancelled-background',
