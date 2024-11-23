@@ -1,7 +1,7 @@
 import moment from 'moment'
 import Divider from 'src/components/Divider'
 import Tag from 'src/components/Tag'
-import { DATE_TIME_FORMATS, EVENT_STATUS_COLOR_CLASSES } from 'src/constants/common'
+import { EVENT_STATUS_COLOR_CLASSES } from 'src/constants/common'
 import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
 import { useOrganizerId } from '../../../../hooks/useOrganizerId'
 import { useEventId } from '../../../../hooks/useEventId'
