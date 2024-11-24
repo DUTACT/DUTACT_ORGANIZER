@@ -11,7 +11,8 @@ export const path = {
     link: (id: number) => `/update-event/${id}`
   },
   createEvent: '/event/create',
-  user: '/user',
+  account: '/account',
+  studentAccount: '/account/student',
   eventMod: '/event-mod',
   eventModDetails: {
     pattern: '/event-mod/:id',

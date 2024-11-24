@@ -18,11 +18,21 @@ export const SIDEBAR_ROUTES = [
     userRoles: [USER_ROLE.ADMIN, USER_ROLE.STUDENT_AFFAIRS_OFFICE, USER_ROLE.EVENT_ORGANIZER]
   },
   {
-    path: path.user,
+    path: path.account,
     name: 'Quản lý người dùng',
     icon: UserIcon,
     iconActive: UserActiveIcon,
-    userRoles: [USER_ROLE.ADMIN]
+    userRoles: [USER_ROLE.ADMIN],
+    canopen: false,
+    subRoutes: [
+      {
+        path: path.studentAccount,
+        name: 'Quản lý tài khoản sinh viên',
+        icon: UserIcon,
+        iconActive: UserActiveIcon,
+        userRoles: [USER_ROLE.ADMIN],
+      }
+    ]
   },
   {
     path: path.event,
@@ -36,6 +46,6 @@ export const SIDEBAR_ROUTES = [
     name: 'Kiểm duyệt sự kiện',
     icon: EventModIcon,
     iconActive: EventModActiveIcon,
-    userRoles: [USER_ROLE.ADMIN, USER_ROLE.STUDENT_AFFAIRS_OFFICE]
+    userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
   }
 ]
