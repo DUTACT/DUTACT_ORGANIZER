@@ -3,6 +3,8 @@ import LogOutIcon from 'src/assets/icons/i-logout.svg?react'
 import PasswordIcon from 'src/assets/icons/i-password.svg?react'
 import { useAppContext } from 'src/contexts/app.context'
 import { setupToken } from 'src/config/queryClient'
+import { useUserRole } from 'src/hooks/useUserRole'
+import { USER_ROLE } from 'src/constants/common'
 
 interface ProfilePopover {
   onClosePopover: () => void
@@ -16,6 +18,8 @@ export default function ProfilePopover({
   setIsShowChangePasswordPopup
 }: ProfilePopover) {
   const { setIsAuthenticated } = useAppContext()
+  const userRole = useUserRole()
+  const isAdmin = userRole === USER_ROLE.ADMIN
 
   const handleLogOut = () => {
     localStorage.removeItem('access_token')
@@ -25,16 +29,18 @@ export default function ProfilePopover({
 
   return (
     <div className='overflow-hidden rounded-md border border-neutral-3 shadow-custom'>
-      <div
-        className='flex cursor-pointer items-center gap-3 py-2 pl-2 pr-6 hover:bg-neutral-2'
-        onClick={() => {
-          setIsShowProfilePopup(true)
-          onClosePopover()
-        }}
-      >
-        <UserIcon className='h-[20px] w-[20px]' />
-        <span className='text-base text-neutral-6'>Thông tin cá nhân</span>
-      </div>
+      {!isAdmin && (
+        <div
+          className='flex cursor-pointer items-center gap-3 py-2 pl-2 pr-6 hover:bg-neutral-2'
+          onClick={() => {
+            setIsShowProfilePopup(true)
+            onClosePopover()
+          }}
+        >
+          <UserIcon className='h-[20px] w-[20px]' />
+          <span className='text-base text-neutral-6'>Thông tin cá nhân</span>
+        </div>
+      )}
       <div
         className='flex cursor-pointer items-center gap-3 py-2 pl-2 pr-6 hover:bg-neutral-2'
         onClick={() => {
