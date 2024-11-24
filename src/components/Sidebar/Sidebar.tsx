@@ -48,26 +48,62 @@ export default function Sidebar() {
       <Divider className='mt-4' />
       <div className='mt-4 flex flex-1 flex-col items-start justify-start gap-2'>
         {SIDEBAR_ROUTES.filter((route) => route.userRoles.includes(userRole)).map(
-          ({ path, name, icon: Icon, iconActive: IconActive }) => (
-            <NavLink
-              key={path}
-              to={path}
-              className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:bg-neutral-3 hover:text-neutral-6'
-            >
-              {({ isActive }: { isActive: boolean }) => (
-                <>
-                  {isActive ? <IconActive className='h-[24px] w-[24px]' /> : <Icon className='h-[24px] w-[24px]' />}
-                  <div
-                    className={cn('test-base', {
-                      'font-medium text-semantic-secondary': isActive,
-                      'font-normal': !isActive
-                    })}
-                  >
-                    {name}
-                  </div>
-                </>
+          ({ path, name, icon: Icon, iconActive: IconActive, subRoutes }) => (
+            <>
+              <NavLink
+                key={path}
+                to={path}
+                onClick={(e) => {
+                  if (subRoutes) {
+                    e.preventDefault()
+                  }
+                }}
+                className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:bg-neutral-3 hover:text-neutral-6'
+              >
+                {({ isActive }: { isActive: boolean }) => (
+                  <>
+                    {isActive ? <IconActive className='h-[24px] w-[24px]' /> : <Icon className='h-[24px] w-[24px]' />}
+                    <div
+                      className={cn('test-base', {
+                        'font-medium text-semantic-secondary': isActive,
+                        'font-normal': !isActive
+                      })}
+                    >
+                      {name}
+                    </div>
+                  </>
+                )}
+              </NavLink>
+              {subRoutes && (
+                <div className='ml-4'>
+                  {subRoutes.map(({ path, name, icon: Icon, iconActive: IconActive }) => (
+                    <NavLink
+                      key={path}
+                      to={path}
+                      className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:bg-neutral-3 hover:text-neutral-6'
+                    >
+                      {({ isActive }: { isActive: boolean }) => (
+                        <>
+                          {isActive ? (
+                            <IconActive className='h-[24px] w-[24px]' />
+                          ) : (
+                            <Icon className='h-[24px] w-[24px]' />
+                          )}
+                          <div
+                            className={cn('test-base', {
+                              'font-medium text-semantic-secondary': isActive,
+                              'font-normal': !isActive
+                            })}
+                          >
+                            {name}
+                          </div>
+                        </>
+                      )}
+                    </NavLink>
+                  ))}
+                </div>
               )}
-            </NavLink>
+            </>
           )
         )}
       </div>
