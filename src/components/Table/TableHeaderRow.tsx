@@ -3,6 +3,6 @@ interface TableHeaderRowProps {
   className?: string
 }
 
-export default function TableHeaderRow({ children, className }: TableHeaderRowProps): JSX.Element {
+export default function TableHeaderRow({ children, className }: TableHeaderRowProps) {
   return <tr className={className}>{children}</tr>
 }

@@ -14,7 +14,7 @@ import EventModeration from 'src/pages/EventModeration'
 import UpdateEventPage from 'src/pages/UpdateEventPage'
 import EventManagementDetails from 'src/pages/EventManagementDetails'
 import EventModerationDetails from 'src/pages/EventModerationDetails'
-import StudentAccountManagement from 'src/pages/AccountManagement/StudentAccountManagement'
+import StudentAccountManagement from 'src/pages/StudentAccountManagement.tsx/StudentAccountManagement'
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAppContext()

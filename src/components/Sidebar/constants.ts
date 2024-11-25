@@ -19,18 +19,17 @@ export const SIDEBAR_ROUTES = [
   },
   {
     path: path.account,
-    name: 'Quản lý người dùng',
+    name: 'Quản lý tài khoản',
     icon: UserIcon,
     iconActive: UserActiveIcon,
     userRoles: [USER_ROLE.ADMIN],
-    canopen: false,
     subRoutes: [
       {
         path: path.studentAccount,
         name: 'Quản lý tài khoản sinh viên',
         icon: UserIcon,
         iconActive: UserActiveIcon,
-        userRoles: [USER_ROLE.ADMIN],
+        userRoles: [USER_ROLE.ADMIN]
       }
     ]
   },
