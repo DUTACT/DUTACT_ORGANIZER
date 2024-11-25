@@ -6,6 +6,6 @@ type TableRowProps = {
   className?: string
 }
 
-export default function TableRow({ children, className = '' }: TableRowProps): JSX.Element {
+export default function TableRow({ children, className = '' }: TableRowProps) {
   return <tr className={cn('group border-b-[1px] border-neutral-4 hover:bg-neutral-2', className)}>{children}</tr>
 }
