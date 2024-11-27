@@ -6,7 +6,8 @@ import { PostStatus } from 'src/types/post.type'
 export const USER_ROLE: Record<UserRole, string> = {
   ADMIN: 'ROLE_ADMIN',
   STUDENT_AFFAIRS_OFFICE: 'ROLE_STUDENT_AFFAIRS_OFFICE',
-  EVENT_ORGANIZER: 'ROLE_EVENT_ORGANIZER'
+  EVENT_ORGANIZER: 'ROLE_EVENT_ORGANIZER',
+  STUDENT: 'ROLE_STUDENT'
 }
 
 export const USER_ROLE_LABEL: Record<string, string> = {

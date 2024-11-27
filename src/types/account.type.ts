@@ -36,7 +36,7 @@ export interface Account {
 }
 
 export interface StudentAccount extends Account {
-  fullName: string
+  name: string
   phone?: string
   faculty?: string
   address?: string
