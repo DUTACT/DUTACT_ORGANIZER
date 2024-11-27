@@ -75,7 +75,7 @@ export default function StudentAccountManagement() {
             {students.map((student) => (
               <TableRow key={student.id}>
                 <TableCell>{student.username}</TableCell>
-                <TableCell>{student.fullName}</TableCell>
+                <TableCell>{student.name}</TableCell>
               </TableRow>
             ))}
           </TableBody>
