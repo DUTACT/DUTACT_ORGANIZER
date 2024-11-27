@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: Dutact
+    env: node
+    plan: free
+    autoDeploy: true
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
