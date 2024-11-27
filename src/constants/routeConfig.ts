@@ -15,8 +15,13 @@ export const ROUTE_CONFIG = [
     icon: EventIcon
   },
   {
-    path: path.user,
+    path: path.account,
     title: 'Quản lý người dùng',
+    icon: UserIcon
+  },
+  {
+    path: path.studentAccount,
+    title: 'Quản lý tài khoản sinh viên',
     icon: UserIcon
   }
 ]

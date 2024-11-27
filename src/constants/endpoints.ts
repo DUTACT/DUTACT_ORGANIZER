@@ -73,3 +73,20 @@ export const getConfirmEventParticipationUrl = (eventId: number) => {
 export const getRejectEventParticipationUrl = (eventId: number) => {
   return `/api/admin/events/${eventId}/participation/reject`
 }
+
+// manage-account-controller
+export const getManageAccountsUrl = () => {
+  return '/api/admin/manage-accounts'
+}
+
+export const getManageAccountUrl = (accountId: number) => {
+  return `/api/admin/manage-accounts/${accountId}`
+}
+
+export const getManageStudentAccountsUrl = () => {
+  return '/api/admin/manage-accounts/students'
+}
+
+export const getManageOrganizerAccountsUrl = () => {
+  return '/api/admin/manage-accounts/organizers'
+}

@@ -6,7 +6,6 @@ import HomePage from 'src/pages/HomePage'
 import PageNotFound from 'src/pages/PageNotFound'
 import MainLayout from 'src/layouts/MainLayout'
 import { useAppContext } from 'src/contexts/app.context'
-import UserManagement from 'src/pages/UserManagement'
 import EventManagement from 'src/pages/EventManagement'
 import { useEffect } from 'react'
 import { ROUTE_CONFIG } from 'src/constants/routeConfig'
@@ -15,6 +14,7 @@ import EventModeration from 'src/pages/EventModeration'
 import UpdateEventPage from 'src/pages/UpdateEventPage'
 import EventManagementDetails from 'src/pages/EventManagementDetails'
 import EventModerationDetails from 'src/pages/EventModerationDetails'
+import StudentAccountManagement from 'src/pages/StudentAccountManagement.tsx/StudentAccountManagement'
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAppContext()
@@ -50,10 +50,13 @@ export default function useRouteElements() {
           )
         },
         {
-          path: path.user,
+          path: path.account
+        },
+        {
+          path: path.studentAccount,
           element: (
             <MainLayout>
-              <UserManagement />
+              <StudentAccountManagement />
             </MainLayout>
           )
         },
