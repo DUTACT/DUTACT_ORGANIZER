@@ -13,6 +13,7 @@ export const path = {
   createEvent: '/event/create',
   account: '/account',
   studentAccount: '/account/student',
+  organizerAccount: '/account/organizer',
   eventMod: '/event-mod',
   eventModDetails: {
     pattern: '/event-mod/:id',

@@ -1,9 +1,9 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { queryFetch } from 'src/config/queryClient'
 import { STALE_TIME } from 'src/constants/common'
-import { getManageAccountsUrl, getManageStudentAccountsUrl, getOrganizerProfileUrl } from 'src/constants/endpoints'
+import { getManageAccountsUrl, getManageOrganizerAccountsUrl, getManageStudentAccountsUrl, getOrganizerProfileUrl } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
-import { Account, Profile, StudentAccount, UserRole } from 'src/types/account.type'
+import { Account, OrganizerAccount, Profile, StudentAccount, UserRole } from 'src/types/account.type'
 import { PageInfo } from 'src/types/pagination.type'
 
 export const getOrganizerProfile = (organizerId: number, options?: UseQueryOptions<Profile, ApiError>) => {
@@ -61,7 +61,24 @@ export const getStudentAccounts = ({ searchQuery, page, pageSize, options }: Get
       const response = await queryFetch<PageInfo<StudentAccount>>({
         url: getManageStudentAccountsUrl(),
         inputParams: {
-          role: 'STUDENT',
+          searchQuery,
+          page,
+          pageSize
+        },
+        ...options
+      })
+      return response
+    }
+  })
+}
+
+export const getOrganizerAccounts = ({ searchQuery, page, pageSize, options }: GetStudentAccountsProps = {}) => {
+  return useQuery<PageInfo<OrganizerAccount>, ApiError>({
+    queryKey: ['getOrganizerAccounts', searchQuery, page, pageSize],
+    queryFn: async () => {
+      const response = await queryFetch<PageInfo<OrganizerAccount>>({
+        url: getManageOrganizerAccountsUrl(),
+        inputParams: {
           searchQuery,
           page,
           pageSize

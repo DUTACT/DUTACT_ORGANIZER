@@ -43,3 +43,10 @@ export interface StudentAccount extends Account {
   className?: string
   avatarUrl?: string
 }
+
+export interface OrganizerAccount extends Account {
+  name: string
+  phone?: string
+  address?: string
+  avatarUrl?: string
+}
