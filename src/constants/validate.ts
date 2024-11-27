@@ -8,6 +8,7 @@ export const MAX_LENGTH_USERNAME = 20
 export const MIN_LENGTH_USERNAME = 8
 export const ERROR_MAX_LENGTH_USERNAME = `Tên tài khoản chỉ có tối đa ${MAX_LENGTH_USERNAME} ký tự`
 export const ERROR_MIN_LENGTH_USERNAME = `Tên tài khoản phải có tối thiểu ${MIN_LENGTH_USERNAME} ký tự`
+export const ERROR_INCORRECT_FORMAT_USERNAME = 'Tên tài khoản chỉ chứa ký tự chữ và số'
 
 // PASSWORD
 export const MAX_LENGTH_PASSWORD = 128

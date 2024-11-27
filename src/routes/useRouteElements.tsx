@@ -16,6 +16,7 @@ import EventManagementDetails from 'src/pages/EventManagementDetails'
 import EventModerationDetails from 'src/pages/EventModerationDetails'
 import StudentAccountManagement from 'src/pages/StudentAccountManagement.tsx/StudentAccountManagement'
 import OrganizerAccountManagement from 'src/pages/OrganizerAccountManagement'
+import CreateOrganizerAccount from 'src/pages/CreateOrganizerAccount'
 
 const ProtectedRoute: React.FC = () => {
   const { isAuthenticated } = useAppContext()
@@ -58,6 +59,14 @@ export default function useRouteElements() {
           element: (
             <MainLayout>
               <StudentAccountManagement />
+            </MainLayout>
+          )
+        },
+        {
+          path: path.createOrganizerAccount,
+          element: (
+            <MainLayout>
+              <CreateOrganizerAccount />
             </MainLayout>
           )
         },

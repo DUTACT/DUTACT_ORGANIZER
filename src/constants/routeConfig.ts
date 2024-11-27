@@ -23,5 +23,9 @@ export const ROUTE_CONFIG = [
     path: path.studentAccount,
     title: 'Quản lý tài khoản sinh viên',
     icon: UserIcon
-  }
+  },
+  {
+    path: path.createOrganizerAccount,
+    title: 'Tạo tài khoản tổ chức',
+  },
 ]

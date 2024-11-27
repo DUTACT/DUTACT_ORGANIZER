@@ -1,8 +1,8 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { mutationFetch, mutationFormData } from 'src/config/queryClient'
-import { getChangePasswordUrl, getOrganizerProfileUrl } from 'src/constants/endpoints'
+import { getChangePasswordUrl, getManageOrganizerAccountsUrl, getOrganizerProfileUrl } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
-import { ChangePasswordBody, Profile, ProfileBody } from 'src/types/account.type'
+import { ChangePasswordBody, OrganizerAccount, OrganizerAccountBody, Profile, ProfileBody } from 'src/types/account.type'
 
 export const updateProfile = (
   organizerId: number,
@@ -30,6 +30,22 @@ export const changePassword = (
       const response = await mutationFetch<undefined>({
         url: getChangePasswordUrl(organizerId),
         method: 'PUT',
+        body
+      })
+      return response
+    },
+    ...options
+  })
+}
+
+export const createOrganizerAccount = (
+  options?: UseMutationOptions<OrganizerAccount, ApiError, OrganizerAccountBody>
+) => {
+  return useMutation<OrganizerAccount, ApiError, OrganizerAccountBody>({
+    mutationFn: async (body) => {
+      const response = await mutationFetch<OrganizerAccount>({
+        url: getManageOrganizerAccountsUrl(),
+        method: 'POST',
         body
       })
       return response
