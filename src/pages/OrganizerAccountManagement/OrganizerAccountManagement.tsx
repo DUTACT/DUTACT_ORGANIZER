@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getOrganizerAccounts } from 'src/apis/account'
+import Button from 'src/components/Button'
 import InputSearch from 'src/components/InputSearch'
 import Pagination from 'src/components/Pagination/Pagination'
 import { Table, TableBody, TableCell, TableHeader, TableHeaderCell, TableRow } from 'src/components/Table'
 import TableHeaderRow from 'src/components/Table/TableHeaderRow'
 import { TIMEOUT } from 'src/constants/common'
+import { path } from 'src/routes/path'
+import AddIcon from 'src/assets/icons/i-plus-white.svg?react'
 
 export default function OrganizerAccountManagement() {
+  const navigate = useNavigate()
   const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [inputSearch, setInputSearch] = useState<string>('')
@@ -39,14 +44,17 @@ export default function OrganizerAccountManagement() {
   return (
     <div className='flex h-full flex-col gap-4 p-4'>
       <div className='flex items-center justify-between'>
+        <div className='max-w-[300px] flex-1'>
+          <InputSearch placeholder='Tìm kiếm tên đăng nhập' inputSearch={inputSearch} setInputSearch={setInputSearch} />
+        </div>
         <div className='flex items-center gap-2'>
-          <div className='w-[300px] flex-1'>
-            <InputSearch
-              placeholder='Tìm kiếm tên đăng nhập'
-              inputSearch={inputSearch}
-              setInputSearch={setInputSearch}
-            />
-          </div>
+          <Button
+            title='Tạo tài khoản'
+            type='button'
+            classButton='min-w-[100px] text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md gap-1'
+            iconComponent={<AddIcon className='h-[20px] w-[20px]' />}
+            onClick={() => navigate(path.createOrganizerAccount)}
+          />
         </div>
       </div>
       <div className='py-4'>
@@ -72,6 +80,9 @@ export default function OrganizerAccountManagement() {
               <TableHeaderCell>
                 <div className='font-bold'>Số điện thoại</div>
               </TableHeaderCell>
+              <TableHeaderCell>
+                <div className='font-bold'>Người phụ trách</div>
+              </TableHeaderCell>
             </TableHeaderRow>
           </TableHeader>
           <TableBody>
@@ -80,6 +91,7 @@ export default function OrganizerAccountManagement() {
                 <TableCell>{oganizer.username}</TableCell>
                 <TableCell>{oganizer.name}</TableCell>
                 <TableCell>{oganizer.phone}</TableCell>
+                <TableCell>{oganizer.personInChargeName}</TableCell>
               </TableRow>
             ))}
           </TableBody>

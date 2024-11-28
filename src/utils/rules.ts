@@ -21,7 +21,8 @@ import {
   EVENT_START_AFTER_REGISTRATION_END,
   REGISTRATION_END_BEFORE_EVENT_START,
   REGEX_PHONE,
-  ERROR_INVALID_PHONE
+  ERROR_INVALID_PHONE,
+  ERROR_INCORRECT_FORMAT_USERNAME
 } from 'src/constants/validate'
 import * as yup from 'yup'
 
@@ -237,9 +238,30 @@ export const rejectParticipationSchema = yup.object({
   reason: yup.string().trim().required(ERROR_REQUIRED_FIELD)
 })
 
+export const createOrganizerAccountSchema = yup.object({
+  username: yup
+    .string()
+    .required(ERROR_REQUIRED_USERNAME)
+    .min(MIN_LENGTH_USERNAME, ERROR_MIN_LENGTH_USERNAME)
+    .max(MAX_LENGTH_USERNAME, ERROR_MAX_LENGTH_USERNAME)
+    .matches(/^[a-zA-Z0-9]+$/, ERROR_INCORRECT_FORMAT_USERNAME),
+  password: yup
+    .string()
+    .required(ERROR_REQUIRED_PASSWORD)
+    .min(MIN_LENGTH_PASSWORD, ERROR_MIN_LENGTH_PASSWORD)
+    .max(MAX_LENGTH_PASSWORD, ERROR_MAX_LENGTH_PASSWORD)
+    .matches(REGEX_PASSWORD, ERROR_INCORRECT_FORMAT_PASSWORD),
+  confirmPassword: handleConfirmPasswordYup('password'),
+  name: yup.string().trim().required(ERROR_REQUIRED_FIELD),
+  phone: yup.string().trim().required(ERROR_REQUIRED_FIELD).matches(REGEX_PHONE, ERROR_INVALID_PHONE),
+  address: yup.string().trim().required(ERROR_REQUIRED_FIELD),
+  personInChargeName: yup.string().trim().required(ERROR_REQUIRED_FIELD)
+})
+
 export type AuthenSchemaType = yup.InferType<typeof authenSchema>
 export type EventSchemaType = yup.InferType<typeof eventSchema>
 export type CheckInCodeSchemaType = yup.InferType<typeof checkInCodeSchema>
 export type ProfileSchemaType = yup.InferType<typeof profileSchema>
 export type ChangePasswordSchema = yup.InferType<typeof changePasswordSchema>
 export type RejectParticipationSchemaType = yup.InferType<typeof rejectParticipationSchema>
+export type CreateOrganizerAccountSchemaType = yup.InferType<typeof createOrganizerAccountSchema>

@@ -49,4 +49,14 @@ export interface OrganizerAccount extends Account {
   phone?: string
   address?: string
   avatarUrl?: string
+  personInChargeName: string
+}
+
+export interface OrganizerAccountBody {
+  username: string
+  password: string
+  name: string
+  phone: string
+  address: string
+  personInChargeName: string
 }

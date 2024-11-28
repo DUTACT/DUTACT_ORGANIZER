@@ -2,6 +2,8 @@ import { path } from 'src/routes/path'
 import HomeIcon from 'src/assets/icons/i-home.svg?react'
 import EventIcon from 'src/assets/icons/i-event.svg?react'
 import UserIcon from 'src/assets/icons/i-user.svg?react'
+import StudentIcon from 'src/assets/icons/i-student.svg?react'
+import OrganizerIcon from 'src/assets/icons/i-organizer.svg?react'
 
 export const ROUTE_CONFIG = [
   {
@@ -22,6 +24,16 @@ export const ROUTE_CONFIG = [
   {
     path: path.studentAccount,
     title: 'Quản lý tài khoản sinh viên',
-    icon: UserIcon
-  }
+    icon: StudentIcon
+  },
+  {
+    path: path.organizerAccount,
+    title: 'Quản lý tài khoản tổ chức',
+    icon: OrganizerIcon
+  },
+  {
+    path: path.createOrganizerAccount,
+    title: 'Tạo tài khoản tổ chức',
+    icon: OrganizerIcon
+  },
 ]
