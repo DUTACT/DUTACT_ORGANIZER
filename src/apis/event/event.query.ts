@@ -40,8 +40,10 @@ export const getEventOfOrganizerById = (
   })
 }
 
-export const getAllEvents = (eventStatuses?: EventStatus[],
-  options?: UseQueryOptions<EventOfOrganizer[], ApiError>) => {
+export const getAllEvents = (
+  eventStatuses?: EventStatus[],
+  options?: UseQueryOptions<EventOfOrganizer[], ApiError>
+) => {
   return useQuery<EventOfOrganizer[], ApiError>({
     queryKey: ['getAllEvents', eventStatuses],
     queryFn: async () => {

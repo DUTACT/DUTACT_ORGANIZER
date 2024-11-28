@@ -23,6 +23,7 @@ import EventFilter from '../EventManagement/components/EventFilter'
 import FilterPopover from 'src/components/FilterPopover'
 import { useNavigate } from 'react-router-dom'
 import { path } from 'src/routes/path'
+import { ModeratedEvent, ModeratedEvent, ModeratedEvent } from './type'
 
 export default function ModeratedEvent() {
   const navigate = useNavigate()
@@ -30,7 +31,6 @@ export default function ModeratedEvent() {
   const [inputSearch, setInputSearch] = useState<string>('')
 
   const [events, setEvents] = useState<EventOfOrganizer[]>([])
-  const [filteredEvents, setFilteredEvents] = useState<EventOfOrganizer[]>([])
   const [eventFilterOptions, setEventFilterOptions] = useState<EventFilterType>({
     organizerIds: [],
     timeStartFrom: '',
@@ -61,27 +61,22 @@ export default function ModeratedEvent() {
     )
   }, [uniqueOrganizers])
 
-  const handleSearchEvents = (events: EventOfOrganizer[], value: string): EventOfOrganizer[] => {
+  const handleSearchEvents = (events: ModeratedEvent[], value: string): ModeratedEvent[] => {
     const lowerCaseValue = value.trim().toLowerCase()
     return events.filter(
-      (event: EventOfOrganizer) =>
+      (event: ModeratedEvent) =>
         event.name.toLowerCase().includes(lowerCaseValue) ||
-        event.content.toLowerCase().includes(lowerCaseValue) ||
-        event.startAt.includes(lowerCaseValue) ||
-        event.endAt.toLowerCase().includes(lowerCaseValue) ||
-        event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
-        event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
+        event.moderatedAt.includes(lowerCaseValue) ||
+        event.organizerName.toLowerCase().includes(lowerCaseValue) ||
+        event.status.toLowerCase().includes(lowerCaseValue)
     )
   }
 
-  const handleSortChange = (
-    events: EventOfOrganizer[],
-    criteria: SortCriterion<EventOfOrganizer>[]
-  ): EventOfOrganizer[] => {
-    return sortItems<EventOfOrganizer>(events, criteria)
+  const handleSortChange = (events: ModeratedEvent[], criteria: SortCriterion<ModeratedEvent>[]): ModeratedEvent[] => {
+    return sortItems<ModeratedEvent>(events, criteria)
   }
 
-  const handleFilterEvents = (events: EventOfOrganizer[], eventFilterOptions: EventFilterType) => {
+  const handleFilterEvents = (events: ModeratedEvent[], eventFilterOptions: EventFilterType) => {
     return events.filter((event) => {
       const organizerMatch =
         eventFilterOptions.organizerIds.length === 0 || eventFilterOptions.organizerIds.includes(event.organizer.id)
@@ -154,16 +149,16 @@ export default function ModeratedEvent() {
   }, [eventList])
 
   useEffect(() => {
-    const newFilteredEvents = handleFilterEvents(handleSearchEvents(events, inputSearch), eventFilterOptions)
+    const newFilteredEvents = handleFilterEvents(handleSearchEvents(eventList, inputSearch), eventFilterOptions)
 
-    setFilteredEvents(newFilteredEvents)
-  }, [inputSearch, events, eventFilterOptions])
+    setEvents(newFilteredEvents)
+  }, [inputSearch, eventList, eventFilterOptions])
 
   const indexOfLastEvent = useMemo(() => currentPage * itemsPerPage, [currentPage, itemsPerPage])
   const indexOfFirstEvent = useMemo(() => indexOfLastEvent - itemsPerPage, [indexOfLastEvent, itemsPerPage])
   const currentEvents = useMemo(
-    () => filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent),
-    [filteredEvents, indexOfFirstEvent, indexOfLastEvent]
+    () => events.slice(indexOfFirstEvent, indexOfLastEvent),
+    [events, indexOfFirstEvent, indexOfLastEvent]
   )
 
   return (
