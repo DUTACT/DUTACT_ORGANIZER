@@ -116,13 +116,15 @@ export default function EventInformation() {
           </div>
           <div className='flex flex-col items-start gap-2'>
             <span>{event?.endRegistrationAt}</span>
-            {organizerId === event.organizer.id && !registrationEnded && (
-              <Button
-                className='min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-secondary/90 px-3 py-1 text-neutral-0 outline-none hover:bg-semantic-secondary focus:outline-none'
-                title='Đóng đơn đăng ký sớm'
-                onClick={openPopupCloseRegistration}
-              />
-            )}
+            {organizerId === event.organizer.id &&
+              !registrationEnded &&
+              (event.status.type === 'approved' || event.status.type === 'commingSoon') && (
+                <Button
+                  className='min-w-[100px] gap-1 text-nowrap rounded-md bg-semantic-secondary/90 px-3 py-1 text-neutral-0 outline-none hover:bg-semantic-secondary focus:outline-none'
+                  title='Đóng đơn đăng ký sớm'
+                  onClick={openPopupCloseRegistration}
+                />
+              )}
           </div>
         </div>
       </div>
