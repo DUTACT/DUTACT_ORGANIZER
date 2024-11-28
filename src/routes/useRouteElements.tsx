@@ -10,7 +10,7 @@ import EventManagement from 'src/pages/EventManagement'
 import { useEffect } from 'react'
 import { ROUTE_CONFIG } from 'src/constants/routeConfig'
 import CreateEventPage from 'src/pages/CreateEventPage'
-import { EventModeration, ModeratedEvent, PendingEvent } from 'src/pages/EventModeration'
+import { ModeratedEvent, PendingEvent } from 'src/pages/EventModeration'
 import UpdateEventPage from 'src/pages/UpdateEventPage'
 import EventManagementDetails from 'src/pages/EventManagementDetails'
 import EventModerationDetails from 'src/pages/EventModerationDetails'
@@ -107,14 +107,6 @@ export default function useRouteElements() {
           element: (
             <MainLayout>
               <UpdateEventPage />
-            </MainLayout>
-          )
-        },
-        {
-          path: path.eventMod,
-          element: (
-            <MainLayout>
-              <EventModeration />
             </MainLayout>
           )
         },
