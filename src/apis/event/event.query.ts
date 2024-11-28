@@ -3,7 +3,7 @@ import { queryFetch } from 'src/config/queryClient'
 import { STALE_TIME } from 'src/constants/common'
 import { BASE_API_URL_ADMIN_EVENT, getEventModerationUrl, getEventUrlOfOrganizer } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
-import { EventOfOrganizer } from 'src/types/event.type'
+import { EventOfOrganizer, EventStatus } from 'src/types/event.type'
 
 export const getAllEventsOfOrganizer = (
   organizerId: number,
@@ -40,14 +40,17 @@ export const getEventOfOrganizerById = (
   })
 }
 
-export const getAllEvents = (options?: UseQueryOptions<EventOfOrganizer[], ApiError>) => {
+export const getAllEvents = (
+  eventStatuses?: EventStatus[],
+  options?: UseQueryOptions<EventOfOrganizer[], ApiError>
+) => {
   return useQuery<EventOfOrganizer[], ApiError>({
-    queryKey: ['getAllEvents'],
+    queryKey: ['getAllEvents', eventStatuses],
     queryFn: async () => {
       const response = await queryFetch<EventOfOrganizer[]>({
         url: BASE_API_URL_ADMIN_EVENT
       })
-      return response
+      return response.filter((event) => !eventStatuses || eventStatuses.includes(event.status.type))
     },
     ...options
   })

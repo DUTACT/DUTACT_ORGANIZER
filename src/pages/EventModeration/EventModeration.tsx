@@ -10,13 +10,12 @@ import moment from 'moment'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import InputSearch from 'src/components/InputSearch'
-import { EventOfOrganizer, EventFilter as EventFilterType } from 'src/types/event.type'
+import { EventOfOrganizer, EventFilter as EventFilterType, EventStatus } from 'src/types/event.type'
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
 import Pagination from 'src/components/Pagination/Pagination'
-import { getStatusMessage, parseJwt } from 'src/utils/common'
+import { getStatusMessage } from 'src/utils/common'
 import Tag from 'src/components/Tag'
-import useLocalStorage from 'src/hooks/useLocalStorage'
 import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
 import EventFilter from '../EventManagement/components/EventFilter'
@@ -24,11 +23,12 @@ import FilterPopover from 'src/components/FilterPopover'
 import { useNavigate } from 'react-router-dom'
 import { path } from 'src/routes/path'
 
-export default function EventModeration() {
-  const navigate = useNavigate()
+interface Props {
+  eventStatuses?: EventStatus[]
+}
 
-  const [accessToken, _] = useLocalStorage<string>('access_token')
-  const organizerId = parseJwt(accessToken)?.organizerId
+export default function EventModeration({ eventStatuses }: Props) {
+  const navigate = useNavigate()
 
   const [inputSearch, setInputSearch] = useState<string>('')
 
@@ -54,7 +54,7 @@ export default function EventModeration() {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(INITIAL_ITEMS_PER_PAGE)
 
-  const { data: eventList, error: eventsError } = getAllEvents(organizerId)
+  const { data: eventList, error: eventsError } = getAllEvents(eventStatuses)
 
   const uniqueOrganizers = useMemo(() => {
     return events

@@ -11,6 +11,10 @@ import EventIcon from 'src/assets/icons/i-event.svg?react'
 import EventActiveIcon from 'src/assets/icons/i-event-active.svg?react'
 import EventModIcon from 'src/assets/icons/i-event-mod.svg?react'
 import EventModActiveIcon from 'src/assets/icons/i-event-mod-active.svg?react'
+import EventPendingIcon from 'src/assets/icons/i-event-pending.svg?react'
+import EventPendingActiveIcon from 'src/assets/icons/i-event-pending-active.svg?react'
+import EventModeratedIcon from 'src/assets/icons/i-event-moderated.svg?react'
+import EventModeratedActiveIcon from 'src/assets/icons/i-event-moderated-active.svg?react'
 import { USER_ROLE } from 'src/constants/common'
 
 export const SIDEBAR_ROUTES = [
@@ -56,6 +60,22 @@ export const SIDEBAR_ROUTES = [
     name: 'Kiểm duyệt sự kiện',
     icon: EventModIcon,
     iconActive: EventModActiveIcon,
-    userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
+    userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE],
+    subRoutes: [
+      {
+        path: path.eventPending,
+        name: 'Sự kiện chờ duyệt',
+        icon: EventPendingIcon,
+        iconActive: EventPendingActiveIcon,
+        userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
+      },
+      {
+        path: path.eventModerated,
+        name: 'Sự kiện đã kiểm duyệt',
+        icon: EventModeratedIcon,
+        iconActive: EventModeratedActiveIcon,
+        userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
+      }
+    ]
   }
 ]
