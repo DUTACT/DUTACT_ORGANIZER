@@ -1,5 +1,4 @@
 import ShowDetailIcon from 'src/assets/icons/i-eye-secondary.svg?react'
-import { getAllEvents } from 'src/apis/event'
 import {
   DATE_TIME_FORMATS,
   EVENT_STATUS_COLOR_CLASSES,
@@ -10,108 +9,76 @@ import moment from 'moment'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import InputSearch from 'src/components/InputSearch'
-import { EventOfOrganizer, EventFilter as EventFilterType, EventStatus } from 'src/types/event.type'
-import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
-import SortIcon from 'src/components/SortIcon'
+import { EventOfOrganizer, EventFilter as EventFilterType } from 'src/types/event.type'
+import { SortCriterion } from 'src/utils/sortItems'
 import Pagination from 'src/components/Pagination/Pagination'
-import { getStatusMessage, parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
-import useLocalStorage from 'src/hooks/useLocalStorage'
-import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
 import EventFilter from '../EventManagement/components/EventFilter'
 import FilterPopover from 'src/components/FilterPopover'
 import { useNavigate } from 'react-router-dom'
 import { path } from 'src/routes/path'
-import { ModeratedEvent, ModeratedEvent, ModeratedEvent } from './type'
+import useQueryEvents from './hooks/useFilteredEvents'
+import { getStatusMessage } from 'src/utils/common'
 
-export default function ModeratedEvent() {
+export default function ModeratedEventManagement() {
   const navigate = useNavigate()
 
   const [inputSearch, setInputSearch] = useState<string>('')
-
-  const [events, setEvents] = useState<EventOfOrganizer[]>([])
   const [eventFilterOptions, setEventFilterOptions] = useState<EventFilterType>({
     organizerIds: [],
     timeStartFrom: '',
     timeStartTo: '',
     registrationDeadlineFrom: '',
     registrationDeadlineTo: '',
-    types: []
+    types: ['approved', 'rejected']
   })
+  const [sortCriteria] = useState<SortCriterion<EventOfOrganizer>[]>([
+    { field: 'name', direction: null },
+    {
+      field: {
+        name: 'moderatedAt',
+        fn: (event) => {
+          return event.status.moderatedAt ? moment(event.status.moderatedAt) : moment('0000-01-01T00:00:00')
+        }
+      },
+      direction: 'desc'
+    }
+  ])
 
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(INITIAL_ITEMS_PER_PAGE)
 
-  const { data: eventList, error: eventsError } = getAllEvents(['approved', 'rejected'])
+  const { queryEvents, eventsError, organizers, totalEvents } = useQueryEvents({
+    search: inputSearch,
+    filter: eventFilterOptions,
+    sortCriteria,
+    currentPage,
+    itemsPerPage
+  })
 
-  const uniqueOrganizers = useMemo(() => {
-    return events
-      .map((event) => event.organizer)
-      .filter((organizer, index, self) => index === self.findIndex((o) => o.id === organizer.id))
-  }, [events])
+  const curEvents = useMemo(() => {
+    if (queryEvents) {
+      return queryEvents.map((event) => ({
+        ...event,
+        status: {
+          ...event.status,
+          label: getStatusMessage(EVENT_STATUS_MESSAGES, event.status.type),
+          moderatedAt: moment(event.status.moderatedAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)
+        }
+      }))
+    }
+  }, [queryEvents])
 
-  const organizerList = useMemo((): Option[] => {
-    return uniqueOrganizers.map(
+  const organizerOptions = useMemo((): Option[] => {
+    return organizers.map(
       (organizer) =>
         ({
           label: organizer.name,
           value: organizer.id
         }) as Option
     )
-  }, [uniqueOrganizers])
-
-  const handleSearchEvents = (events: ModeratedEvent[], value: string): ModeratedEvent[] => {
-    const lowerCaseValue = value.trim().toLowerCase()
-    return events.filter(
-      (event: ModeratedEvent) =>
-        event.name.toLowerCase().includes(lowerCaseValue) ||
-        event.moderatedAt.includes(lowerCaseValue) ||
-        event.organizerName.toLowerCase().includes(lowerCaseValue) ||
-        event.status.toLowerCase().includes(lowerCaseValue)
-    )
-  }
-
-  const handleSortChange = (events: ModeratedEvent[], criteria: SortCriterion<ModeratedEvent>[]): ModeratedEvent[] => {
-    return sortItems<ModeratedEvent>(events, criteria)
-  }
-
-  const handleFilterEvents = (events: ModeratedEvent[], eventFilterOptions: EventFilterType) => {
-    return events.filter((event) => {
-      const organizerMatch =
-        eventFilterOptions.organizerIds.length === 0 || eventFilterOptions.organizerIds.includes(event.organizer.id)
-
-      const typesMatch = eventFilterOptions.types.length === 0 || eventFilterOptions.types.includes(event.status.type)
-
-      const timeStartFrom = moment(eventFilterOptions.timeStartFrom, DATE_TIME_FORMATS.DATE).startOf('day')
-      const timeStartTo = moment(eventFilterOptions.timeStartTo, DATE_TIME_FORMATS.DATE).startOf('day')
-      const eventStartAt = moment(event.startAt, DATE_TIME_FORMATS.DATE_TIME_COMMON).startOf('day')
-      const eventEndAt = moment(event.endAt, DATE_TIME_FORMATS.DATE_TIME_COMMON).startOf('day')
-
-      const isTimeOverlap = checkTimeOverlap(eventStartAt, eventEndAt, timeStartFrom, timeStartTo)
-
-      const registrationDeadlineFrom = moment(
-        eventFilterOptions.registrationDeadlineFrom,
-        DATE_TIME_FORMATS.DATE
-      ).startOf('day')
-      const registrationDeadlineTo = moment(eventFilterOptions.registrationDeadlineTo, DATE_TIME_FORMATS.DATE).startOf(
-        'day'
-      )
-      const eventRegistrationStartAt = moment(event.startRegistrationAt, DATE_TIME_FORMATS.DATE_TIME_COMMON).startOf(
-        'day'
-      )
-      const eventRegistrationEndAt = moment(event.endRegistrationAt, DATE_TIME_FORMATS.DATE_TIME_COMMON).startOf('day')
-
-      const isRegistrationOverlap = checkTimeOverlap(
-        eventRegistrationStartAt,
-        eventRegistrationEndAt,
-        registrationDeadlineFrom,
-        registrationDeadlineTo
-      )
-
-      return organizerMatch && typesMatch && isTimeOverlap && isRegistrationOverlap
-    })
-  }
+  }, [organizers])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -128,38 +95,9 @@ export default function ModeratedEvent() {
     }
   }, [eventsError])
 
-  useEffect(() => {
-    if (eventList) {
-      const newEvents = eventList.map((event: EventOfOrganizer) => ({
-        ...event,
-        startAt: moment(event.startAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        endAt: moment(event.endAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        startRegistrationAt: moment(event.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        endRegistrationAt: moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
-        status: {
-          ...event.status,
-          moderatedAt: event.status.moderatedAt
-            ? moment(event.status.moderatedAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)
-            : event.status.moderatedAt,
-          label: getStatusMessage(EVENT_STATUS_MESSAGES, event.status.type)
-        }
-      }))
-      setEvents(newEvents)
-    }
-  }, [eventList])
-
-  useEffect(() => {
-    const newFilteredEvents = handleFilterEvents(handleSearchEvents(eventList, inputSearch), eventFilterOptions)
-
-    setEvents(newFilteredEvents)
-  }, [inputSearch, eventList, eventFilterOptions])
-
-  const indexOfLastEvent = useMemo(() => currentPage * itemsPerPage, [currentPage, itemsPerPage])
-  const indexOfFirstEvent = useMemo(() => indexOfLastEvent - itemsPerPage, [indexOfLastEvent, itemsPerPage])
-  const currentEvents = useMemo(
-    () => events.slice(indexOfFirstEvent, indexOfLastEvent),
-    [events, indexOfFirstEvent, indexOfLastEvent]
-  )
+  if (!curEvents) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className='flex h-full flex-col gap-4 p-4'>
@@ -177,19 +115,19 @@ export default function ModeratedEvent() {
               <EventFilter
                 onSendFilterOptions={setEventFilterOptions}
                 onClosePopover={onClosePopover}
-                organizerOptions={organizerList}
+                organizerOptions={organizerOptions}
               />
             )}
           />
         </div>
       </div>
       <Pagination
-        totalItems={filteredEvents.length}
+        totalItems={totalEvents}
         onPageChange={handlePageChange}
         onRowsPerPageChange={handleRowsPerPageChange}
       />
       <div className='block overflow-auto'>
-        {events.length > 0 && (
+        {curEvents.length > 0 && (
           <table className='relative min-w-full overflow-auto'>
             <thead className='sticky top-0 z-50 bg-neutral-0 before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-neutral-5'>
               <tr>
@@ -218,9 +156,9 @@ export default function ModeratedEvent() {
                 </th>
               </tr>
             </thead>
-            {currentEvents.length > 0 && (
+            {curEvents.length > 0 && (
               <tbody>
-                {currentEvents.map((event) => (
+                {curEvents.map((event) => (
                   <tr key={event.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
                     <td className='px-4 py-2 text-sm'>
                       <div className='line-clamp-3 overflow-hidden'>
@@ -250,7 +188,7 @@ export default function ModeratedEvent() {
                 ))}
               </tbody>
             )}
-            {currentEvents.length === 0 && (
+            {curEvents.length === 0 && (
               <tbody>
                 <tr>
                   <td colSpan={10} className='py-4 text-center'>

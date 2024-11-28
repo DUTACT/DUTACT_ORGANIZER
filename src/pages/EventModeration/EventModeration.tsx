@@ -14,9 +14,8 @@ import { EventOfOrganizer, EventFilter as EventFilterType, EventStatus } from 's
 import { getSortDirection, SortCriterion, sortItems, toggleSortDirection } from 'src/utils/sortItems'
 import SortIcon from 'src/components/SortIcon'
 import Pagination from 'src/components/Pagination/Pagination'
-import { getStatusMessage, parseJwt } from 'src/utils/common'
+import { getStatusMessage } from 'src/utils/common'
 import Tag from 'src/components/Tag'
-import useLocalStorage from 'src/hooks/useLocalStorage'
 import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
 import EventFilter from '../EventManagement/components/EventFilter'
@@ -30,9 +29,6 @@ interface Props {
 
 export default function EventModeration({ eventStatuses }: Props) {
   const navigate = useNavigate()
-
-  const [accessToken, _] = useLocalStorage<string>('access_token')
-  const organizerId = parseJwt(accessToken)?.organizerId
 
   const [inputSearch, setInputSearch] = useState<string>('')
 

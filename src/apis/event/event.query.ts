@@ -50,7 +50,7 @@ export const getAllEvents = (
       const response = await queryFetch<EventOfOrganizer[]>({
         url: BASE_API_URL_ADMIN_EVENT
       })
-      return response.filter((event) => eventStatuses && eventStatuses.includes(event.status.type))
+      return response.filter((event) => !eventStatuses || eventStatuses.includes(event.status.type))
     },
     ...options
   })

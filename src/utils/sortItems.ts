@@ -1,7 +1,7 @@
 export type SortDirection = 'asc' | 'desc' | null
 
 export interface SortCriterion<T> {
-  field: keyof T
+  field: keyof T | { name: string; fn: (item: T) => any }
   direction: SortDirection
 }
 
@@ -15,13 +15,20 @@ export const sortItems = <T>(
       if (direction === null) continue
 
       const compareFn =
-        compareFns?.[field] ||
-        ((a, b) => {
-          const aValue = a[field]
-          const bValue = b[field]
+        typeof field === 'object'
+          ? (a: T, b: T) => {
+              const aValue = field.fn(a)
+              const bValue = field.fn(b)
 
-          return aValue > bValue ? 1 : aValue < bValue ? -1 : 0
-        })
+              return aValue > bValue ? 1 : aValue < bValue ? -1 : 0
+            }
+          : compareFns?.[field] ||
+            ((a, b) => {
+              const aValue = a[field]
+              const bValue = b[field]
+
+              return aValue > bValue ? 1 : aValue < bValue ? -1 : 0
+            })
 
       const result = compareFn(a, b)
       return direction === 'asc' ? result : -result
