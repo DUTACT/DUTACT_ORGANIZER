@@ -1,3 +1,4 @@
 import EventModeration from './EventModeration'
+import ModeratedEvent from './ModeratedEvent'
 
-export default EventModeration
+export { EventModeration, ModeratedEvent }

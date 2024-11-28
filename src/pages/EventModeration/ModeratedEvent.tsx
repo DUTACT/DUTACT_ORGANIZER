@@ -24,28 +24,13 @@ import FilterPopover from 'src/components/FilterPopover'
 import { useNavigate } from 'react-router-dom'
 import { path } from 'src/routes/path'
 
-interface Props {
-  eventStatuses?: EventStatus[]
-}
-
-export default function EventModeration({ eventStatuses }: Props) {
+export default function ModeratedEvent() {
   const navigate = useNavigate()
-
-  const [accessToken, _] = useLocalStorage<string>('access_token')
-  const organizerId = parseJwt(accessToken)?.organizerId
 
   const [inputSearch, setInputSearch] = useState<string>('')
 
   const [events, setEvents] = useState<EventOfOrganizer[]>([])
   const [filteredEvents, setFilteredEvents] = useState<EventOfOrganizer[]>([])
-  const [sortCriteria, setSortCriteria] = useState<SortCriterion<EventOfOrganizer>[]>([
-    { field: 'name', direction: null },
-    { field: 'content', direction: null },
-    { field: 'startAt', direction: null },
-    { field: 'endAt', direction: null },
-    { field: 'startRegistrationAt', direction: null },
-    { field: 'endRegistrationAt', direction: null }
-  ])
   const [eventFilterOptions, setEventFilterOptions] = useState<EventFilterType>({
     organizerIds: [],
     timeStartFrom: '',
@@ -58,7 +43,7 @@ export default function EventModeration({ eventStatuses }: Props) {
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [itemsPerPage, setItemsPerPage] = useState<number>(INITIAL_ITEMS_PER_PAGE)
 
-  const { data: eventList, error: eventsError } = getAllEvents(eventStatuses)
+  const { data: eventList, error: eventsError } = getAllEvents(['approved', 'rejected'])
 
   const uniqueOrganizers = useMemo(() => {
     return events
@@ -87,11 +72,6 @@ export default function EventModeration({ eventStatuses }: Props) {
         event.startRegistrationAt.toLowerCase().includes(lowerCaseValue) ||
         event.endRegistrationAt.toLowerCase().includes(lowerCaseValue)
     )
-  }
-
-  const toggleSortCriteria = (field: keyof EventOfOrganizer): void => {
-    const updatedCriteria = toggleSortDirection(sortCriteria, field)
-    setSortCriteria(updatedCriteria)
   }
 
   const handleSortChange = (
@@ -163,6 +143,9 @@ export default function EventModeration({ eventStatuses }: Props) {
         endRegistrationAt: moment(event.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON),
         status: {
           ...event.status,
+          moderatedAt: event.status.moderatedAt
+            ? moment(event.status.moderatedAt).format(DATE_TIME_FORMATS.DATE_TIME_COMMON)
+            : event.status.moderatedAt,
           label: getStatusMessage(EVENT_STATUS_MESSAGES, event.status.type)
         }
       }))
@@ -171,12 +154,10 @@ export default function EventModeration({ eventStatuses }: Props) {
   }, [eventList])
 
   useEffect(() => {
-    const newFilteredEvents = handleSortChange(
-      handleFilterEvents(handleSearchEvents(events, inputSearch), eventFilterOptions),
-      sortCriteria
-    )
+    const newFilteredEvents = handleFilterEvents(handleSearchEvents(events, inputSearch), eventFilterOptions)
+
     setFilteredEvents(newFilteredEvents)
-  }, [inputSearch, events, eventFilterOptions, sortCriteria])
+  }, [inputSearch, events, eventFilterOptions])
 
   const indexOfLastEvent = useMemo(() => currentPage * itemsPerPage, [currentPage, itemsPerPage])
   const indexOfFirstEvent = useMemo(() => indexOfLastEvent - itemsPerPage, [indexOfLastEvent, itemsPerPage])
@@ -217,42 +198,22 @@ export default function EventModeration({ eventStatuses }: Props) {
           <table className='relative min-w-full overflow-auto'>
             <thead className='sticky top-0 z-50 bg-neutral-0 before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-neutral-5'>
               <tr>
-                <th className='sticky left-0 z-10 bg-neutral-0 px-4 py-2 text-center before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-neutral-5'>
-                  <div className='flex items-center justify-center'>
-                    <input type='checkbox' className='h-[16px] w-[16px] cursor-pointer' />
-                  </div>
-                </th>
-                <th
-                  className='min-w-[150px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('name')}
-                >
+                <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
                   <div className='flex items-center justify-between'>
                     <span className='font-bold'>Tên sự kiện</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'name')} />
                   </div>
                 </th>
-                <th
-                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('startAt')}
-                >
+                <th className='min-w-[150px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
                   <div className='flex items-center justify-between'>
-                    <span>Thời gian diễn ra sự kiện</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'startAt')} />
+                    <span className='font-bold'>Tổ chức</span>
                   </div>
                 </th>
-                <th
-                  className='min-w-[140px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('startRegistrationAt')}
-                >
+                <th className='min-w-[140px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
                   <div className='flex items-center justify-between'>
-                    <span>Thời gian đăng ký</span>
-                    <SortIcon sortDirection={getSortDirection(sortCriteria, 'startRegistrationAt')} />
+                    <span>Thời gian kiểm duyệt</span>
                   </div>
                 </th>
-                <th
-                  className='min-w-[120px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
-                  onClick={() => toggleSortCriteria('endRegistrationAt')}
-                >
+                <th className='min-w-[120px] whitespace-normal break-words px-4 py-2 text-left text-sm'>
                   <div className='flex items-center justify-between'>
                     <span>Trạng thái</span>
                   </div>
@@ -266,23 +227,17 @@ export default function EventModeration({ eventStatuses }: Props) {
               <tbody>
                 {currentEvents.map((event) => (
                   <tr key={event.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
-                    <td className='sticky left-0 z-10 bg-neutral-0 px-4 py-2 group-hover:bg-neutral-2'>
-                      <div className='flex items-center justify-center'>
-                        <input type='checkbox' className='h-[16px] w-[16px] cursor-pointer' />
+                    <td className='px-4 py-2 text-sm'>
+                      <div className='line-clamp-3 overflow-hidden'>
+                        <span className='text-base font-bold'>{event.name}</span>
                       </div>
                     </td>
                     <td className='px-4 py-2 text-sm'>
                       <div className='line-clamp-3 overflow-hidden'>
-                        <span className='text-base font-bold'>{event.name}</span>
                         <div className='text-sm'>{event.organizer.name}</div>
                       </div>
                     </td>
-                    <td className='px-4 py-2 text-sm'>
-                      {event.startAt} - {event.endAt}
-                    </td>
-                    <td className='px-4 py-2 text-sm'>
-                      {event.startRegistrationAt} - {event.endRegistrationAt}
-                    </td>
+                    <td className='px-4 py-2 text-sm'>{event.status.moderatedAt}</td>
                     <td className='px-4 py-2 text-sm'>
                       <Tag status={event.status} statusClasses={EVENT_STATUS_COLOR_CLASSES} />
                     </td>

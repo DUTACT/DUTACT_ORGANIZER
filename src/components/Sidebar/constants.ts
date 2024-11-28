@@ -56,6 +56,22 @@ export const SIDEBAR_ROUTES = [
     name: 'Kiểm duyệt sự kiện',
     icon: EventModIcon,
     iconActive: EventModActiveIcon,
-    userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
+    userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE],
+    subRoutes: [
+      {
+        path: path.eventPending,
+        name: 'Sự kiện chờ duyệt',
+        icon: EventIcon,
+        iconActive: EventActiveIcon,
+        userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
+      },
+      {
+        path: path.eventModerated,
+        name: 'Sự kiện đã kiểm duyệt',
+        icon: EventIcon,
+        iconActive: EventActiveIcon,
+        userRoles: [USER_ROLE.STUDENT_AFFAIRS_OFFICE]
+      }
+    ]
   }
 ]

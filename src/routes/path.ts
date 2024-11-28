@@ -16,6 +16,8 @@ export const path = {
   organizerAccount: '/account/organizer',
   createOrganizerAccount: '/account/organizer/create',
   eventMod: '/event-mod',
+  eventModerated: '/event-mod/moderated',
+  eventPending: '/event-mod/pending',
   eventModDetails: {
     pattern: '/event-mod/:id',
     link: (id: number) => `/event-mod/${id}`
