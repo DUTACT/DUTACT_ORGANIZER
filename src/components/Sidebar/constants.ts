@@ -1,6 +1,4 @@
 import { path } from 'src/routes/path'
-import HomeIcon from 'src/assets/icons/i-home.svg?react'
-import HomeActiveIcon from 'src/assets/icons/i-home-active.svg?react'
 import UserIcon from 'src/assets/icons/i-user.svg?react'
 import UserActiveIcon from 'src/assets/icons/i-user-active.svg?react'
 import OrganizerIcon from 'src/assets/icons/i-organizer.svg?react'
@@ -18,13 +16,6 @@ import EventModeratedActiveIcon from 'src/assets/icons/i-event-moderated-active.
 import { USER_ROLE } from 'src/constants/common'
 
 export const SIDEBAR_ROUTES = [
-  {
-    path: path.home,
-    name: 'Dashboard',
-    icon: HomeIcon,
-    iconActive: HomeActiveIcon,
-    userRoles: [USER_ROLE.ADMIN, USER_ROLE.STUDENT_AFFAIRS_OFFICE, USER_ROLE.EVENT_ORGANIZER]
-  },
   {
     path: path.account,
     name: 'Quản lý tài khoản',
