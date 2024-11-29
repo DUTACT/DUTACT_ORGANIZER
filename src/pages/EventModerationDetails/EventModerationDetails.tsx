@@ -143,6 +143,9 @@ export default function EventModerationDetails() {
               </span>
             </div>
           </div>
+          {event.status.type === 'rejected' && (
+            <div className='mb-4 text-semantic-cancelled'>Lý do từ chối: {event.status.reason}</div>
+          )}
           <div>
             <div className='flex items-center'>
               <img src={event.organizer.avatarUrl} alt='avatar' className='h-6 w-6 rounded-full' />

@@ -35,7 +35,7 @@ export default function PendingEvent() {
   })
   const [sortCriteria] = useState<SortCriterion<EventOfOrganizer>[]>([
     { field: 'name', direction: null },
-    { field: 'createdAt', direction: 'desc' }
+    { field: 'createdAt', direction: 'asc' }
   ])
 
   const [currentPage, setCurrentPage] = useState<number>(1)
