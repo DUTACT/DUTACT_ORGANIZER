@@ -101,7 +101,7 @@ export default function EventManagement() {
   ): EventOfOrganizer[] => {
     return sortItems<EventOfOrganizer>(events, criteria, {
       status: (a, b) => {
-        const statusOrder = ['ongoing', 'commingSoon', 'ended', 'pending', 'rejected', 'approved']
+        const statusOrder = ['ongoing', 'commingSoon', 'pending', 'ended', 'rejected', 'approved']
         const aStatus = a.status.type
         const bStatus = b.status.type
 
