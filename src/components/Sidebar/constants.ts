@@ -1,6 +1,4 @@
 import { path } from 'src/routes/path'
-import HomeIcon from 'src/assets/icons/i-home.svg?react'
-import HomeActiveIcon from 'src/assets/icons/i-home-active.svg?react'
 import UserIcon from 'src/assets/icons/i-user.svg?react'
 import UserActiveIcon from 'src/assets/icons/i-user-active.svg?react'
 import OrganizerIcon from 'src/assets/icons/i-organizer.svg?react'
