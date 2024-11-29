@@ -58,7 +58,10 @@ export default function Sidebar() {
                     e.preventDefault()
                   }
                 }}
-                className='flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5 hover:bg-neutral-3 hover:text-neutral-6'
+                className={cn(
+                  'flex w-full items-center gap-2 rounded-lg px-4 py-2 text-neutral-5',
+                  subRoutes ? 'cursor-auto hover:text-neutral-5' : 'hover:bg-neutral-3 hover:text-neutral-6'
+                )}
               >
                 {({ isActive }: { isActive: boolean }) => (
                   <>

@@ -19,13 +19,6 @@ import { USER_ROLE } from 'src/constants/common'
 
 export const SIDEBAR_ROUTES = [
   {
-    path: path.home,
-    name: 'Dashboard',
-    icon: HomeIcon,
-    iconActive: HomeActiveIcon,
-    userRoles: [USER_ROLE.ADMIN, USER_ROLE.STUDENT_AFFAIRS_OFFICE, USER_ROLE.EVENT_ORGANIZER]
-  },
-  {
     path: path.account,
     name: 'Quản lý tài khoản',
     icon: UserIcon,

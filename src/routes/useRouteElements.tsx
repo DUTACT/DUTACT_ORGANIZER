@@ -119,6 +119,14 @@ export default function useRouteElements() {
           )
         },
         {
+          path: path.eventModeratedDetails.pattern,
+          element: (
+            <MainLayout>
+              <EventModerationDetails />
+            </MainLayout>
+          )
+        },
+        {
           path: path.eventPending,
           element: (
             <MainLayout>
@@ -126,7 +134,15 @@ export default function useRouteElements() {
             </MainLayout>
           )
         },
-
+        {
+          path: path.eventPendingDetails.pattern,
+          element: (
+            <MainLayout>
+              <EventModerationDetails />
+            </MainLayout>
+          )
+        },
+        {},
         {
           path: path.eventModDetails.pattern,
           element: (

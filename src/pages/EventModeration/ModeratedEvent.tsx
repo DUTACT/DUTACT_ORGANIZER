@@ -178,7 +178,7 @@ export default function ModeratedEventManagement() {
                       <div className='flex items-center justify-center gap-1'>
                         <div
                           className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                          onClick={() => navigate(path.eventModDetails.link(event.id))}
+                          onClick={() => navigate(path.eventModeratedDetails.link(event.id))}
                         >
                           <ShowDetailIcon className='h-[20px] w-[20px]' />
                         </div>
