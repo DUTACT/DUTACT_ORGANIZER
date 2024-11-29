@@ -268,11 +268,6 @@ export default function EventManagement() {
           <table className='relative min-w-full overflow-auto'>
             <thead className='sticky top-0 z-50 bg-neutral-0 before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-neutral-5'>
               <tr>
-                <th className='sticky left-0 z-10 bg-neutral-0 px-4 py-2 text-center before:absolute before:bottom-0 before:left-0 before:h-[2px] before:w-full before:bg-neutral-5'>
-                  <div className='flex items-center justify-center'>
-                    <input type='checkbox' className='h-[16px] w-[16px] cursor-pointer' />
-                  </div>
-                </th>
                 <th
                   className='min-w-[150px] cursor-pointer whitespace-normal break-words px-4 py-2 text-left text-sm'
                   onClick={() => toggleSortCriteria('name')}
@@ -318,11 +313,6 @@ export default function EventManagement() {
               <tbody>
                 {currentEvents.map((event) => (
                   <tr key={event.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
-                    <td className='sticky left-0 z-10 bg-neutral-0 px-4 py-2 group-hover:bg-neutral-2'>
-                      <div className='flex items-center justify-center'>
-                        <input type='checkbox' className='h-[16px] w-[16px] cursor-pointer' />
-                      </div>
-                    </td>
                     <td className='px-4 py-2'>
                       <div className='line-clamp-3 overflow-hidden text-base font-bold'>{event.name}</div>
                     </td>
