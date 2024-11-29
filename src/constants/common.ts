@@ -35,16 +35,16 @@ export const EVENT_STATUS_COLOR_CLASSES: Record<EventStatus, { backgroundColor: 
     textColor: 'text-semantic-success'
   },
   commingSoon: {
-    backgroundColor: 'bg-semantic-secondary-background',
-    textColor: 'text-semantic-secondary'
+    backgroundColor: 'bg-semantic-warning-background',
+    textColor: 'text-semantic-warning'
   },
   ongoing: {
     backgroundColor: 'bg-semantic-success-background',
     textColor: 'text-semantic-success'
   },
   ended: {
-    backgroundColor: 'bg-semantic-cancelled-background',
-    textColor: 'text-semantic-cancelled'
+    backgroundColor: 'bg-semantic-neutral-background',
+    textColor: 'text-semantic-neutral'
   },
   rejected: {
     backgroundColor: 'bg-semantic-cancelled-background',

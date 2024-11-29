@@ -14,6 +14,7 @@ export interface EventOfOrganizer {
     type: EventStatus
     label?: string
     moderatedAt?: string
+    reason?: string
   }
   organizer: {
     id: number
