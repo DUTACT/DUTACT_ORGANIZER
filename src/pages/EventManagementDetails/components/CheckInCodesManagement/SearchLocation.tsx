@@ -125,28 +125,24 @@ const CustomControl = ({ children }: { children: React.ReactNode }) => {
   const map = useMap()
 
   useEffect(() => {
-    // Create the custom control
     const control = new L.Control({ position: 'topright' })
 
     control.onAdd = () => {
-      // Create a div for the control, apply styling and render children
       const div = L.DomUtil.create('div', 'custom-control')
       div.innerHTML = ''
       div.appendChild(controlRef.current as unknown as Node)
 
-      // Prevent map drag when interacting with control
       L.DomEvent.disableClickPropagation(div)
       L.DomEvent.on(div, 'mousedown', (e) => {
-        L.DomEvent.stopPropagation(e) // Prevent dragging map
+        L.DomEvent.stopPropagation(e)
       })
       L.DomEvent.on(div, 'mousewheel', (e) => {
-        L.DomEvent.stopPropagation(e) // Prevent dragging map
+        L.DomEvent.stopPropagation(e)
       })
 
       return div
     }
 
-    // Add control to map
     control.addTo(map)
 
     return () => {
