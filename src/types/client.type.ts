@@ -1,9 +1,12 @@
+import { AxiosInstance } from 'axios'
+
 export type MutationMethodType = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 export interface QueryFetchOptions {
   url: string
   inputParams?: any
   token?: string
+  client?: AxiosInstance
 }
 
 export interface MutationFetchOptions {

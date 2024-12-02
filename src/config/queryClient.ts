@@ -22,9 +22,9 @@ export function setupToken(token?: string): void {
   }
 }
 
-export async function queryFetch<T>({ url, inputParams }: QueryFetchOptions): Promise<T> {
+export async function queryFetch<T>({ url, inputParams, client: queryClient }: QueryFetchOptions): Promise<T> {
   let params = ''
-
+  queryClient = queryClient ?? client
   if (inputParams) {
     params = qs.stringify(inputParams)
   }
@@ -37,7 +37,7 @@ export async function queryFetch<T>({ url, inputParams }: QueryFetchOptions): Pr
         fetchUrl += '?' + params
       }
 
-      const res = await client.get(fetchUrl)
+      const res = await queryClient.get(fetchUrl)
       const json = await res.data
 
       resolve(json)

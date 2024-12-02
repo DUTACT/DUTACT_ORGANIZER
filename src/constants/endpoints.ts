@@ -90,3 +90,8 @@ export const getManageStudentAccountsUrl = () => {
 export const getManageOrganizerAccountsUrl = () => {
   return '/api/admin/manage-accounts/organizers'
 }
+
+// HERE map
+export const getAutoSuggestUrl = () => {
+  return `https://autosuggest.search.hereapi.com/v1/autosuggest`
+}

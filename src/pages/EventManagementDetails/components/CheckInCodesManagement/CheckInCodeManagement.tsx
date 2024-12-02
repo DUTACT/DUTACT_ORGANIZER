@@ -87,6 +87,11 @@ export default function CheckInCodeManagement() {
                 <span>Thời gian hiệu lực</span>
               </div>
             </th>
+            <th className='whitespace-normal break-words px-4 py-2 text-left text-sm'>
+              <div className='flex items-center justify-between'>
+                <span>Địa điểm</span>
+              </div>
+            </th>
             <th className='sticky right-0 z-20 whitespace-normal break-words bg-neutral-0 px-4 py-2 text-left text-sm before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-neutral-5'>
               Hành động
             </th>
@@ -103,6 +108,11 @@ export default function CheckInCodeManagement() {
                 </td>
                 <td className='px-4 py-2 text-sm'>
                   {new Date(checkInCode.startAt).toLocaleString()} - {new Date(checkInCode.endAt).toLocaleString()}
+                </td>
+                <td className='px-4 py-2'>
+                  <div className='line-clamp-6 overflow-hidden whitespace-pre-wrap text-sm font-normal'>
+                    {checkInCode.location ? checkInCode.location.title : 'Không có'}
+                  </div>
                 </td>
                 <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                   <div className='flex items-center justify-center gap-1'>

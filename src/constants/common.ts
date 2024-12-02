@@ -89,6 +89,7 @@ export const POST_STATUS_COLOR_CLASSES: Record<PostStatus, { backgroundColor: st
 export const TIMEOUT = {
   TOAST_SHORT: 3000,
   DEBOUNCE: 500,
+  DEBOUNCE_LONG: 1000,
   NAVIGATE: 1000
 }
 
