@@ -173,7 +173,6 @@ export default function CreateCheckInCodePopup({ setIsShowPopup }: CreateCheckIn
                     {location ? (
                       <div>
                         <div>{location.title}</div>
-                        <div className='text-sm text-neutral-5'>{location.address?.label}</div>
                       </div>
                     ) : (
                       <div>Chưa chọn địa điểm</div>

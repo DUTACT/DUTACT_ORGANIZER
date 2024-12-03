@@ -11,7 +11,6 @@ export interface GeoItem {
   id: string
   title: string
   position: GeoPosition
-  scoring: number
   address?: GeoAddress
 }
 
