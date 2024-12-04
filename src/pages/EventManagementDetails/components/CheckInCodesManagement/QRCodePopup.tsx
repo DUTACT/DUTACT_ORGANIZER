@@ -26,10 +26,7 @@ export default function QRCodePopup({ checkInCode, onClose }: CreateCheckInCodeP
   }
 
   return createPortal(
-    <div
-      className='fixed left-0 right-0 top-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-overlay'
-      onClick={onClose}
-    >
+    <div className='fixed left-0 right-0 top-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-overlay'>
       <div
         className='h-fit max-h-popup w-[600px] max-w-popup overflow-hidden rounded-lg bg-neutral-0 shadow-custom'
         onClick={(e) => e.stopPropagation()}

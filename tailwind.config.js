@@ -81,6 +81,9 @@ module.exports = {
       inset: {
         sidebar: 'var(--sidebar)',
         aside: 'var(--aside)'
+      },
+      zIndex: {
+        1000: 1000
       }
     }
   },

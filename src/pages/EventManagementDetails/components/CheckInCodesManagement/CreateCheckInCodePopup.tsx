@@ -13,6 +13,9 @@ import { CheckInCodeBody } from 'src/types/checkInCode.type'
 import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
 import { useOrganizerId } from '../../../../hooks/useOrganizerId'
 import moment from 'moment'
+import SearchLocation from './SearchLocation'
+import { GeoItem } from 'src/types/map.type'
+import { useState } from 'react'
 
 interface CreateCheckInCodePopup {
   setIsShowPopup: React.Dispatch<React.SetStateAction<boolean>>
@@ -24,18 +27,14 @@ export default function CreateCheckInCodePopup({ setIsShowPopup }: CreateCheckIn
   const eventId = useEventId()
   const organizerId = useOrganizerId()
   const { event } = useOrganizerEvent(organizerId, eventId)
+  const [location, setLocation] = useState<GeoItem | null>(null)
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false)
 
   if (!event) {
     return <div>Loading...</div>
   }
 
-  const {
-    control,
-    handleSubmit,
-    trigger,
-    formState: { errors },
-    setError
-  } = useForm<FormData>({
+  const { control, handleSubmit, trigger, setError } = useForm<FormData>({
     resolver: yupResolver(checkInCodeSchema)
   })
 
@@ -43,9 +42,24 @@ export default function CreateCheckInCodePopup({ setIsShowPopup }: CreateCheckIn
     createCode: { mutate: createCheckInCode, isPending: isCreatingPostPending }
   } = useEventCheckInCodes()
 
+  const handleSelectLocation = (item: GeoItem) => {
+    setLocation(item)
+    setIsSearchingLocation(false)
+  }
+
+  const handleCancelSelectLocation = () => {
+    setIsSearchingLocation(false)
+  }
+
   const handleCreateCheckInCode = handleSubmit((data) => {
     const body: CheckInCodeBody = {
       eventId,
+      location: location
+        ? {
+            title: location.title,
+            geoPosition: { ...location.position }
+          }
+        : undefined,
       ...data
     }
 
@@ -88,15 +102,8 @@ export default function CreateCheckInCodePopup({ setIsShowPopup }: CreateCheckIn
     })
   })
 
-  if (errors) {
-    console.log(`errors`, errors)
-  }
-
   return createPortal(
-    <div
-      className='fixed left-0 right-0 top-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-overlay'
-      onClick={() => setIsShowPopup(false)}
-    >
+    <div className='fixed left-0 right-0 top-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-overlay'>
       <div
         className='h-fit max-h-popup w-[600px] max-w-popup overflow-hidden rounded-lg bg-neutral-0 shadow-custom'
         onClick={(e) => e.stopPropagation()}
@@ -142,6 +149,42 @@ export default function CreateCheckInCodePopup({ setIsShowPopup }: CreateCheckIn
                 }}
                 autoResize
               />
+              {isSearchingLocation ? (
+                <SearchLocation onSelect={handleSelectLocation} onCancel={handleCancelSelectLocation} />
+              ) : (
+                <div>
+                  <div>
+                    {location ? (
+                      <div className='flex items-start justify-between'>
+                        <div className='text-base font-medium text-neutral-7'>Địa điểm</div>
+                        <div
+                          className='cursor-pointer p-1 opacity-70 hover:opacity-100'
+                          onClick={() => setLocation(null)}
+                        >
+                          <CloseIcon className='h-[20px] w-[20px]' />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className='text-base font-medium text-neutral-7'>Địa điểm</div>
+                    )}
+                  </div>
+                  <div className='mt-2 flex items-center justify-between gap-2'>
+                    {location ? (
+                      <div>
+                        <div>{location.title}</div>
+                      </div>
+                    ) : (
+                      <div>Chưa chọn địa điểm</div>
+                    )}
+                    <div
+                      onClick={() => setIsSearchingLocation(true)}
+                      className='min-w-[150px] cursor-pointer text-right font-medium text-semantic-secondary/80 underline decoration-blue-600 transition duration-300 hover:text-semantic-secondary/90'
+                    >
+                      Chọn địa điểm
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
