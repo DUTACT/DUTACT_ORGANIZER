@@ -57,7 +57,6 @@ export default function CreateCheckInCodePopup({ setIsShowPopup }: CreateCheckIn
       location: location
         ? {
             title: location.title,
-            address: location.address?.label,
             geoPosition: { ...location.position }
           }
         : undefined,

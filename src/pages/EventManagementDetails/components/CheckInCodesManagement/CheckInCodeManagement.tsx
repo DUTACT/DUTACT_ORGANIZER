@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { CheckInCode } from 'src/types/checkInCode.type'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
 import AddIcon from 'src/assets/icons/i-plus-white.svg?react'
-import ShowIcon from 'src/assets/icons/i-eye-secondary.svg?react'
+import ShowQRIcon from 'src/assets/icons/i-qr-code.svg?react'
 import Button from 'src/components/Button'
 import { useDispatch } from 'react-redux'
 import CreateCheckInCodePopup from './CreateCheckInCodePopup'
@@ -117,7 +117,11 @@ export default function CheckInCodeManagement() {
                 <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                   <div className='flex items-center justify-center gap-1'>
                     <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
-                      <ShowIcon className='h-[20px] w-[20px]' onClick={() => setSeletedCode(checkInCode)} />
+                      <ShowQRIcon
+                        style={{ color: '#0960bd' }}
+                        className='h-[20px] w-[20px]'
+                        onClick={() => setSeletedCode(checkInCode)}
+                      />
                     </div>
                     <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
                       <DeleteIcon className='h-[20px] w-[20px]' onClick={() => openPopupDeleteCode(checkInCode)} />

@@ -55,6 +55,10 @@ export default function SearchLocation({ onSelect, onCancel }: SearchLocationPro
 
   const isTyping = (isSearching || isLoading) && query
 
+  data?.forEach((item) => {
+    console.log('item', JSON.stringify(item))
+  })
+
   return (
     <div className='flex flex-col gap-2'>
       <MapContainer
