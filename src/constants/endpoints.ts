@@ -15,7 +15,7 @@ export const getEventUrlOfOrganizer = (organizerId: number, eventId?: number) =>
 }
 
 export const getCloseEventUrlOfOrganizer = (organizerId: number, eventId: number) => {
-  return `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events/${eventId}/close`
+  return `${BASE_API_URL_ORGANIZER_EVENT}/${organizerId}/events/${eventId}/close-registration`
 }
 
 // admin-event-controller
