@@ -101,7 +101,7 @@ export default function BaseMultiSelect<
         </div>
 
         {isOpen && (
-          <div className='absolute z-10 mt-1 w-full rounded-md border bg-white shadow-lg'>
+          <div className='absolute bottom-[100%] z-10 mt-1 max-h-[300px] w-full -translate-y-1 overflow-auto rounded-md border bg-white shadow-lg'>
             {options.map((option) => (
               <div
                 key={option.value}

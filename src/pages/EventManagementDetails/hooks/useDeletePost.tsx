@@ -18,7 +18,7 @@ export const useDeletePost = (): UseDeletePostResult => {
 
   const { mutate: mutateDeletePost } = deletePost({
     onSuccess: (postId: number) => {
-      toast.success(SUCCESS_MESSAGE.DELETE_EVENT)
+      toast.success(SUCCESS_MESSAGE.DELETE_EVENT_POST)
       dispatch(setIsShowModalConfirm(false))
       deletePostInList(postId)
     },
