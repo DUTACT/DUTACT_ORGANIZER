@@ -16,7 +16,6 @@ import moment from 'moment'
 import SearchLocation from './SearchLocation'
 import { GeoItem } from 'src/types/map.type'
 import { useState } from 'react'
-import { isSea } from 'node:sea'
 
 interface CreateCheckInCodePopup {
   setIsShowPopup: React.Dispatch<React.SetStateAction<boolean>>
