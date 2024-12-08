@@ -121,7 +121,7 @@ export default function SearchLocation({ onSelect, onCancel }: SearchLocationPro
       </MapContainer>
       <div className='flex items-center justify-between gap-2'>
         <div>{selectedLocation.title}</div>
-        <div className='mt-3 flex items-center justify-between'>
+        <div className='mt-3 flex items-center justify-between gap-2'>
           <Button
             className='bg-semantic-neutral/90 text-neutral-0 hover:bg-semantic-neutral'
             title='Hủy'

@@ -16,6 +16,7 @@ import moment from 'moment'
 import SearchLocation from './SearchLocation'
 import { GeoItem } from 'src/types/map.type'
 import { useState } from 'react'
+import { isSea } from 'node:sea'
 
 interface CreateCheckInCodePopup {
   setIsShowPopup: React.Dispatch<React.SetStateAction<boolean>>
@@ -188,17 +189,19 @@ export default function CreateCheckInCodePopup({ setIsShowPopup }: CreateCheckIn
             </div>
           </div>
         </div>
-        <div className='flex h-footer-popup items-center justify-between px-6 text-sm'>
-          <Button
-            title={isCreatingPostPending ? 'Đang tạo...' : 'Tạo mã check-in'}
-            type='submit'
-            classButton='text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md'
-            classButtonDisabled='cursor-not-allowed opacity-40'
-            onClick={handleCreateCheckInCode}
-            disabled={isCreatingPostPending}
-            classLoadingIndicator='text-neutral-7 fill-neutral-7'
-          />
-        </div>
+        {!isSearchingLocation && (
+          <div className='flex h-footer-popup items-center justify-between px-6 text-sm'>
+            <Button
+              title={isCreatingPostPending ? 'Đang tạo...' : 'Tạo mã check-in'}
+              type='submit'
+              classButton='text-neutral-0 bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md'
+              classButtonDisabled='cursor-not-allowed opacity-40'
+              onClick={handleCreateCheckInCode}
+              disabled={isCreatingPostPending}
+              classLoadingIndicator='text-neutral-7 fill-neutral-7'
+            />
+          </div>
+        )}
       </div>
     </div>,
     document.body
