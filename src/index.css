@@ -5,8 +5,7 @@
 @layer base {
   :root {
     --sidebar: 280px;
-    --aside: 280px;
-    --w-main: calc(100% - var(--sidebar) - var(--aside));
+    --w-main: calc(100% - var(--sidebar));
     --max-w-popup: calc(100vw - 60px);
     --max-h-popup: calc(100vh - 60px);
     --h-header-popup: 50px;

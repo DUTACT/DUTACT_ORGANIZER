@@ -33,7 +33,12 @@ export default function Profile() {
       <Popover
         isOpen={isPopoverOpen}
         content={
-          <div ref={setPopperElement} style={{ ...styles.popper, zIndex: 9999 }} {...attributes.popper}>
+          <div
+            className='rounded-lg bg-white shadow-lg'
+            ref={setPopperElement}
+            style={{ ...styles.popper, zIndex: 9999 }}
+            {...attributes.popper}
+          >
             <ProfilePopover
               onClosePopover={onClosePopover}
               setIsShowProfilePopup={setIsShowProfilePopup}
