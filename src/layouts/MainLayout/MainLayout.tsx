@@ -1,4 +1,3 @@
-import Aside from 'src/components/Aside/Aside'
 import Header from 'src/components/Header'
 import Sidebar from 'src/components/Sidebar'
 
@@ -15,7 +14,6 @@ export default function MainLayout({ children }: Props) {
         <Header />
         <div className='mt-header block h-main'>{children}</div>
       </div>
-      <Aside />
     </div>
   )
 }
