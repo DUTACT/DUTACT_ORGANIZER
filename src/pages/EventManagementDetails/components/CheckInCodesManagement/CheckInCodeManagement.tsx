@@ -3,6 +3,7 @@ import { CheckInCode } from 'src/types/checkInCode.type'
 import DeleteIcon from 'src/assets/icons/i-delete-warning.svg?react'
 import AddIcon from 'src/assets/icons/i-plus-white.svg?react'
 import ShowQRIcon from 'src/assets/icons/i-qr-code.svg?react'
+import MapIcon from 'src/assets/icons/i-map.svg?react'
 import Button from 'src/components/Button'
 import { useDispatch } from 'react-redux'
 import CreateCheckInCodePopup from './CreateCheckInCodePopup'
@@ -15,6 +16,8 @@ import { useEventId } from 'src/hooks/useEventId'
 import { useOrganizerId } from 'src/hooks/useOrganizerId'
 import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
 import moment from 'moment'
+import MapLocationPopup from './MapLocationPopup'
+import { cn } from 'src/lib/tailwind/utils'
 
 export default function CheckInCodeManagement() {
   const dispatch = useDispatch()
@@ -25,6 +28,7 @@ export default function CheckInCodeManagement() {
   const { checkInCodes, deleteCode: deleteCheckInCode } = useEventCheckInCodes()
   const [isShowCreateCheckInCodePopup, setIsShowCreateCheckInCodePopup] = useState<boolean>(false)
   const [seletedCode, setSeletedCode] = useState<CheckInCode | null>(null)
+  const [selectedCodeForLocation, setSelectedCodeForLocation] = useState<CheckInCode | null>(null)
 
   const handleDeleteCode = (id: string) => {
     deleteCheckInCode.mutate(id, {
@@ -110,12 +114,31 @@ export default function CheckInCodeManagement() {
                   {new Date(checkInCode.startAt).toLocaleString()} - {new Date(checkInCode.endAt).toLocaleString()}
                 </td>
                 <td className='px-4 py-2'>
-                  <div className='line-clamp-6 overflow-hidden whitespace-pre-wrap text-sm font-normal'>
-                    {checkInCode.location ? checkInCode.location.title : 'Không có'}
-                  </div>
+                  {checkInCode.location ? (
+                    <div className='line-clamp-6 overflow-hidden whitespace-pre-wrap text-sm font-normal'>
+                      {checkInCode.location.title}
+                    </div>
+                  ) : (
+                    <div className='text-sm text-neutral-5'>Không có</div>
+                  )}
                 </td>
                 <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
                   <div className='flex items-center justify-center gap-1'>
+                    <div
+                      className={cn(
+                        'flex items-center justify-center p-2',
+                        checkInCode.location
+                          ? 'cursor-pointer opacity-70 hover:opacity-100'
+                          : 'opacity-100 hover:opacity-100'
+                      )}
+                    >
+                      <MapIcon
+                        style={{ color: checkInCode.location ? '#0960bd' : '#d1d5db' }}
+                        className='h-[20px] w-[20px]'
+                        onClick={checkInCode.location ? () => setSelectedCodeForLocation(checkInCode) : undefined}
+                      />
+                    </div>
+
                     <div className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'>
                       <ShowQRIcon
                         style={{ color: '#0960bd' }}
@@ -143,6 +166,9 @@ export default function CheckInCodeManagement() {
         )}
       </table>
       {seletedCode && <QRCodePopup checkInCode={seletedCode} onClose={() => setSeletedCode(null)} />}
+      {selectedCodeForLocation && (
+        <MapLocationPopup checkInCode={selectedCodeForLocation} onClose={() => setSelectedCodeForLocation(null)} />
+      )}
       {isShowCreateCheckInCodePopup && <CreateCheckInCodePopup setIsShowPopup={setIsShowCreateCheckInCodePopup} />}
     </>
   )
