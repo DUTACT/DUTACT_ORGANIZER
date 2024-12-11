@@ -7,13 +7,13 @@ import { cn } from 'src/lib/tailwind/utils'
 import { GeoItem } from 'src/types/map.type'
 import { MapContainer, Marker, TileLayer, useMap, useMapEvent } from 'react-leaflet'
 import L from 'leaflet'
-
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
-  shadowUrl: iconShadow
+  shadowUrl: iconShadow,
+  iconAnchor: [12, 41]
 })
 
 L.Marker.prototype.options.icon = DefaultIcon
@@ -119,8 +119,17 @@ export default function SearchLocation({ onSelect, onCancel }: SearchLocationPro
           }}
         />
       </MapContainer>
-      <div className='flex items-center justify-between gap-2'>
-        <div>{selectedLocation.title}</div>
+
+      <div className='flex items-end justify-between gap-2'>
+        <label className='flex-1'>
+          <div>Địa điểm</div>
+          <input
+            className='mt-1 w-full rounded-md border-[1px] border-neutral-3 bg-neutral-1 px-4 py-2 focus:outline-primary'
+            type='text'
+            value={selectedLocation.title}
+            onChange={(e) => setSelectedLocation({ ...selectedLocation, title: e.target.value })}
+          />
+        </label>
         <div className='mt-3 flex items-center justify-between gap-2'>
           <Button
             className='bg-semantic-neutral/90 text-neutral-0 hover:bg-semantic-neutral'
