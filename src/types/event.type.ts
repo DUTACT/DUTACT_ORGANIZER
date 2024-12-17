@@ -31,6 +31,7 @@ export interface ChangeEventStatusData {
   eventId: number
   type: EventStatus
   moderatedAt: string
+  reason?: string
 }
 
 export interface EventFilter {
