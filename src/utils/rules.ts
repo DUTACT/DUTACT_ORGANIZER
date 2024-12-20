@@ -22,7 +22,8 @@ import {
   REGISTRATION_END_BEFORE_EVENT_START,
   REGEX_PHONE,
   ERROR_INVALID_PHONE,
-  ERROR_INCORRECT_FORMAT_USERNAME
+  ERROR_INCORRECT_FORMAT_USERNAME,
+  ERROR_TIME_LESS_THAN_CURRENT_TIME
 } from 'src/constants/validate'
 import * as yup from 'yup'
 
@@ -151,6 +152,17 @@ const validateTimeRange = (
     })
 }
 
+const timeAfterNowTest = () : yup.TestFunction<string> => {
+  return (value: string) => {
+    const currentTime = moment()
+    const time = moment(value)
+    if (!time.isValid()) {
+      return true
+    }
+    return time.isAfter(currentTime)
+  }
+}
+
 export const authenSchema = yup.object({
   username: yup
     .string()
@@ -178,7 +190,7 @@ export const eventSchema = yup.object({
     'endRegistrationAt',
     undefined,
     EVENT_START_AFTER_REGISTRATION_END
-  ),
+  ).test(timeAfterNowTest())
   endAt: validateTimeRange(
     'startAt',
     'endAt',
