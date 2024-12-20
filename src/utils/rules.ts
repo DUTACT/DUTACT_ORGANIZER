@@ -152,14 +152,12 @@ const validateTimeRange = (
     })
 }
 
-const timeAfterNowTest = () : yup.TestFunction<string> => {
-  return (value: string) => {
-    const currentTime = moment()
+const timeAfterNowTest: yup.TestConfig<string, yup.AnyObject> = {
+  name: 'time-after-now',
+  message: ERROR_TIME_LESS_THAN_CURRENT_TIME,
+  test: (value: string) => {
     const time = moment(value)
-    if (!time.isValid()) {
-      return true
-    }
-    return time.isAfter(currentTime)
+    return time.isAfter(moment())
   }
 }
 
@@ -190,7 +188,7 @@ export const eventSchema = yup.object({
     'endRegistrationAt',
     undefined,
     EVENT_START_AFTER_REGISTRATION_END
-  ).test(timeAfterNowTest())
+  ).test(timeAfterNowTest),
   endAt: validateTimeRange(
     'startAt',
     'endAt',
@@ -199,7 +197,7 @@ export const eventSchema = yup.object({
     'endRegistrationAt',
     undefined,
     EVENT_START_AFTER_REGISTRATION_END
-  ),
+  ).test(timeAfterNowTest),
   startRegistrationAt: validateTimeRange(
     'startRegistrationAt',
     'endRegistrationAt',
@@ -208,7 +206,7 @@ export const eventSchema = yup.object({
     undefined,
     'startAt',
     REGISTRATION_END_BEFORE_EVENT_START
-  ),
+  ).test(timeAfterNowTest),
   endRegistrationAt: validateTimeRange(
     'startRegistrationAt',
     'endRegistrationAt',
@@ -217,7 +215,7 @@ export const eventSchema = yup.object({
     undefined,
     'startAt',
     REGISTRATION_END_BEFORE_EVENT_START
-  ),
+  ).test(timeAfterNowTest),
   coverPhoto: yup.mixed<File>().required(ERROR_REQUIRED_FIELD)
 })
 

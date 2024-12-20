@@ -181,7 +181,7 @@ export default function CreateEventPage() {
             </div>
           </div>
         </div>
-        <div className='flex w-full gap-4'>
+        <div className='flex w-full flex-col'>
           <Input
             variant='textarea'
             placeholder='Nhập thông tin sự kiện'
@@ -194,6 +194,9 @@ export default function CreateEventPage() {
             name='content'
             autoResize
           />
+          <div className='mt-1 min-h-[18px] text-xs font-semibold text-semantic-cancelled'>
+            {errors.content?.message}
+          </div>
         </div>
         <div className='flex w-full gap-4'>
           <DraggableInputFile
