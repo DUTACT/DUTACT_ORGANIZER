@@ -1,7 +1,6 @@
-import { yupResolver } from '@hookform/resolvers/yup'
 import { useQueryClient } from '@tanstack/react-query'
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -16,8 +15,9 @@ import useLocalStorage from 'src/hooks/useLocalStorage'
 import { cn } from 'src/lib/tailwind/utils'
 import { path } from 'src/routes/path'
 import { EventBody, EventOfOrganizer } from 'src/types/event.type'
-import { getDefaultImageFile, parseJwt } from 'src/utils/common'
-import { createEventSchema, EventSchemaType } from 'src/utils/rules'
+import { parseJwt } from 'src/utils/common'
+import { eventSchema, EventSchemaType } from 'src/utils/rules'
+import { ValidationError } from 'yup'
 
 type FormData = EventSchemaType
 
@@ -29,17 +29,17 @@ export default function UpdateEventPage() {
   const eventId = Number(id) ?? 0
   const organizerId = parseJwt(accessToken)?.organizerId ?? 0
   const [removedCoverPhoto, setRemovedCoverPhoto] = useState<boolean>(false)
+  const { data, isSuccess } = getEventOfOrganizerById(organizerId, Number(eventId) ?? 0)
+
   const {
     control,
     trigger,
     handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm<FormData>({
-    resolver: yupResolver(createEventSchema)
-  })
-
-  const { data, error, isSuccess } = getEventOfOrganizerById(organizerId, Number(eventId) ?? 0)
+    setValue,
+    getValues,
+    setError,
+    formState: { dirtyFields }
+  } = useForm<FormData>()
 
   const { mutate, isPending } = updateEvent(organizerId, eventId, {
     onSuccess: (data) => {
@@ -52,14 +52,25 @@ export default function UpdateEventPage() {
     }
   })
 
-  const onSubmit = handleSubmit((data) => {
-    const eventBody: Partial<EventBody> = {
-      name: data.name,
-      content: data.content,
-      startAt: moment(data.startAt).format(DATE_TIME_FORMATS.ISO),
-      endAt: moment(data.endAt).format(DATE_TIME_FORMATS.ISO),
-      startRegistrationAt: moment(data.startRegistrationAt).format(DATE_TIME_FORMATS.ISO),
-      endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.ISO)
+  const submitForm = handleSubmit((data) => {
+    const eventBody: Partial<EventBody> = {}
+    if (data.name) {
+      eventBody.name = data.name
+    }
+    if (data.content) {
+      eventBody.content = data.content
+    }
+    if (data.startAt) {
+      eventBody.startAt = data.startAt
+    }
+    if (data.endAt) {
+      eventBody.endAt = data.endAt
+    }
+    if (data.startRegistrationAt) {
+      eventBody.startRegistrationAt = data.startRegistrationAt
+    }
+    if (data.endRegistrationAt) {
+      eventBody.endRegistrationAt = data.endRegistrationAt
     }
     if (removedCoverPhoto) {
       eventBody.coverPhoto = data.coverPhoto
@@ -67,24 +78,38 @@ export default function UpdateEventPage() {
     mutate(eventBody)
   })
 
+  const handleUserSubmit = async () => {
+    const fieldsToValidate = Object.keys(eventSchema.fields).filter((key) => dirtyFields[key as keyof FormData])
+    let isValid = true
+    for (const field of fieldsToValidate) {
+      try {
+        await eventSchema.validateAt(field, getValues())
+      } catch (error) {
+        isValid = false
+        if (error instanceof ValidationError) {
+          setError(field as keyof FormData, { type: 'manual', message: error.message })
+        }
+      }
+    }
+
+    if (!isValid) {
+      return
+    }
+
+    submitForm()
+  }
+
   const navigateToEventManagementPage = () => {
     navigate(path.event)
   }
 
-  useEffect(() => {
-    if (isSuccess && data) {
-      reset({
-        ...data,
-        startAt: moment(data.startAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
-        endAt: moment(data.endAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
-        startRegistrationAt: moment(data.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
-        endRegistrationAt: moment(data.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL),
-        coverPhoto: getDefaultImageFile()
-      })
-    } else if (error) {
-      toast.error(error.message)
-    }
-  }, [isSuccess, data, error, reset])
+  const handleFieldChange = (name: keyof FormData, value: string) => {
+    setValue(name, value)
+  }
+
+  if (!isSuccess || !data) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div className='flex h-full w-full flex-1 flex-col'>
@@ -104,7 +129,7 @@ export default function UpdateEventPage() {
                 'min-w-fit text-neutral-0 border-none bg-semantic-secondary/90 hover:bg-semantic-secondary text-nowrap rounded-md',
                 { 'cursor-progress opacity-50': isPending }
               )}
-              onClick={onSubmit}
+              onClick={handleUserSubmit}
               disabled={isPending}
             />
             <Button
@@ -121,6 +146,8 @@ export default function UpdateEventPage() {
         <div className='flex w-full gap-4'>
           <Input
             name='name'
+            value={data?.name}
+            onChange={(e) => handleFieldChange('name', e.target.value)}
             control={control}
             type='text'
             placeholder='Nhập tên sự kiện'
@@ -140,42 +167,42 @@ export default function UpdateEventPage() {
           <div className='flex w-full flex-col'>
             <div className='flex w-full flex-1 gap-4'>
               <Input
+                name='startAt'
+                value={moment(data?.startAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL)}
                 type='datetime-local'
                 labelName='Ngày bắt đầu sự kiện'
                 showIsRequired={true}
-                showError={false}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
                 disabled={moment().isAfter(data?.startAt)}
-                name='startAt'
-                onChange={() => {
+                onChange={(e) => {
                   trigger('endAt')
                   trigger('endRegistrationAt')
+                  handleFieldChange('startAt', e.target.value)
                 }}
               />
-
               <Input
+                name='endAt'
+                value={moment(data?.endAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL)}
                 type='datetime-local'
                 labelName='Ngày kết thúc sự kiện'
                 showIsRequired={true}
-                showError={false}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
-                name='endAt'
-                onChange={() => {
+                onChange={(e) => {
                   trigger('startAt')
+                  handleFieldChange('endAt', e.target.value)
                 }}
               />
-            </div>
-            <div className='mt-1 min-h-[18px] text-xs font-semibold text-semantic-cancelled'>
-              {errors.startAt?.message}
             </div>
           </div>
           <div className='flex w-full flex-col'>
             <div className='flex w-full flex-1 gap-4'>
               <Input
+                name='startRegistrationAt'
+                value={moment(data?.startRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL)}
                 type='datetime-local'
                 labelName='Ngày bắt đầu đăng ký'
                 showIsRequired={true}
@@ -183,13 +210,13 @@ export default function UpdateEventPage() {
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
-                name='startRegistrationAt'
                 onChange={() => {
                   trigger('endRegistrationAt')
                 }}
               />
-
               <Input
+                name='endRegistrationAt'
+                value={moment(data?.endRegistrationAt).format(DATE_TIME_FORMATS.DATE_TIME_LOCAL)}
                 type='datetime-local'
                 labelName='Ngày kết thúc đăng ký'
                 showIsRequired={true}
@@ -197,29 +224,28 @@ export default function UpdateEventPage() {
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
-                name='endRegistrationAt'
-                onChange={() => {
+                onChange={(e) => {
                   trigger('startRegistrationAt')
                   trigger('startAt')
+                  handleFieldChange('endRegistrationAt', e.target.value)
                 }}
               />
-            </div>
-            <div className='mt-1 min-h-[18px] text-xs font-semibold text-semantic-cancelled'>
-              {errors.startRegistrationAt?.message}
             </div>
           </div>
         </div>
         <div className='flex w-full gap-4'>
           <Input
+            name='content'
+            value={data?.content}
+            onChange={(e) => handleFieldChange('content', e.target.value)}
             variant='textarea'
             placeholder='Nhập thông tin sự kiện'
             labelName='Thông tin sự kiện'
             showIsRequired={true}
-            showError={false}
+            showError={true}
             classNameWrapper='text-sm w-full flex-1'
             classNameInput='px-3 overflow-hidden'
             control={control}
-            name='content'
             autoResize
           />
         </div>

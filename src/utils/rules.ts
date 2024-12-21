@@ -171,36 +171,31 @@ export const authenSchema = yup.object({
   name: yup.string().required(ERROR_REQUIRED_NAME)
 })
 
-const eventBaseSchema = {
-  name: yup.string().trim(),
-  content: yup.string().trim(),
+export const eventSchema = yup.object({
+  name: yup.string().trim().required(ERROR_REQUIRED_FIELD),
+  content: yup.string().trim().required(ERROR_REQUIRED_FIELD),
   startAt: yup
     .string()
     .test(timeRangeCompareTest('endAt', 'lt', ERROR_START_TIME_GREATER_THAN_END_TIME))
-    .test(timeRangeCompareTest('endRegistrationAt', 'gt', EVENT_START_AFTER_REGISTRATION_END)),
+    .test(timeRangeCompareTest('endRegistrationAt', 'gt', EVENT_START_AFTER_REGISTRATION_END))
+    .required(ERROR_REQUIRED_FIELD),
   endAt: yup
     .string()
-    .test(timeRangeCompareTest('startAt', 'gt', ERROR_START_TIME_GREATER_THAN_END_TIME))
-    .test(timeAfterNowTest),
+    .test(timeRangeCompareTest('startRegistrationAt', 'gt', ERROR_START_TIME_GREATER_THAN_END_TIME))
+    .test(timeRangeCompareTest('startAt', 'lt', REGISTRATION_END_BEFORE_EVENT_START))
+    .test(timeAfterNowTest)
+    .required(ERROR_REQUIRED_FIELD),
   startRegistrationAt: yup
     .string()
-    .test(timeRangeCompareTest('endRegistrationAt', 'lt', ERROR_START_TIME_GREATER_THAN_END_TIME)),
+    .test(timeRangeCompareTest('endRegistrationAt', 'lt', ERROR_START_TIME_GREATER_THAN_END_TIME))
+    .required(ERROR_REQUIRED_FIELD),
   endRegistrationAt: yup
     .string()
     .test(timeRangeCompareTest('startRegistrationAt', 'gt', ERROR_START_TIME_GREATER_THAN_END_TIME))
     .test(timeRangeCompareTest('startAt', 'lt', REGISTRATION_END_BEFORE_EVENT_START))
-    .test(timeAfterNowTest),
-  coverPhoto: yup.mixed<File>()
-}
-
-export const createEventSchema = yup.object({
-  name: eventBaseSchema.name.required(ERROR_REQUIRED_FIELD),
-  content: eventBaseSchema.content.required(ERROR_REQUIRED_FIELD),
-  startAt: yup.string().required(ERROR_REQUIRED_FIELD).concat(eventBaseSchema.startAt),
-  endAt: yup.string().required(ERROR_REQUIRED_FIELD).concat(eventBaseSchema.endAt),
-  startRegistrationAt: yup.string().required(ERROR_REQUIRED_FIELD).concat(eventBaseSchema.startRegistrationAt),
-  endRegistrationAt: yup.string().required(ERROR_REQUIRED_FIELD).concat(eventBaseSchema.endRegistrationAt),
-  coverPhoto: eventBaseSchema.coverPhoto.required(ERROR_REQUIRED_FIELD)
+    .test(timeAfterNowTest)
+    .required(ERROR_REQUIRED_FIELD),
+  coverPhoto: yup.mixed<File>().required(ERROR_REQUIRED_FIELD)
 })
 
 export const checkInCodeSchema = yup.object({
@@ -260,7 +255,7 @@ export const createOrganizerAccountSchema = yup.object({
 })
 
 export type AuthenSchemaType = yup.InferType<typeof authenSchema>
-export type EventSchemaType = yup.InferType<typeof createEventSchema>
+export type EventSchemaType = yup.InferType<typeof eventSchema>
 export type CheckInCodeSchemaType = yup.InferType<typeof checkInCodeSchema>
 export type ProfileSchemaType = yup.InferType<typeof profileSchema>
 export type ChangePasswordSchema = yup.InferType<typeof changePasswordSchema>
