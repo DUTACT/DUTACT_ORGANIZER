@@ -79,11 +79,18 @@ export default function UpdateEventPage() {
   })
 
   const handleUserSubmit = async () => {
+    if (!data) return
+
+    const formData = {
+      ...data,
+      ...Object.fromEntries(Object.entries(getValues()).filter(([, value]) => value !== undefined))
+    }
+
     const fieldsToValidate = Object.keys(eventSchema.fields).filter((key) => dirtyFields[key as keyof FormData])
     let isValid = true
     for (const field of fieldsToValidate) {
       try {
-        await eventSchema.validateAt(field, getValues())
+        await eventSchema.validateAt(field, formData)
       } catch (error) {
         isValid = false
         if (error instanceof ValidationError) {
@@ -206,7 +213,6 @@ export default function UpdateEventPage() {
                 type='datetime-local'
                 labelName='Ngày bắt đầu đăng ký'
                 showIsRequired={true}
-                showError={false}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
@@ -220,7 +226,6 @@ export default function UpdateEventPage() {
                 type='datetime-local'
                 labelName='Ngày kết thúc đăng ký'
                 showIsRequired={true}
-                showError={false}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
@@ -242,7 +247,6 @@ export default function UpdateEventPage() {
             placeholder='Nhập thông tin sự kiện'
             labelName='Thông tin sự kiện'
             showIsRequired={true}
-            showError={true}
             classNameWrapper='text-sm w-full flex-1'
             classNameInput='px-3 overflow-hidden'
             control={control}

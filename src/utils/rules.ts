@@ -17,13 +17,14 @@ import {
   REGEX_PASSWORD,
   ERROR_REQUIRED_NAME,
   ERROR_REQUIRED_FIELD,
-  ERROR_START_TIME_GREATER_THAN_END_TIME,
+  ERROR_START_TIME_GREATER_THAN_EQUAL_END_TIME,
   EVENT_START_AFTER_REGISTRATION_END,
   REGISTRATION_END_BEFORE_EVENT_START,
   REGEX_PHONE,
   ERROR_INVALID_PHONE,
   ERROR_INCORRECT_FORMAT_USERNAME,
-  ERROR_TIME_LESS_THAN_CURRENT_TIME
+  ERROR_TIME_LESS_THAN_CURRENT_TIME,
+  ERROR_END_TIME_LESS_THAN_EQUAL_START_TIME
 } from 'src/constants/validate'
 import * as yup from 'yup'
 
@@ -176,22 +177,21 @@ export const eventSchema = yup.object({
   content: yup.string().trim().required(ERROR_REQUIRED_FIELD),
   startAt: yup
     .string()
-    .test(timeRangeCompareTest('endAt', 'lt', ERROR_START_TIME_GREATER_THAN_END_TIME))
+    .test(timeRangeCompareTest('endAt', 'lt', ERROR_START_TIME_GREATER_THAN_EQUAL_END_TIME))
     .test(timeRangeCompareTest('endRegistrationAt', 'gt', EVENT_START_AFTER_REGISTRATION_END))
     .required(ERROR_REQUIRED_FIELD),
   endAt: yup
     .string()
-    .test(timeRangeCompareTest('startRegistrationAt', 'gt', ERROR_START_TIME_GREATER_THAN_END_TIME))
-    .test(timeRangeCompareTest('startAt', 'lt', REGISTRATION_END_BEFORE_EVENT_START))
+    .test(timeRangeCompareTest('startAt', 'gt', ERROR_END_TIME_LESS_THAN_EQUAL_START_TIME))
     .test(timeAfterNowTest)
     .required(ERROR_REQUIRED_FIELD),
   startRegistrationAt: yup
     .string()
-    .test(timeRangeCompareTest('endRegistrationAt', 'lt', ERROR_START_TIME_GREATER_THAN_END_TIME))
+    .test(timeRangeCompareTest('endRegistrationAt', 'lt', ERROR_START_TIME_GREATER_THAN_EQUAL_END_TIME))
     .required(ERROR_REQUIRED_FIELD),
   endRegistrationAt: yup
     .string()
-    .test(timeRangeCompareTest('startRegistrationAt', 'gt', ERROR_START_TIME_GREATER_THAN_END_TIME))
+    .test(timeRangeCompareTest('startRegistrationAt', 'gt', ERROR_END_TIME_LESS_THAN_EQUAL_START_TIME))
     .test(timeRangeCompareTest('startAt', 'lt', REGISTRATION_END_BEFORE_EVENT_START))
     .test(timeAfterNowTest)
     .required(ERROR_REQUIRED_FIELD),
@@ -203,11 +203,11 @@ export const checkInCodeSchema = yup.object({
   startAt: yup
     .string()
     .required(ERROR_REQUIRED_FIELD)
-    .test(timeRangeCompareTest('endAt', 'lt', ERROR_START_TIME_GREATER_THAN_END_TIME)),
+    .test(timeRangeCompareTest('endAt', 'lt', ERROR_START_TIME_GREATER_THAN_EQUAL_END_TIME)),
   endAt: yup
     .string()
     .required(ERROR_REQUIRED_FIELD)
-    .test(timeRangeCompareTest('startAt', 'gt', ERROR_START_TIME_GREATER_THAN_END_TIME))
+    .test(timeRangeCompareTest('startAt', 'gt', ERROR_END_TIME_LESS_THAN_EQUAL_START_TIME))
     .test(timeAfterNowTest)
 })
 
