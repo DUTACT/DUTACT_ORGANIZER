@@ -17,7 +17,6 @@ import ParticipationManagement from './components/ParticipationManagement'
 import { useOrganizerEvent } from './hooks/useOrganizerEvent'
 import { useEventId } from 'src/hooks/useEventId'
 import { useOrganizerId } from 'src/hooks/useOrganizerId'
-import moment from 'moment'
 
 export default function EventManagementDetails() {
   const location = useLocation()

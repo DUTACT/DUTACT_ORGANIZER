@@ -89,7 +89,6 @@ export default function CreateEventPage() {
         </div>
         <Divider className='mt-4' />
       </div>
-
       <form action='' className='flex-1 overflow-auto px-6 py-3'>
         <div className='flex w-full gap-4'>
           <Input
@@ -116,7 +115,7 @@ export default function CreateEventPage() {
                 type='datetime-local'
                 labelName='Ngày bắt đầu sự kiện'
                 showIsRequired={true}
-                showError={false}
+                showError={true}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
@@ -126,12 +125,11 @@ export default function CreateEventPage() {
                   trigger('endRegistrationAt')
                 }}
               />
-
               <Input
                 type='datetime-local'
                 labelName='Ngày kết thúc sự kiện'
                 showIsRequired={true}
-                showError={false}
+                showError={true}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
@@ -141,9 +139,6 @@ export default function CreateEventPage() {
                 }}
               />
             </div>
-            <div className='mt-1 min-h-[18px] text-xs font-semibold text-semantic-cancelled'>
-              {errors.startAt?.message}
-            </div>
           </div>
           <div className='flex w-full flex-col'>
             <div className='flex w-full flex-1 gap-4'>
@@ -151,7 +146,6 @@ export default function CreateEventPage() {
                 type='datetime-local'
                 labelName='Ngày bắt đầu đăng ký'
                 showIsRequired={true}
-                showError={false}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
@@ -165,7 +159,6 @@ export default function CreateEventPage() {
                 type='datetime-local'
                 labelName='Ngày kết thúc đăng ký'
                 showIsRequired={true}
-                showError={false}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
@@ -175,9 +168,6 @@ export default function CreateEventPage() {
                   trigger('startAt')
                 }}
               />
-            </div>
-            <div className='mt-1 min-h-[18px] text-xs font-semibold text-semantic-cancelled'>
-              {errors.startRegistrationAt?.message}
             </div>
           </div>
         </div>

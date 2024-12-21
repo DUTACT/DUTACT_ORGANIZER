@@ -17,13 +17,14 @@ import {
   REGEX_PASSWORD,
   ERROR_REQUIRED_NAME,
   ERROR_REQUIRED_FIELD,
-  ERROR_START_TIME_GREATER_THAN_END_TIME,
+  ERROR_START_TIME_GREATER_THAN_EQUAL_END_TIME,
   EVENT_START_AFTER_REGISTRATION_END,
   REGISTRATION_END_BEFORE_EVENT_START,
   REGEX_PHONE,
   ERROR_INVALID_PHONE,
   ERROR_INCORRECT_FORMAT_USERNAME,
-  ERROR_TIME_LESS_THAN_CURRENT_TIME
+  ERROR_TIME_LESS_THAN_CURRENT_TIME,
+  ERROR_END_TIME_LESS_THAN_EQUAL_START_TIME
 } from 'src/constants/validate'
 import * as yup from 'yup'
 
@@ -97,65 +98,59 @@ const handleConfirmPasswordYup = (refString: string) => {
     .oneOf([yup.ref(refString)], ERROR_PASSWORD_NOT_MATCHED)
 }
 
-const validateTimeRange = (
-  firstFieldKey: string,
-  secondFieldKey: string,
-  errorMessage: string | null,
-  requiredMessage: string | null,
-  minTimeFieldKey?: string,
-  maxTimeFieldKey?: string,
-  outOfRangeMessage?: string
-) => {
-  return yup
-    .string()
-    .required(requiredMessage || '')
-    .test({
-      name: 'time-range-validation',
-      message: errorMessage ?? '',
-      test(_, context) {
-        const firstValue = context.parent[firstFieldKey]
-        const secondValue = context.parent[secondFieldKey]
+const timeRangeCompareTest = (
+  compareFieldKey: string,
+  type: 'gt' | 'lt' | 'gte' | 'lte' | 'eq' | 'ne',
+  errorMessage: string | null
+): yup.TestConfig<string | undefined, yup.AnyObject> => {
+  return {
+    name: 'time-range-compare-validation',
+    message: errorMessage ?? '',
+    test(value, context) {
+      const firstValue = value
+      const secondValue = context.parent[compareFieldKey]
 
-        if (!firstValue || !secondValue) {
-          return context.createError({ message: requiredMessage ?? '' })
-        }
-
-        const firstTime = moment(firstValue)
-        const secondTime = moment(secondValue)
-
-        if (!firstTime.isValid() || !secondTime.isValid()) {
-          return true
-        }
-
-        if (minTimeFieldKey) {
-          const minValue = context.parent[minTimeFieldKey]
-          if (!minValue) return true
-
-          const minTime = moment(minValue)
-          if (minTime.isSameOrAfter(firstTime)) {
-            return context.createError({ message: outOfRangeMessage ?? '' })
-          }
-        }
-
-        if (maxTimeFieldKey) {
-          const maxValue = context.parent[maxTimeFieldKey]
-          if (!maxValue) return true
-
-          const maxTime = moment(maxValue)
-          if (maxTime.isSameOrBefore(secondTime)) {
-            return context.createError({ message: outOfRangeMessage ?? '' })
-          }
-        }
-
-        return firstTime.isSameOrBefore(secondTime)
+      if (!firstValue) {
+        return true
       }
-    })
+
+      if (!secondValue) {
+        return true
+      }
+
+      const firstTime = moment(firstValue)
+      const secondTime = moment(secondValue)
+
+      if (!firstTime.isValid() || !secondTime.isValid()) {
+        return true
+      }
+
+      switch (type) {
+        case 'gt':
+          return firstTime.isAfter(secondTime)
+        case 'lt':
+          return firstTime.isBefore(secondTime)
+        case 'gte':
+          return firstTime.isSameOrAfter(secondTime)
+        case 'lte':
+          return firstTime.isSameOrBefore(secondTime)
+        case 'eq':
+          return firstTime.isSame(secondTime)
+        case 'ne':
+          return !firstTime.isSame(secondTime)
+        default:
+          return true
+      }
+    }
+  }
 }
 
-const timeAfterNowTest: yup.TestConfig<string, yup.AnyObject> = {
-  name: 'time-after-now',
+const timeAfterNowTest: yup.TestConfig<string | undefined, yup.AnyObject> = {
+  name: 'time-after-now-validation',
   message: ERROR_TIME_LESS_THAN_CURRENT_TIME,
-  test: (value: string) => {
+  test: (value) => {
+    if (!value) return true
+
     const time = moment(value)
     return time.isAfter(moment())
   }
@@ -180,49 +175,40 @@ export const authenSchema = yup.object({
 export const eventSchema = yup.object({
   name: yup.string().trim().required(ERROR_REQUIRED_FIELD),
   content: yup.string().trim().required(ERROR_REQUIRED_FIELD),
-  startAt: validateTimeRange(
-    'startAt',
-    'endAt',
-    ERROR_START_TIME_GREATER_THAN_END_TIME,
-    ERROR_REQUIRED_FIELD,
-    'endRegistrationAt',
-    undefined,
-    EVENT_START_AFTER_REGISTRATION_END
-  ).test(timeAfterNowTest),
-  endAt: validateTimeRange(
-    'startAt',
-    'endAt',
-    ERROR_START_TIME_GREATER_THAN_END_TIME,
-    ERROR_REQUIRED_FIELD,
-    'endRegistrationAt',
-    undefined,
-    EVENT_START_AFTER_REGISTRATION_END
-  ).test(timeAfterNowTest),
-  startRegistrationAt: validateTimeRange(
-    'startRegistrationAt',
-    'endRegistrationAt',
-    ERROR_START_TIME_GREATER_THAN_END_TIME,
-    ERROR_REQUIRED_FIELD,
-    undefined,
-    'startAt',
-    REGISTRATION_END_BEFORE_EVENT_START
-  ).test(timeAfterNowTest),
-  endRegistrationAt: validateTimeRange(
-    'startRegistrationAt',
-    'endRegistrationAt',
-    ERROR_START_TIME_GREATER_THAN_END_TIME,
-    ERROR_REQUIRED_FIELD,
-    undefined,
-    'startAt',
-    REGISTRATION_END_BEFORE_EVENT_START
-  ).test(timeAfterNowTest),
+  startAt: yup
+    .string()
+    .test(timeRangeCompareTest('endAt', 'lt', ERROR_START_TIME_GREATER_THAN_EQUAL_END_TIME))
+    .test(timeRangeCompareTest('endRegistrationAt', 'gt', EVENT_START_AFTER_REGISTRATION_END))
+    .required(ERROR_REQUIRED_FIELD),
+  endAt: yup
+    .string()
+    .test(timeRangeCompareTest('startAt', 'gt', ERROR_END_TIME_LESS_THAN_EQUAL_START_TIME))
+    .test(timeAfterNowTest)
+    .required(ERROR_REQUIRED_FIELD),
+  startRegistrationAt: yup
+    .string()
+    .test(timeRangeCompareTest('endRegistrationAt', 'lt', ERROR_START_TIME_GREATER_THAN_EQUAL_END_TIME))
+    .required(ERROR_REQUIRED_FIELD),
+  endRegistrationAt: yup
+    .string()
+    .test(timeRangeCompareTest('startRegistrationAt', 'gt', ERROR_END_TIME_LESS_THAN_EQUAL_START_TIME))
+    .test(timeRangeCompareTest('startAt', 'lt', REGISTRATION_END_BEFORE_EVENT_START))
+    .test(timeAfterNowTest)
+    .required(ERROR_REQUIRED_FIELD),
   coverPhoto: yup.mixed<File>().required(ERROR_REQUIRED_FIELD)
 })
 
 export const checkInCodeSchema = yup.object({
   title: yup.string().trim().required(ERROR_REQUIRED_FIELD),
-  startAt: validateTimeRange('startAt', 'endAt', ERROR_START_TIME_GREATER_THAN_END_TIME, ERROR_REQUIRED_FIELD),
-  endAt: validateTimeRange('startAt', 'endAt', ERROR_START_TIME_GREATER_THAN_END_TIME, ERROR_REQUIRED_FIELD)
+  startAt: yup
+    .string()
+    .required(ERROR_REQUIRED_FIELD)
+    .test(timeRangeCompareTest('endAt', 'lt', ERROR_START_TIME_GREATER_THAN_EQUAL_END_TIME)),
+  endAt: yup
+    .string()
+    .required(ERROR_REQUIRED_FIELD)
+    .test(timeRangeCompareTest('startAt', 'gt', ERROR_END_TIME_LESS_THAN_EQUAL_START_TIME))
+    .test(timeAfterNowTest)
 })
 
 export const profileSchema = yup.object({

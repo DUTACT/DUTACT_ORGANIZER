@@ -61,12 +61,17 @@ export default function Input<
         fieldState: {}
       }
 
-  const [localValue, setLocalValue] = useState<string>(field.value || '')
+  const [isDirty, setIsDirty] = useState<boolean>(false)
+  const displayValue = isDirty ? field.value : value?.toString() || ''
+  const [localValue, setLocalValue] = useState<string>(displayValue)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
     if (hasController) {
-      setLocalValue(field.value || '')
+      setLocalValue(displayValue)
+    }
+    if (!isDirty) {
+      setIsDirty(true)
     }
   }, [field.value, hasController])
 
