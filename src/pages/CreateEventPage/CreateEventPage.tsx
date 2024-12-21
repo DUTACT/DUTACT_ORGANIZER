@@ -15,7 +15,7 @@ import { useProfile } from 'src/hooks/useProfile'
 import { cn } from 'src/lib/tailwind/utils'
 import { path } from 'src/routes/path'
 import { EventBody } from 'src/types/event.type'
-import { eventSchema, EventSchemaType } from 'src/utils/rules'
+import { createEventSchema, EventSchemaType } from 'src/utils/rules'
 
 type FormData = EventSchemaType
 
@@ -29,7 +29,7 @@ export default function CreateEventPage() {
     handleSubmit,
     formState: { errors }
   } = useForm<FormData>({
-    resolver: yupResolver(eventSchema)
+    resolver: yupResolver(createEventSchema)
   })
 
   const { mutate, isPending } = createEvent(organizerId, {
@@ -116,7 +116,6 @@ export default function CreateEventPage() {
                 type='datetime-local'
                 labelName='Ngày bắt đầu sự kiện'
                 showIsRequired={true}
-                showError={false}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
@@ -131,7 +130,7 @@ export default function CreateEventPage() {
                 type='datetime-local'
                 labelName='Ngày kết thúc sự kiện'
                 showIsRequired={true}
-                showError={false}
+                showError={true}
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}

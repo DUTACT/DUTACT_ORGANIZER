@@ -17,7 +17,7 @@ import { cn } from 'src/lib/tailwind/utils'
 import { path } from 'src/routes/path'
 import { EventBody, EventOfOrganizer } from 'src/types/event.type'
 import { getDefaultImageFile, parseJwt } from 'src/utils/common'
-import { eventSchema, EventSchemaType } from 'src/utils/rules'
+import { createEventSchema, EventSchemaType } from 'src/utils/rules'
 
 type FormData = EventSchemaType
 
@@ -36,7 +36,7 @@ export default function UpdateEventPage() {
     reset,
     formState: { errors }
   } = useForm<FormData>({
-    resolver: yupResolver(eventSchema)
+    resolver: yupResolver(createEventSchema)
   })
 
   const { data, error, isSuccess } = getEventOfOrganizerById(organizerId, Number(eventId) ?? 0)
@@ -147,6 +147,7 @@ export default function UpdateEventPage() {
                 classNameWrapper='text-sm w-full flex-1'
                 classNameInput='px-3'
                 control={control}
+                disabled={moment().isAfter(data?.startAt)}
                 name='startAt'
                 onChange={() => {
                   trigger('endAt')
