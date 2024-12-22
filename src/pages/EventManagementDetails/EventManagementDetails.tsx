@@ -17,6 +17,7 @@ import ParticipationManagement from './components/ParticipationManagement'
 import { useOrganizerEvent } from './hooks/useOrganizerEvent'
 import { useEventId } from 'src/hooks/useEventId'
 import { useOrganizerId } from 'src/hooks/useOrganizerId'
+import FeedbackManagement from './components/FeedbackManagement'
 
 export default function EventManagementDetails() {
   const location = useLocation()
@@ -47,6 +48,9 @@ export default function EventManagementDetails() {
                 setIsShowCreateOrUpdatePostPopup={setIsShowCreateOrUpdatePostPopup}
                 setUpdatedPostId={setUpdatedPostId}
               />
+            </Tab>
+            <Tab label='Phản hồi'>
+              <FeedbackManagement />
             </Tab>
             <Tab label='Đơn đăng ký'>
               <EventRegistrations />
