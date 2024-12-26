@@ -42,3 +42,10 @@ export interface EventFilter {
   registrationDeadlineTo: string
   types: EventStatus[]
 }
+
+export interface EventInformationForCalendar {
+  id: string
+  title: string
+  start: Date
+  end: Date
+}

@@ -1,0 +1,17 @@
+export const CALENDAR_LABEL = {
+  date: 'Ngày',
+  time: 'Thời gian',
+  event: 'Sự kiện',
+  allDay: 'Cả ngày',
+  week: 'Tuần',
+  work_week: 'Ngày làm việc',
+  day: 'Ngày',
+  month: 'Tháng',
+  previous: 'Trước',
+  next: 'Sau',
+  yesterday: 'Hôm qua',
+  tomorrow: 'Ngày mai',
+  today: 'Hôm nay',
+  agenda: 'Lịch trình',
+  noEventsInRange: 'Không có sự kiện trong khoảng thời gian này.',
+};
