@@ -28,6 +28,7 @@ import _ from 'lodash'
 import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
 import { mapEventOfOrganizer } from 'src/utils/eventMapping'
+import { cn } from 'src/lib/tailwind/utils'
 
 export default function EventManagement() {
   const navigate = useNavigate()
@@ -311,44 +312,60 @@ export default function EventManagement() {
             </thead>
             {currentEvents.length > 0 && (
               <tbody>
-                {currentEvents.map((event) => (
-                  <tr key={event.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
-                    <td className='px-4 py-2'>
-                      <div className='line-clamp-3 overflow-hidden text-base font-bold'>{event.name}</div>
-                    </td>
-                    <td className='px-4 py-2 text-sm'>
-                      {event.startAt} - {event.endAt}
-                    </td>
-                    <td className='px-4 py-2 text-sm'>
-                      {event.startRegistrationAt} - {event.endRegistrationAt}
-                    </td>
-                    <td className='px-4 py-2 text-sm'>
-                      <Tag status={event.status} statusClasses={EVENT_STATUS_COLOR_CLASSES} />
-                    </td>
-                    <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
-                      <div className='flex items-center justify-center gap-1'>
-                        <div
-                          className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                          onClick={() => navigateToEventDetailsPage(event.id)}
-                        >
-                          <ShowDetailIcon className='h-[20px] w-[20px]' />
+                {currentEvents.map((event) => {
+                  const allowToUpdate =
+                    event.status.type !== 'rejected' &&
+                    moment().isBefore(moment(event.endAt, DATE_TIME_FORMATS.DATE_TIME_COMMON))
+                  const allowToDelete = !moment().isAfter(moment(event.startAt, DATE_TIME_FORMATS.DATE_TIME_COMMON))
+                  console.log('allowToUpdate', allowToUpdate)
+                  console.log('allowToDelete', allowToDelete)
+                  console.log('startAt', event.startAt)
+                  console.log('endAt', event.endAt)
+                  return (
+                    <tr key={event.id} className='group border-b-[1px] border-neutral-4 hover:bg-neutral-2'>
+                      <td className='px-4 py-2'>
+                        <div className='line-clamp-3 overflow-hidden text-base font-bold'>{event.name}</div>
+                      </td>
+                      <td className='px-4 py-2 text-sm'>
+                        {event.startAt} - {event.endAt}
+                      </td>
+                      <td className='px-4 py-2 text-sm'>
+                        {event.startRegistrationAt} - {event.endRegistrationAt}
+                      </td>
+                      <td className='px-4 py-2 text-sm'>
+                        <Tag status={event.status} statusClasses={EVENT_STATUS_COLOR_CLASSES} />
+                      </td>
+                      <td className='sticky right-0 z-20 bg-neutral-0 px-4 py-2 before:absolute before:left-0 before:top-0 before:h-full before:w-[1px] before:bg-neutral-3 group-hover:bg-neutral-2'>
+                        <div className='flex items-center justify-center gap-1'>
+                          <div
+                            className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
+                            onClick={() => navigateToEventDetailsPage(event.id)}
+                          >
+                            <ShowDetailIcon className='h-[20px] w-[20px]' />
+                          </div>
+                          <div
+                            className={cn(
+                              'flex items-center justify-center p-2',
+                              allowToUpdate ? 'cursor-pointer opacity-70 hover:opacity-100' : 'opacity-30'
+                            )}
+                            onClick={allowToUpdate ? () => navigateToUpdateEventPage(event.id) : undefined}
+                          >
+                            <EditIcon className='h-[20px] w-[20px]' />
+                          </div>
+                          <div
+                            className={cn(
+                              'flex items-center justify-center p-2',
+                              allowToDelete ? 'cursor-pointer opacity-70 hover:opacity-100' : 'opacity-30'
+                            )}
+                            onClick={allowToDelete ? () => openPopupDeleteEvent(event) : undefined}
+                          >
+                            <DeleteIcon className='h-[20px] w-[20px]' />
+                          </div>
                         </div>
-                        <div
-                          className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                          onClick={() => navigateToUpdateEventPage(event.id)}
-                        >
-                          <EditIcon className='h-[20px] w-[20px]' />
-                        </div>
-                        <div
-                          className='flex cursor-pointer items-center justify-center p-2 opacity-70 hover:opacity-100'
-                          onClick={() => openPopupDeleteEvent(event)}
-                        >
-                          <DeleteIcon className='h-[20px] w-[20px]' />
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             )}
             {currentEvents.length === 0 && (
