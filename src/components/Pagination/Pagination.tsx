@@ -13,9 +13,10 @@ interface Props {
   onPageChange: (page: number) => void
   rowsPerPage?: number
   onRowsPerPageChange: (rowsPerPage: number) => void
+  label?: string
 }
 
-export default function Pagination({ totalItems, page, onPageChange, rowsPerPage, onRowsPerPageChange }: Props) {
+export default function Pagination({ totalItems, page, onPageChange, rowsPerPage, onRowsPerPageChange, label }: Props) {
   const { currentPage, itemsPerPage, totalPages, nextPage, prevPage, goToPage, changeItemsPerPage } = usePagination({
     totalItems,
     intialPage: page,
@@ -40,7 +41,7 @@ export default function Pagination({ totalItems, page, onPageChange, rowsPerPage
     <div className='flex items-center justify-between'>
       <div className='flex items-center gap-1'>
         <label htmlFor='rowsPerPage' className='text-sm'>
-          Tổng số sự kiện mỗi trang:
+          {label || 'Số dòng mỗi trang:'}
         </label>
         <select
           id='rowsPerPage'

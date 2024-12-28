@@ -95,3 +95,8 @@ export const getManageOrganizerAccountsUrl = () => {
 export const getAutoSuggestUrl = () => {
   return `https://autosuggest.search.hereapi.com/v1/autosuggest`
 }
+
+// feedback-management-controller
+export const getFeedbackUrl = (feedbackId?: number) => {
+  return feedbackId ? `/api/admin/feedbacks/${feedbackId}` : `/api/admin/feedbacks`
+}
