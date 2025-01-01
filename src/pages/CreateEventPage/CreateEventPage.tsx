@@ -121,6 +121,7 @@ export default function CreateEventPage() {
                 control={control}
                 name='startAt'
                 onChange={() => {
+                  trigger('startAt')
                   trigger('endAt')
                   trigger('endRegistrationAt')
                 }}
@@ -136,6 +137,7 @@ export default function CreateEventPage() {
                 name='endAt'
                 onChange={() => {
                   trigger('startAt')
+                  trigger('endAt')
                 }}
               />
             </div>
@@ -151,6 +153,7 @@ export default function CreateEventPage() {
                 control={control}
                 name='startRegistrationAt'
                 onChange={() => {
+                  trigger('startRegistrationAt')
                   trigger('endRegistrationAt')
                 }}
               />
@@ -166,6 +169,7 @@ export default function CreateEventPage() {
                 onChange={() => {
                   trigger('startRegistrationAt')
                   trigger('startAt')
+                  trigger('endRegistrationAt')
                 }}
               />
             </div>
