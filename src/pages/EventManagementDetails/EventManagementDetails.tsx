@@ -1,7 +1,7 @@
 import PostTableList from './components/PostTableList'
 import EventInformation from './components/EventInformation'
 import CreateOrUpdatePostPopup from './components/CreateOrUpdatePostPopup'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Tab, Tabs } from 'src/components/Tab'
 import EventRegistrations from './components/EventRegistrations'
 import { matchPath, useLocation } from 'react-router-dom'
