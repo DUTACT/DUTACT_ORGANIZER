@@ -10,11 +10,14 @@ export default defineConfig({
     port: 6969
   },
   css: {
-    devSourcemap: true
+    devSourcemap: false
   },
   resolve: {
     alias: {
       src: path.resolve(__dirname, './src')
     }
+  },
+  build: {
+    sourcemap: false
   }
 })
