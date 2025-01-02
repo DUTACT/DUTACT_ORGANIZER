@@ -1,9 +1,9 @@
-import { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { SelectHTMLAttributes, useEffect, useState } from 'react'
 import { useController, type FieldPath, type FieldValues, type UseControllerProps } from 'react-hook-form'
 import FormFieldWrapper from 'src/components/FormFieldWrapper'
 import { cn } from 'src/lib/tailwind/utils'
-
-type InputVariant = 'input' | 'textarea'
+import { OptionSelect } from 'src/types/common.type'
+import ChevronDownIcon from 'src/assets/icons/i-chevron-down.svg?react'
 
 export type Props<
   TFieldValues extends FieldValues = FieldValues,
@@ -11,7 +11,8 @@ export type Props<
 > = {
   classNameWrapper?: string
   classNameLabel?: string
-  classNameInput?: string
+  classNameSelect?: string
+  classNameOption?: string
   classNameError?: string
   classNameRequired?: string
   className?: string
@@ -19,32 +20,30 @@ export type Props<
   showIsRequired?: boolean
   showError?: boolean
   name?: FieldPath<TFieldValues>
-  variant?: InputVariant
-  autoResize?: boolean
-} & InputHTMLAttributes<HTMLInputElement> &
-  TextareaHTMLAttributes<HTMLTextAreaElement> &
+  options: OptionSelect[]
+  placeholder?: string
+} & SelectHTMLAttributes<HTMLSelectElement> &
   Partial<UseControllerProps<TFieldValues, TName>>
 
-export default function Input<
+export default function Select<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 >(props: Props<TFieldValues, TName>) {
   const {
-    type,
     onChange,
     labelName,
     showIsRequired,
     classNameWrapper,
-    classNameInput = '',
+    classNameSelect = '',
+    classNameOption = '',
     classNameError,
-    className = '',
     showError,
     value,
     control,
     name,
     rules,
-    variant = 'input',
-    autoResize = false,
+    options,
+    placeholder = '',
     ...rest
   } = props
 
@@ -58,43 +57,20 @@ export default function Input<
         field: {
           value: value?.toString() || ''
         },
-        fieldState: {}
+        fieldState: { error: undefined }
       }
 
-  const [isDirty, setIsDirty] = useState<boolean>(false)
-  const displayValue = isDirty ? field.value : value?.toString() || ''
-  const [localValue, setLocalValue] = useState<string>(displayValue)
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const [localValue, setLocalValue] = useState<string>(field.value || '')
 
   useEffect(() => {
     if (hasController) {
-      setLocalValue(displayValue)
-    }
-    if (!isDirty) {
-      setIsDirty(true)
+      setLocalValue(field.value || '')
     }
   }, [field.value, hasController])
 
-  useLayoutEffect(() => {
-    if (variant === 'textarea' && autoResize) {
-      adjustHeight()
-    }
-  }, [localValue, autoResize, variant])
-
-  const adjustHeight = () => {
-    if (textareaRef.current && autoResize) {
-      textareaRef.current.style.height = 'auto'
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
-    }
-  }
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const valueFromInput = event.target.value
     setLocalValue(valueFromInput)
-
-    if (variant === 'textarea' && autoResize) {
-      adjustHeight()
-    }
 
     if ('onChange' in field && typeof field.onChange === 'function') {
       field.onChange(valueFromInput)
@@ -113,33 +89,33 @@ export default function Input<
       errorMessage={error?.message}
       {...rest}
     >
-      {variant === 'textarea' ? (
-        <textarea
+      <div className='relative mt-1'>
+        <select
           className={cn(
-            'mt-1 w-full rounded-md border-[1px] border-neutral-3 bg-neutral-1 px-4 py-2 focus:outline-primary',
-            classNameInput
+            'w-full appearance-none rounded-md border-[1px] border-neutral-3 bg-neutral-1 px-4 py-2 focus:outline-primary',
+            classNameSelect
           )}
           {...rest}
           {...(hasController ? field : {})}
-          ref={textareaRef}
           onChange={handleChange}
           value={localValue}
-        />
-      ) : (
-        <input
-          className={cn(
-            'mt-1 w-full rounded-md border-[1px] border-neutral-3 bg-neutral-1 px-4 py-2 focus:outline-primary',
-            classNameInput
+        >
+          {placeholder && (
+            <option key='' value='' disabled className={cn('bg-neutral-0 text-sm', classNameOption)}>
+              {placeholder}
+            </option>
           )}
-          {...rest}
-          {...(hasController ? field : {})}
-          type={type}
-          onChange={handleChange}
-          value={localValue}
-          min='2024-01-01T07:00'
-          max='2024-12-31T23:59'
-        />
-      )}
+          {options &&
+            options.map(({ label, value }) => (
+              <option key={value} value={value} className={cn('bg-neutral-0 text-sm', classNameOption)}>
+                {label}
+              </option>
+            ))}
+        </select>
+        <div className='pointer-events-none absolute inset-y-0 right-3 flex items-center'>
+          <ChevronDownIcon className='h-[16px] w-[16px]' />
+        </div>
+      </div>
     </FormFieldWrapper>
   )
 }

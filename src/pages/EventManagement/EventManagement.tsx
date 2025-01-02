@@ -19,9 +19,7 @@ import { path } from 'src/routes/path'
 import { useDispatch } from 'react-redux'
 import { clearModal, setIsShowModalConfirm, setModalProperties } from 'src/redux/slices/modalConfirm'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
-import { parseJwt } from 'src/utils/common'
 import Tag from 'src/components/Tag'
-import useLocalStorage from 'src/hooks/useLocalStorage'
 import FilterPopover from 'src/components/FilterPopover'
 import EventFilter from './components/EventFilter'
 import _ from 'lodash'
@@ -29,12 +27,12 @@ import { checkTimeOverlap } from 'src/utils/datetime'
 import { Option } from 'src/types/common.type'
 import { mapEventOfOrganizer } from 'src/utils/eventMapping'
 import { cn } from 'src/lib/tailwind/utils'
+import { useOrganizerId } from 'src/hooks/useOrganizerId'
 
 export default function EventManagement() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [accessToken, _] = useLocalStorage<string>('access_token')
-  const organizerId = parseJwt(accessToken)?.organizerId
+  const organizerId = useOrganizerId()
 
   const [inputSearch, setInputSearch] = useState<string>('')
   const [events, setEvents] = useState<EventOfOrganizer[]>([])

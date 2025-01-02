@@ -49,9 +49,8 @@ export default function Sidebar() {
       <div className='mt-4 flex flex-1 flex-col items-start justify-start gap-2'>
         {SIDEBAR_ROUTES.filter((route) => route.userRoles.includes(userRole)).map(
           ({ path, name, icon: Icon, iconActive: IconActive, subRoutes }) => (
-            <>
+            <div className='w-full' key={path}>
               <NavLink
-                key={path}
                 to={path}
                 onClick={(e) => {
                   if (subRoutes) {
@@ -78,7 +77,7 @@ export default function Sidebar() {
                 )}
               </NavLink>
               {subRoutes && (
-                <div className='ml-4'>
+                <div className='ml-4 mt-1'>
                   {subRoutes.map(({ path, name, icon: Icon, iconActive: IconActive }) => (
                     <NavLink
                       key={path}
@@ -106,7 +105,7 @@ export default function Sidebar() {
                   ))}
                 </div>
               )}
-            </>
+            </div>
           )
         )}
       </div>

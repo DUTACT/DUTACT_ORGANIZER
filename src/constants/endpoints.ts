@@ -91,6 +91,9 @@ export const getManageOrganizerAccountsUrl = () => {
   return '/api/admin/manage-accounts/organizers'
 }
 
+// event-analystic-controller
+export const BASE_API_URL_ANALYTICS = '/api/admin/analytics'
+
 // HERE map
 export const getAutoSuggestUrl = () => {
   return `https://autosuggest.search.hereapi.com/v1/autosuggest`
