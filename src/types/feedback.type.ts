@@ -3,6 +3,7 @@ export type Feedback = {
   postedAt: string
   content: string
   coverPhotoUrl?: string
+  coverPhotoUrls: string[]
   studentName: string
   studentId: number
   studentAvatarUrl?: string

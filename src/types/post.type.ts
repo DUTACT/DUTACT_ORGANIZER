@@ -6,6 +6,7 @@ export interface Post {
   content: string
   postedAt: string
   coverPhotoUrl?: string
+  coverPhotoUrls: string[]
   status: {
     type: PostStatus
     label?: string
@@ -13,7 +14,8 @@ export interface Post {
 }
 
 export type PostBody = Omit<Post, 'id' | 'postedAt' | 'coverPhotoUrl' | 'status'> & {
-  coverPhoto: File
+  coverPhotos?: File[]
+  keepCoverPhotoUrls?: string[]
 }
 
 export interface ChangePostStatusData {
@@ -24,4 +26,10 @@ export interface PostFilterType {
   timeFrom: string
   timeTo: string
   types: PostStatus[]
+}
+
+export interface CoverPhotoData {
+  type: 'file' | 'url'
+  file?: File
+  url?: string
 }

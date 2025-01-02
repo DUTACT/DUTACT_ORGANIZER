@@ -85,7 +85,14 @@ export async function mutationFormData<T>({ url, body, method }: MutationFetchOp
       const bodyValue = Object.values(body)
 
       bodyValue.map((value: any, index) => {
-        return form.append(keys[index], value)
+        const key = keys[index]
+        if (Array.isArray(value)) {
+          value.forEach((item, idx) => {
+            form.append(`${key}[${idx}]`, item)
+          })
+        } else {
+          form.append(key, value)
+        }
       })
 
       const res = await client.request({

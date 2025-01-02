@@ -4,7 +4,6 @@ import Divider from 'src/components/Divider'
 import DUTLogo from 'src/assets/img/dut-logo.jpg'
 import Input from 'src/components/Input'
 import Button from 'src/components/Button'
-import DraggableInputFile from 'src/components/DraggableInputFile/DraggableInputFile'
 import { useOrganizerId } from '../../../../hooks/useOrganizerId'
 import { useEventId } from '../../../../hooks/useEventId'
 import { useOrganizerEvent } from '../../hooks/useOrganizerEvent'
@@ -12,16 +11,20 @@ import { useForm, useWatch } from 'react-hook-form'
 import { createPost, updatePost } from 'src/apis/post'
 import { toast } from 'react-toastify'
 import { SUCCESS_MESSAGE } from 'src/constants/message'
-import { PostBody } from 'src/types/post.type'
+import { CoverPhotoData, PostBody } from 'src/types/post.type'
 import { useEventPosts } from '../../hooks/useEventPosts'
 import { cn } from 'src/lib/tailwind/utils'
 import { usePost } from '../../hooks/usePost'
-import { useEffect, useState } from 'react'
-import { getDefaultImageFile } from 'src/utils/common'
+import { useEffect } from 'react'
+import DraggableImages from 'src/components/DraggableImages'
 
 interface CreateOrUpdatePostPopupProps {
   setIsShowCreateOrUpdatePostPopup: React.Dispatch<React.SetStateAction<boolean>>
   updatedPostId: number | undefined
+}
+
+type FormData = Partial<PostBody> & {
+  coverPhotoArray?: Array<CoverPhotoData>
 }
 
 export default function CreateOrUpdatePostPopup({
@@ -32,26 +35,41 @@ export default function CreateOrUpdatePostPopup({
   const eventId = useEventId()
   const { event } = useOrganizerEvent(organizerId, eventId)
   const { addPost } = useEventPosts()
-  const [removedCoverPhoto, setRemovedCoverPhoto] = useState<boolean>(false)
-
-  const { control, handleSubmit, setValue, reset } = useForm<{
-    content: string
-    coverPhoto: File
-  }>()
-
-  const content = useWatch({ control, name: 'content' })
-  const coverPhoto = useWatch({ control, name: 'coverPhoto' })
-
-  const isButtonDisabled = !content || !coverPhoto
-
   const { post, updatePostInList } = updatedPostId
     ? usePost(updatedPostId)
     : { post: undefined, updatePostInList: undefined }
 
+  const { control, handleSubmit, setValue, reset } = useForm<FormData>({
+    defaultValues: {
+      eventId,
+      content: '',
+      coverPhotoArray: updatedPostId
+        ? post?.coverPhotoUrls.map((coverPhotoUrl) => ({
+            type: 'url',
+            url: coverPhotoUrl
+          })) || []
+        : undefined
+    }
+  })
+
+  const content = useWatch({ control, name: 'content' })
+  const coverPhotoArray = useWatch({ control, name: 'coverPhotoArray' })
+
+  const isButtonDisabled = !content || coverPhotoArray?.length === 0
+
   useEffect(() => {
     if (updatedPostId && post) {
       setValue('content', post.content)
-      setValue('coverPhoto', getDefaultImageFile())
+      setValue(
+        'coverPhotoArray',
+        post.coverPhotoUrls.map(
+          (coverPhotoUrl) =>
+            ({
+              type: 'url',
+              url: coverPhotoUrl
+            }) as CoverPhotoData
+        ) || []
+      )
     } else {
       reset()
     }
@@ -80,18 +98,35 @@ export default function CreateOrUpdatePostPopup({
   })
 
   const onSubmit = handleSubmit((data) => {
+    if (data.coverPhotoArray) {
+      if (data.coverPhotoArray.length > 0) {
+        const keepCoverPhotoUrls: string[] = []
+        const newCoverPhotos: File[] = []
+        data.coverPhotoArray.forEach((photo) => {
+          if (photo.type === 'file') {
+            newCoverPhotos.push(photo.file as File)
+          } else {
+            keepCoverPhotoUrls.push(photo.url as string)
+          }
+        })
+        data.keepCoverPhotoUrls = keepCoverPhotoUrls
+        data.coverPhotos = newCoverPhotos
+      }
+      delete data.coverPhotoArray
+    }
     if (updatedPostId) {
       const postBody: Partial<PostBody> = {
-        content: data.content
+        content: data.content,
+        keepCoverPhotoUrls: data.keepCoverPhotoUrls,
+        coverPhotos: data.coverPhotos
       }
-      if (removedCoverPhoto) {
-        postBody.coverPhoto = data.coverPhoto
-      }
+
       mutateUpdatePost(postBody)
     } else {
-      const postBody: PostBody = {
-        ...data,
-        eventId
+      const postBody: Partial<PostBody> = {
+        eventId,
+        content: data.content as string,
+        coverPhotos: data.coverPhotos
       }
       mutateCreatePost(postBody)
     }
@@ -138,13 +173,11 @@ export default function CreateOrUpdatePostPopup({
                 classNameInput='mt-0 h-auto min-h-fit w-full resize-none overflow-hidden rounded-none border-none p-0 text-sm focus:outline-transparent'
                 autoResize
               />
-              <DraggableInputFile
-                name='coverPhoto'
+              <DraggableImages
+                name='coverPhotoArray'
                 control={control}
+                showIsRequired={false}
                 classNameWrapper='text-sm w-full flex-1'
-                initialImageUrl={post?.coverPhotoUrl}
-                removedInitialImage={removedCoverPhoto}
-                setRemovedInitialImage={setRemovedCoverPhoto}
               />
             </div>
           </div>
