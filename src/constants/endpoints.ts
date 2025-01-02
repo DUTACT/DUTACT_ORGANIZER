@@ -30,8 +30,8 @@ export const getEventModerationUrl = (eventId?: number) => {
 
 export const BASE_API_URL_POST = '/api/admin/posts'
 
-export const getPostUrl = (postId?: number) => {
-  return postId ? `${BASE_API_URL_POST}/${postId}` : BASE_API_URL_POST
+export const getPostUrl = (eventOrPostId?: number) => {
+  return eventOrPostId ? `${BASE_API_URL_POST}/${eventOrPostId}` : BASE_API_URL_POST
 }
 
 // admin-analytics-event

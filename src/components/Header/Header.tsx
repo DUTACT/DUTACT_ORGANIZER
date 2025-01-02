@@ -7,6 +7,7 @@ export default function Header() {
     title: '',
     icon: null
   }
+
   return (
     <div className='absolute left-0 right-0 top-0 flex h-header w-full border-b-[1px] border-b-neutral-3 px-4 shadow-sm'>
       {currentPageInfo && (

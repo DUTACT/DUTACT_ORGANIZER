@@ -136,8 +136,6 @@ export default function Input<
           type={type}
           onChange={handleChange}
           value={localValue}
-          min='2024-01-01T07:00'
-          max='2024-12-31T23:59'
         />
       )}
     </FormFieldWrapper>

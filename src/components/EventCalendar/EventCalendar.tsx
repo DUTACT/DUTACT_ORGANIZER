@@ -4,6 +4,8 @@ import 'moment/locale/vi'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { EventInformationForCalendar } from 'src/types/event.type'
 import { CALENDAR_LABEL } from 'src/constants/calendar'
+import { useNavigate } from 'react-router-dom'
+import { path } from 'src/routes/path'
 
 moment.locale('vi')
 const localizer = momentLocalizer(moment)
@@ -13,6 +15,7 @@ interface EventCalendarProps {
 }
 
 export default function EventCalendar({ agendaOfEvents }: EventCalendarProps) {
+  const navigate = useNavigate()
   return (
     <div className='col-span-8'>
       <Calendar
@@ -25,6 +28,7 @@ export default function EventCalendar({ agendaOfEvents }: EventCalendarProps) {
         step={60}
         popup
         messages={CALENDAR_LABEL}
+        onSelectEvent={(event) => navigate(path.eventDetails.link(parseInt(event.id, 10)))}
       />
     </div>
   )

@@ -4,11 +4,11 @@ import { getPostUrl } from 'src/constants/endpoints'
 import { ApiError } from 'src/types/client.type'
 import { ChangePostStatusData, Post, PostBody } from 'src/types/post.type'
 
-export const createPost = (options?: UseMutationOptions<Post, ApiError, PostBody>) => {
-  return useMutation<Post, ApiError, PostBody>({
+export const createPost = (options?: UseMutationOptions<Post, ApiError, Partial<PostBody>>) => {
+  return useMutation<Post, ApiError, Partial<PostBody>>({
     mutationFn: async (body) => {
       const response = await mutationFormData<Post>({
-        url: getPostUrl(),
+        url: `${getPostUrl(body.eventId)}/v2`,
         method: 'POST',
         body
       })
@@ -52,7 +52,7 @@ export const updatePost = (postId: number, options?: UseMutationOptions<Post, Ap
   return useMutation<Post, ApiError, Partial<PostBody>>({
     mutationFn: async (body) => {
       const response = await mutationFormData<Post>({
-        url: getPostUrl(postId),
+        url: `${getPostUrl(postId)}/v2`,
         method: 'PATCH',
         body
       })

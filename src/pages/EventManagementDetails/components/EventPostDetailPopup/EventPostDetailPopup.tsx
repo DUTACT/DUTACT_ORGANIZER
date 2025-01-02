@@ -5,6 +5,8 @@ import { clearEventPostDetailState } from 'src/redux/slices/eventPostDetail'
 import { EventOfOrganizer } from 'src/types/event.type'
 import { Post } from 'src/types/post.type'
 import PostTime from '../PostTime'
+import ImageSlider from 'src/components/ImageSlider'
+import { useState } from 'react'
 
 interface EventPostDetailPopupProps {
   event: EventOfOrganizer
@@ -13,6 +15,14 @@ interface EventPostDetailPopupProps {
 
 export default function EventPostDetailPopup({ event, post }: EventPostDetailPopupProps) {
   const dispatch = useDispatch()
+  const [selectedImage, setSelectedImage] = useState<string>('')
+  const [isShowImageSlider, setIsShowImageSlider] = useState<boolean>(false)
+
+  const handleShowImageSlider = (image: string) => {
+    setSelectedImage(image)
+    setIsShowImageSlider(true)
+  }
+
   return createPortal(
     <div
       className='fixed left-0 right-0 top-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-overlay'
@@ -35,13 +45,67 @@ export default function EventPostDetailPopup({ event, post }: EventPostDetailPop
               <div className='line-clamp-1 text-sm font-semibold text-neutral-7'>{event?.organizer.name}</div>
               <PostTime postedAt={post.postedAt} />
               <div className='mt-3 whitespace-pre-wrap text-sm font-normal text-neutral-7'>{post.content}</div>
-              <div className='relative mt-3'>
-                <img
-                  src={post.coverPhotoUrl}
-                  alt='cover-photo'
-                  className='h-full max-h-96 w-auto max-w-full rounded-md border border-neutral-300 object-cover'
-                />
-              </div>
+              {post.coverPhotoUrls.length > 0 && (
+                <div
+                  className='relative mt-3 block w-full rounded-lg border border-neutral-4 p-1'
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  <div className='flex w-full flex-col gap-[2px] overflow-hidden rounded-md'>
+                    <div className='block w-full'>
+                      <div className='flex w-full flex-row gap-[2px]'>
+                        {(post.coverPhotoUrls.length <= 3 ? post.coverPhotoUrls : post.coverPhotoUrls.slice(0, 2)).map(
+                          (image, index) => (
+                            <div
+                              key={index}
+                              className='relative block w-full hover:cursor-pointer'
+                              onClick={() => handleShowImageSlider(image)}
+                            >
+                              <div className='aspect-h-9 aspect-w-16 relative block min-h-[150px] w-full overflow-hidden'>
+                                <img
+                                  src={image}
+                                  alt={`Uploaded image ${index + 1}`}
+                                  className='absolute left-0 top-0 mx-auto h-full w-full object-cover'
+                                />
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                    {post.coverPhotoUrls.length >= 4 && (
+                      <div className='block w-full'>
+                        <div className='flex w-full flex-row gap-[2px]'>
+                          {post.coverPhotoUrls.slice(2, 5).map((image, index) => (
+                            <div
+                              key={index}
+                              className='relative block w-full hover:cursor-pointer'
+                              onClick={() => handleShowImageSlider(image)}
+                            >
+                              <div className='aspect-h-9 aspect-w-16 relative block min-h-[150px] w-full overflow-hidden'>
+                                <img
+                                  src={image}
+                                  alt={`Uploaded image ${index + 1}`}
+                                  className='absolute left-0 top-0 mx-auto h-full w-full object-cover'
+                                />
+                              </div>
+                              {post.coverPhotoUrls.length > 5 && index === 2 && (
+                                <div
+                                  className='absolute left-0 top-0 flex h-full w-full items-center justify-center bg-neutral-6/60 text-4xl font-medium tracking-wider text-neutral-3 hover:cursor-pointer'
+                                  onClick={() => handleShowImageSlider(image)}
+                                >
+                                  +{post.coverPhotoUrls.length - 5}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -54,6 +118,13 @@ export default function EventPostDetailPopup({ event, post }: EventPostDetailPop
           )}
         </div>
       </div>
+      {isShowImageSlider && (
+        <ImageSlider
+          imageList={post.coverPhotoUrls}
+          currentImage={selectedImage}
+          onClose={() => setIsShowImageSlider(false)}
+        />
+      )}
     </div>,
     document.body
   )

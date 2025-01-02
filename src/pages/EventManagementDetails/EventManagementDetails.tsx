@@ -1,7 +1,7 @@
 import PostTableList from './components/PostTableList'
 import EventInformation from './components/EventInformation'
 import CreateOrUpdatePostPopup from './components/CreateOrUpdatePostPopup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Tab, Tabs } from 'src/components/Tab'
 import EventRegistrations from './components/EventRegistrations'
 import { matchPath, useLocation } from 'react-router-dom'
@@ -55,11 +55,11 @@ export default function EventManagementDetails() {
             <Tab label='Đơn đăng ký'>
               <EventRegistrations />
             </Tab>
-            <Tab label='Thông tin tham gia'>
-              <ParticipationManagement />
-            </Tab>
             <Tab label='Mã check-in'>
               <CheckInCodeManagement />
+            </Tab>
+            <Tab label='Thông tin tham gia'>
+              <ParticipationManagement />
             </Tab>
           </Tabs>
         )}
