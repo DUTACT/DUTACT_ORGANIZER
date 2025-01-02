@@ -4,7 +4,8 @@ export const ERROR_MESSAGE = {
   payload_too_large: 'Nội dung tải lên của bạn có dung lượng quá lớn',
   UNEXPECTED_ERROR: 'An unexpected error occurred',
   IMAGE_SIZE_EXCEEDS_LIMIT: 'Dung lượng ảnh tải lên của bạn quá lớn. Vui lòng chỉ chọn ảnh có kích thước nhỏ hơn 5MB',
-  INVALID_PASSWORD: 'Mật khẩu hiện tại không đúng'
+  INVALID_PASSWORD: 'Mật khẩu hiện tại không đúng',
+  username_already_exists: 'Tên tài khoản đã tồn tại'
 }
 
 export const SUCCESS_MESSAGE = {
@@ -26,5 +27,5 @@ export const SUCCESS_MESSAGE = {
   CHANGE_PASSWORD: 'Thay đổi mật khẩu thành công',
   REJECT_PARTICIPATION: 'Đã xác nhận không tham gia',
   CONFIRM_PARTICIPATION: 'Đã xác nhận tham gia',
-  CREATE_ORGANIZER_ACCOUNT: 'Tạo tài khoản tổ chức thành công',
+  CREATE_ORGANIZER_ACCOUNT: 'Tạo tài khoản tổ chức thành công'
 }
