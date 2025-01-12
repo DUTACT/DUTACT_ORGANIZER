@@ -99,7 +99,7 @@ export async function mutationFormData<T>({ url, body, method }: MutationFetchOp
               form.append(`${key}[${idx}]`, item)
             })
           }
-        } else {
+        } else if (value) {
           form.append(key, value)
         }
       })
