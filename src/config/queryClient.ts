@@ -81,14 +81,19 @@ export async function mutationFormData<T>({ url, body, method }: MutationFetchOp
   return new Promise(async (resolve, reject) => {
     try {
       const form = new FormData()
+      console.log('body', body)
       const keys = Object.keys(body)
       const bodyValue = Object.values(body)
+
+      const alwaysAppendKeys = ['keepCoverPhotoUrls']
 
       bodyValue.map((value: any, index) => {
         const key = keys[index]
         if (Array.isArray(value)) {
           if (value.length === 0) {
-            form.append(key, '[]')
+            if (alwaysAppendKeys.includes(key)) {
+              form.append(key, '[]')
+            }
           } else {
             value.forEach((item, idx) => {
               form.append(`${key}[${idx}]`, item)
